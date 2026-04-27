@@ -1,0 +1,11 @@
+Leia primeiro o AGENTS.md na raiz do projeto.
+
+Contexto complementar para agentes Codex:
+- docs/codex/project-context.md: mapa do projeto, stack, funcionalidades e fluxo atual.
+- docs/codex/agent-playbook.md: padrões para continuar implementando endpoints, DTOs, entidades e ações.
+- docs/codex/review-notes.md: pontos de atenção técnicos encontrados na avaliação.
+
+Este projeto é um backend Symfony/PHP para finanças pessoais. Preserve o padrão atual:
+controllers finos, DTOs configuráveis em src/Infrastructure/DTO/EntityDto, ActionManager/Action
+para orquestração CRUD, FieldsAttribute para metadados/validação/campos de saída e ResponseBuilder
+para respostas JSON padronizadas.

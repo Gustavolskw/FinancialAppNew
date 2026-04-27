@@ -1,0 +1,40 @@
+
+###> symfony/framework-bundle ###
+/.env
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+###> dependencies ###
+/composer.lock
+###< dependencies ###
+
+###> IDEs and local tooling ###
+/.idea/
+/.vscode/
+*.iml
+###< IDEs and local tooling ###
+
+###> local caches and reports ###
+/.phpunit.cache/
+/.php-cs-fixer.cache
+/.phpstan.cache/
+/coverage/
+###< local caches and reports ###
+
+###> OS files ###
+.DS_Store
+Thumbs.db
+###< OS files ###
+
+###> docker overrides ###
+docker-compose.override.yml
+###< docker overrides ###
+
+.env
+.env

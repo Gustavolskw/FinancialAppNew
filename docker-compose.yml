@@ -1,0 +1,46 @@
+volumes:
+  postgres-fin-new-app-volume:
+    driver: local
+
+services:
+  postgres-fin-new-app:
+    image: postgres:16
+    container_name: postgres-fin-new-app
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-financial_app}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-fin-new-app-volume:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - fin-new-app
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: backend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "9500:80"
+    volumes:
+      - ./Backend:/var/www
+    env_file:
+      - ./Backend/.env
+    environment:
+      - APP_ENV=dev
+      - APP_DEBUG=1
+      - DB_HOST=postgres-fin-new-app
+      - XDEBUG_MODE=debug,develop
+      - XDEBUG_CONFIG=client_host=host.docker.internal client_port=9003
+    depends_on:
+      - postgres-fin-new-app
+    networks:
+      - fin-new-app
+
+networks:
+  fin-new-app:
+    driver: bridge
