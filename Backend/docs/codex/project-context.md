@@ -23,6 +23,8 @@ O projeto está em fase inicial/intermediária: as entidades e uma migration pri
 
 ## Pastas
 
+Antes de alterar qualquer módulo coberto por Skill local, consulte também [docs/codex/skills.md](skills.md).
+
 ### `src/Controller`
 
 Contém endpoints HTTP. Hoje existem `UserController` para CRUD de usuário e `AccessControlController` para controle de acesso.
@@ -61,16 +63,23 @@ Repositories Doctrine gerados, sem lógica customizada. Use-os para consultas es
 
 ### `src/Infrastructure/DTO/EntityDto`
 
+Skill obrigatória antes de alterar esta área: [appfinancasnew-backend-entity-dtos](../../skills/appfinancasnew-backend-entity-dtos/SKILL.md).
+
 Camada central de configuração de entidade para API.
 
-- `ConfigurableEntity`: guarda `FieldsAttributeInterface`, repository e entity manager; resolve query builder com `EntityQueryHelper`; fornece `BaseSpecificAction` por padrão.
+- `ConfigurableEntity`: guarda `FieldsAttributeInterface`, repository e entity manager; resolve query builder com `EntityQueryHelper`; fornece `BaseSpecificAction` por padrão; também fornece os defaults genéricos de `output()` via `AttributeOutputHelper` e `setFieldValues()` por loop sobre os campos configurados.
 - `MainConfigurableEntity`: adiciona `createdAt` e `updatedAt`.
 - `User`: define campos de saída/entrada, validação de senha, role via `RolesEnum`, relação com `Wallet`, termos de resposta `users`/`user` e `UserSpecificAction`.
 - `Wallet`: define campos de carteira e relação com usuário.
+- `EntryType`, `ExpenseType` e `PaymentMethod`: definem catálogos/tipos do domínio financeiro.
+- `Entry` e `Expense`: definem objetos específicos vinculados a transações e catálogos.
+- `Transaction`: define a transação geral, com valor, local, descrição, data, mês, ano e relações opcionais com despesa ou entrada.
 
-Para novas APIs, siga esse padrão: cada entidade Doctrine exposta deve ter um DTO configurável com `ENTITYCLASS`, `LISTDATATERM`, `SINGLEDATATERM`, `configureFields()`, `output()`, `setFieldValues()`, `setFieldsFromEntityData()`, `getEntityClass()` e `build()`.
+Para novas APIs, siga esse padrão: cada entidade Doctrine exposta deve ter um DTO configurável com `ENTITYCLASS`, `LISTDATATERM`, `SINGLEDATATERM`, `configureFields()`, `setFieldsFromEntityData()`, `getEntityClass()` e `build()`. Use os defaults herdados de `ConfigurableEntity` para `output()` e `setFieldValues()`, sobrescrevendo apenas quando houver uma regra específica.
 
 ### `src/Infrastructure/DTO/EntityAttributes`
+
+Skill obrigatória antes de alterar esta área: [appfinancasnew-backend-fields](../../skills/appfinancasnew-backend-fields/SKILL.md).
 
 Sistema de metadados de campos:
 
@@ -105,6 +114,8 @@ DTOs de query string, usados com `#[MapQueryString]`.
 - `ParamDto`: par nome/valor.
 
 ### `src/Infrastructure/Handler/Action`
+
+Skill obrigatória antes de alterar esta área: [appfinancasnew-backend-actions](../../skills/appfinancasnew-backend-actions/SKILL.md).
 
 Orquestra CRUD.
 
@@ -165,10 +176,12 @@ Hoje `listView` usa apenas `countAnalyses()`.
 
 ### `src/Infrastructure/Helper`
 
+Skill obrigatória antes de alterar esta área: [appfinancasnew-backend-helpers](../../skills/appfinancasnew-backend-helpers/SKILL.md).
+
 Helpers para consulta, output e resposta:
 
 - `EntityQueryHelper`: monta query Doctrine com filtros por campos configurados e paginação.
-- `EntityFieldsHelper`: popula DTO configurável a partir de entidade Doctrine.
+- `EntityFieldsHelper`: popula DTO configurável a partir de entidade Doctrine; para relações, aceita uma classe DTO única ou um mapa por nome de campo quando há múltiplas relações.
 - `AttributeOutputHelper`: formata saída, datas em `America/Sao_Paulo` e relações como objeto ou `{campo}Id`.
 - `EntityBuilder`/`EntityListBuilder`: convertem DTOs para arrays.
 - `PasswordHashHelperTrait`: `password_hash` e `password_verify`; usado no hash de cadastro/edição de usuário e na verificação do login.
@@ -193,6 +206,8 @@ Migration principal cria tabelas do domínio financeiro. Atualize migrations qua
 Container PHP-FPM + Nginx + Xdebug. O build copia o projeto, instala dependências e executa Nginx em foreground com PHP-FPM em background.
 
 ## Fluxo De CRUD Atual
+
+Antes de alterar este fluxo, leia [appfinancasnew-backend-actions](../../skills/appfinancasnew-backend-actions/SKILL.md), [appfinancasnew-backend-entity-dtos](../../skills/appfinancasnew-backend-entity-dtos/SKILL.md) e, quando houver mudança em campos, [appfinancasnew-backend-fields](../../skills/appfinancasnew-backend-fields/SKILL.md).
 
 Criar usuário:
 
@@ -250,6 +265,7 @@ Logoff:
 - Geração de JWT stateless assinado com `APP_SECRET` no login.
 - Listagem paginada e filtrada de usuário.
 - Resposta JSON padronizada.
+- EntityDTOs configuráveis para `EntryType`, `ExpenseType`, `PaymentMethod`, `Entry`, `Expense` e `Transaction`, criados na ordem de dependência do domínio.
 - Entidades financeiras principais modeladas no Doctrine.
 - Docker básico para PHP-FPM/Nginx/Xdebug.
 

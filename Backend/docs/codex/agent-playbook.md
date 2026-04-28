@@ -2,14 +2,25 @@
 
 Este arquivo descreve como um agente Codex deve continuar a implementação sem quebrar o estilo atual.
 
+## Antes De Editar
+
+Além de `AGENTS.md` e `.codex`, leia [docs/codex/skills.md](skills.md) e carregue as Skills locais que cobrem os diretórios alterados:
+
+- `src/Infrastructure/DTO/EntityAttributes`: [appfinancasnew-backend-fields](../../skills/appfinancasnew-backend-fields/SKILL.md)
+- `src/Infrastructure/DTO/EntityDto`: [appfinancasnew-backend-entity-dtos](../../skills/appfinancasnew-backend-entity-dtos/SKILL.md)
+- `src/Infrastructure/Handler/Action`: [appfinancasnew-backend-actions](../../skills/appfinancasnew-backend-actions/SKILL.md)
+- `src/Infrastructure/Helper`: [appfinancasnew-backend-helpers](../../skills/appfinancasnew-backend-helpers/SKILL.md)
+
 ## Ao Adicionar Um Novo Endpoint CRUD
+
+Leia primeiro as Skills de EntityDTOs e Actions. Se o CRUD tiver validação nova ou relação obrigatória, leia também a Skill de Fields e a Skill de Helpers.
 
 1. Verifique se a entidade Doctrine existe em `src/Entity`.
 2. Crie ou atualize o DTO configurável em `src/Infrastructure/DTO/EntityDto`.
 3. Declare `ENTITYCLASS`, `LISTDATATERM` e `SINGLEDATATERM`.
 4. Configure os campos em `configureFields()`.
-5. Implemente `output()` usando `AttributeOutputHelper::outputEntityFields()`.
-6. Implemente `setFieldValues()` copiando propriedades do Form DTO para campos existentes.
+5. Use o `output()` herdado de `ConfigurableEntity`, salvo quando a entidade precisar formato de resposta específico.
+6. Use o `setFieldValues()` herdado de `ConfigurableEntity`, salvo quando a entidade precisar mapeamento específico do Form DTO.
 7. Implemente `setFieldsFromEntityData()` usando `EntityFieldsHelper::setFieldsFromEntityData()`.
 8. Crie Form DTOs em `src/Infrastructure/DTO/Forms/{Entidade}`.
 9. Crie Query DTO se a listagem tiver filtros próprios.
@@ -34,6 +45,8 @@ Use:
 - `Request` para o método HTTP.
 
 ## Modelo De DTO Configurável
+
+Para detalhes de criação e manutenção de EntityDTOs, siga [appfinancasnew-backend-entity-dtos](../../skills/appfinancasnew-backend-entity-dtos/SKILL.md).
 
 Campos devem ser declarados no DTO configurável, não no controller:
 
@@ -67,7 +80,11 @@ Para validação específica de campo, use `additionalFieldValidation`:
 
 Esse é o padrão usado em `src/Infrastructure/DTO/EntityDto/User.php` para validar senha forte com uma closure.
 
+`ConfigurableEntity` já implementa o `output()` padrão com `AttributeOutputHelper::outputEntityFields()` e o `setFieldValues()` padrão por loop nos campos configurados. Não duplique esses métodos em EntityDTOs concretos; sobrescreva somente quando o payload ou a saída exigirem comportamento específico.
+
 ## SpecificAction
+
+Para a ordem completa dos hooks e regras de parada por negócio, siga [appfinancasnew-backend-actions](../../skills/appfinancasnew-backend-actions/SKILL.md).
 
 Use `BaseSpecificAction` como base e sobrescreva somente os hooks necessários:
 
@@ -112,6 +129,8 @@ Não chame `specificAction()` no update. Ele é reservado para a ação principa
 
 ## Respostas
 
+Para uso de helpers de saída, hidratação e builders, siga [appfinancasnew-backend-helpers](../../skills/appfinancasnew-backend-helpers/SKILL.md).
+
 Não retorne arrays soltos diretamente do controller. Use:
 
 - `ResponseBuilder`
@@ -136,6 +155,8 @@ Parâmetros reconhecidos como paginação:
 Os demais viram filtros. Texto, nome, email e localização usam `LIKE`. Status usa igualdade booleana. Outros campos usam igualdade simples.
 
 ## Relações
+
+Antes de implementar escrita de relações, leia as Skills de Fields, EntityDTOs e Actions.
 
 O projeto já consegue ler relações e retorná-las como objeto ou id. A escrita de relações ainda precisa de desenho melhor, porque `Action::applyFieldsToEntity()` pula `RELATIONALFIELD`.
 

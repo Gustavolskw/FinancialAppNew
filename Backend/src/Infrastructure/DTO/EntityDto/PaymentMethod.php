@@ -2,21 +2,18 @@
 
 namespace App\Infrastructure\DTO\EntityDto;
 
-use App\Entity\User;
-use App\Entity\Wallet as WalletEntity;
+use App\Entity\PaymentMethod as PaymentMethodEntity;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttribute;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttributeInterface;
 use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
-use App\Infrastructure\DTO\EntityDto\User as UserDto;
 use App\Infrastructure\Helper\EntityHelper\EntityFieldsHelper;
 use Doctrine\ORM\EntityManagerInterface;
 
-final class Wallet extends MainConfigurableEntity
+final class PaymentMethod extends ConfigurableEntity
 {
-    private const string ENTITYCLASS = WalletEntity::class;
-    public const string LISTDATATERM = "wallets";
-    public const string SINGLEDATATERM = "wallet";
-
+    private const string ENTITYCLASS = PaymentMethodEntity::class;
+    public const string LISTDATATERM = "paymentMethods";
+    public const string SINGLEDATATERM = "paymentMethod";
 
     public function configureFields(FieldsAttributeInterface $fields): FieldsAttributeInterface
     {
@@ -24,11 +21,8 @@ final class Wallet extends MainConfigurableEntity
 
         return $fields
             ->setIdField("id")
-            ->setTextField("title", "getTitle")
-            ->setTextField("description", "getDescription")
-            ->setRelationalField("user", User::class, "getWalletUser");
+            ->setNameField("name", required: true);
     }
-
 
     public function setFieldsFromEntityData(object $entity, bool $deepFetch = false): self
     {
@@ -37,7 +31,7 @@ final class Wallet extends MainConfigurableEntity
             self::ENTITYCLASS,
             $this->getFields(),
             $this->getEntityManager(),
-            UserDto::class,
+            null,
             $deepFetch
         );
 
@@ -53,5 +47,4 @@ final class Wallet extends MainConfigurableEntity
     {
         return new self(new FieldsAttribute(), self::ENTITYCLASS, $entityManager);
     }
-
 }

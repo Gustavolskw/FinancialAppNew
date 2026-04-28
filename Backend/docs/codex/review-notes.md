@@ -2,6 +2,8 @@
 
 Este arquivo registra achados importantes para próximos agentes Codex. Ele não é uma lista de tarefas obrigatória, mas ajuda a evitar que o agente continue padrões problemáticos sem perceber.
 
+Antes de mexer em um módulo coberto por Skill local, leia [docs/codex/skills.md](skills.md). Se um risco técnico deste arquivo virar regra durável após correção, atualize também a Skill correspondente em `skills/`.
+
 ## Arquitetura Atual
 
 O projeto está construindo um CRUD genérico próprio sobre Symfony e Doctrine. A intenção é boa: controllers finos, configuração de campos por DTO, respostas padronizadas e hooks específicos por entidade.

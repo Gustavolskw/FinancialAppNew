@@ -2,21 +2,21 @@
 
 namespace App\Infrastructure\DTO\EntityDto;
 
-use App\Entity\User;
-use App\Entity\Wallet as WalletEntity;
+use App\Entity\Entry as EntryEntity;
+use App\Entity\Expense as ExpenseEntity;
+use App\Entity\Transaction as TransactionEntity;
+use App\Infrastructure\DTO\EntityAttributes\FieldTypeEnum;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttribute;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttributeInterface;
 use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
-use App\Infrastructure\DTO\EntityDto\User as UserDto;
 use App\Infrastructure\Helper\EntityHelper\EntityFieldsHelper;
 use Doctrine\ORM\EntityManagerInterface;
 
-final class Wallet extends MainConfigurableEntity
+final class Transaction extends ConfigurableEntity
 {
-    private const string ENTITYCLASS = WalletEntity::class;
-    public const string LISTDATATERM = "wallets";
-    public const string SINGLEDATATERM = "wallet";
-
+    private const string ENTITYCLASS = TransactionEntity::class;
+    public const string LISTDATATERM = "transactions";
+    public const string SINGLEDATATERM = "transaction";
 
     public function configureFields(FieldsAttributeInterface $fields): FieldsAttributeInterface
     {
@@ -24,11 +24,15 @@ final class Wallet extends MainConfigurableEntity
 
         return $fields
             ->setIdField("id")
-            ->setTextField("title", "getTitle")
+            ->setValueField("amount", "getAmount", required: true)
+            ->setTextField("location", "getLocation", FieldTypeEnum::LOCATIONFIELD, required: true)
             ->setTextField("description", "getDescription")
-            ->setRelationalField("user", User::class, "getWalletUser");
+            ->setDateField("date", "getDate", FieldTypeEnum::DATETIMEFIELD, required: true)
+            ->setNumericField("month", "getMonth", required: true)
+            ->setNumericField("year", "getYear", required: true)
+            ->setRelationalField("expense", ExpenseEntity::class, "getTransactionExpense")
+            ->setRelationalField("entry", EntryEntity::class, "getEntryTransaction");
     }
-
 
     public function setFieldsFromEntityData(object $entity, bool $deepFetch = false): self
     {
@@ -37,7 +41,10 @@ final class Wallet extends MainConfigurableEntity
             self::ENTITYCLASS,
             $this->getFields(),
             $this->getEntityManager(),
-            UserDto::class,
+            [
+                "expense" => Expense::class,
+                "entry" => Entry::class,
+            ],
             $deepFetch
         );
 
@@ -53,5 +60,4 @@ final class Wallet extends MainConfigurableEntity
     {
         return new self(new FieldsAttribute(), self::ENTITYCLASS, $entityManager);
     }
-
 }

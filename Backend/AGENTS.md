@@ -6,7 +6,15 @@ Antes de alterar código, leia também:
 
 - [docs/codex/project-context.md](docs/codex/project-context.md)
 - [docs/codex/agent-playbook.md](docs/codex/agent-playbook.md)
+- [docs/codex/skills.md](docs/codex/skills.md)
 - [docs/codex/review-notes.md](docs/codex/review-notes.md)
+
+Quando a tarefa tocar nos diretórios abaixo, leia também a Skill local especializada antes de editar:
+
+- `src/Infrastructure/DTO/EntityAttributes`: [skills/appfinancasnew-backend-fields/SKILL.md](skills/appfinancasnew-backend-fields/SKILL.md)
+- `src/Infrastructure/DTO/EntityDto`: [skills/appfinancasnew-backend-entity-dtos/SKILL.md](skills/appfinancasnew-backend-entity-dtos/SKILL.md)
+- `src/Infrastructure/Handler/Action`: [skills/appfinancasnew-backend-actions/SKILL.md](skills/appfinancasnew-backend-actions/SKILL.md)
+- `src/Infrastructure/Helper`: [skills/appfinancasnew-backend-helpers/SKILL.md](skills/appfinancasnew-backend-helpers/SKILL.md)
 
 ## Como O Projeto Está Organizado
 
@@ -14,6 +22,7 @@ Antes de alterar código, leia também:
 - `src/Entity`: entidades Doctrine do domínio financeiro: `User`, `Wallet`, `Transaction`, `Expense`, `Entry`, `ExpenseType`, `EntryType`, `PaymentMethod`.
 - `src/Repository`: repositories Doctrine gerados pelo MakerBundle, ainda sem queries customizadas.
 - `src/Infrastructure`: camada própria da aplicação, com DTOs, handlers, helpers, paginação, analytics e builder de resposta.
+- `skills`: Skills locais de contexto para agentes Codex; use-as como documentação operacional antes de alterar os módulos cobertos.
 - `config`: configuração Symfony, Doctrine, CORS, Security, rotas por atributos e serviços autowired.
 - `migrations`: migrations Doctrine.
 - `docker`: Nginx para Symfony dentro do container.

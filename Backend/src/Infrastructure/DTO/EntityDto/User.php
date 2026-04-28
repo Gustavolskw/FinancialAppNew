@@ -11,10 +11,8 @@ use App\Infrastructure\DTO\EntityAttributes\FieldsAttributeInterface;
 use App\Infrastructure\DTO\EntityAttributes\FieldTypeEnum;
 use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
 use App\Infrastructure\DTO\EntityDto\Wallet as WalletDto;
-use App\Infrastructure\DTO\Forms\FormDtoInterface;
 use App\Infrastructure\Handler\Action\Specific\Interface\SpecificActionInterface;
 use App\Infrastructure\Handler\Action\Specific\UserSpecificAction;
-use App\Infrastructure\Helper\EntityHelper\AttributeOutputHelper;
 use App\Infrastructure\Helper\EntityHelper\EntityFieldsHelper;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -48,30 +46,6 @@ final class User extends MainConfigurableEntity
         return $fields;
     }
 
-
-    /**
-     * @throws \DateMalformedStringException
-     */
-    public function output(): array
-    {
-        return AttributeOutputHelper::outputEntityFields($this->getFields()->getFields());
-    }
-
-
-    public function setFieldValues(FormDtoInterface $dto): void
-    {
-        foreach ($this->getFields()->getFields() as $field) {
-            $name = $field->getName();
-
-            if (!property_exists($dto, $name)) {
-                continue;
-            }
-
-            if ($dto->$name !== null) {
-                $field->setValue($dto->$name);
-            }
-        }
-    }
 
     public function setFieldsFromEntityData(object $entity, bool $deepFetch = false): self
     {

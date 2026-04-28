@@ -2,12 +2,10 @@
 
 namespace App\Infrastructure\Helper\EntityHelper;
 
-use App\Entity\User as UserEntity;
 use App\Infrastructure\DTO\EntityAttributes\Fields\FieldsInterface;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttributeInterface;
 use App\Infrastructure\DTO\EntityAttributes\FieldTypeEnum;
-use App\Infrastructure\DTO\EntityDto\Wallet as WalletDto;
-use Doctrine\Common\Collections\ArrayCollection;
+use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class EntityFieldsHelper
@@ -17,7 +15,7 @@ class EntityFieldsHelper
      * @param object $entity Entidade Doctrine
      * @param class-string $entityClass FQCN esperado da entidade (ex: App\Entity\User::class)
      * @param FieldsAttributeInterface $fields Campos configurados do DTO
-     * @param class-string<BaseEntityClassInterface>|null $relationalDtoClass DTO relacional (ex: WalletDto::class)
+     * @param class-string<BaseEntityClassInterface>|array<string, class-string<BaseEntityClassInterface>>|null $relationalDtoClass DTO relacional unico (ex: WalletDto::class) ou mapa por campo
      * @param bool $deepFetch Se true, popula o DTO relacional; se false retorna somente id
      * @return FieldsAttributeInterface
      */
@@ -26,7 +24,7 @@ class EntityFieldsHelper
         string $entityClass,
         FieldsAttributeInterface $fields,
         EntityManagerInterface $entityManager,
-        ?string $relationalDtoClass = null,
+        string|array|null $relationalDtoClass = null,
         bool $deepFetch = false
     ): FieldsAttributeInterface {
         if (!$entity instanceof $entityClass) {
@@ -48,11 +46,12 @@ class EntityFieldsHelper
             $value = $entity->$getter();
 
             // Relacional
-            if ($field->getFieldType() === FieldTypeEnum::RELATIONALFIELD && $relationalDtoClass !== null) {
+            $fieldRelationalDtoClass = self::resolveRelationalDtoClass($field, $relationalDtoClass);
+            if ($field->getFieldType() === FieldTypeEnum::RELATIONALFIELD && $fieldRelationalDtoClass !== null) {
                 $value = AttributeOutputHelper::setRelationalAttribute(
                     $deepFetch,
                     $value,
-                    $relationalDtoClass::build($entityManager)
+                    $fieldRelationalDtoClass::build($entityManager)
                 );
             }
 
@@ -65,5 +64,28 @@ class EntityFieldsHelper
         }
 
         return $fields;
+    }
+
+    /**
+     * @param class-string<BaseEntityClassInterface>|array<string, class-string<BaseEntityClassInterface>>|null $relationalDtoClass
+     * @return class-string<BaseEntityClassInterface>|null
+     */
+    private static function resolveRelationalDtoClass(
+        FieldsInterface $field,
+        string|array|null $relationalDtoClass
+    ): ?string {
+        if ($field->getFieldType() !== FieldTypeEnum::RELATIONALFIELD) {
+            return null;
+        }
+
+        if (is_string($relationalDtoClass)) {
+            return $relationalDtoClass;
+        }
+
+        if (is_array($relationalDtoClass)) {
+            return $relationalDtoClass[$field->getName()] ?? null;
+        }
+
+        return null;
     }
 }

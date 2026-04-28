@@ -1,0 +1,147 @@
+---
+name: appfinancasnew-backend-helpers
+description: Use when choosing, changing, or extending helpers under src/Infrastructure/Helper for entity hydration, output formatting, query filtering, response building, pagination support, password hashing, or shared utility behavior in the AppFinancasNew backend.
+---
+
+# AppFinancasNew Backend Helpers
+
+## Scope
+
+Use this skill for `src/Infrastructure/Helper`, especially:
+
+- `EntityHelper/AttributeOutputHelper.php`
+- `EntityHelper/EntityFieldsHelper.php`
+- `EntityHelper/EntityQueryHelper.php`
+- `Response/EntityBuilder.php`
+- `Response/EntityListBuilder.php`
+- `Response/AbstractEntityBuilder.php`
+- `BaseHelper.php`
+- `PasswordHashHelperTrait.php`
+- `Interface/EntityClassCollection.php`
+
+## Helper Responsibilities
+
+Use helpers to keep controllers, actions, and EntityDTOs focused:
+
+- `EntityQueryHelper` builds Doctrine queries from configured fields and query params.
+- `EntityFieldsHelper` copies Doctrine entity getter values into configured fields.
+- `AttributeOutputHelper` converts fields to API arrays.
+- `EntityBuilder` and `EntityListBuilder` adapt EntityDTOs to response-builder data collections.
+- `BaseHelper` contains small generic collection utilities.
+- `PasswordHashHelperTrait` centralizes `password_hash` and `password_verify`.
+
+Do not move business rules into helpers unless they are truly reusable and not tied to a single entity lifecycle.
+
+## EntityQueryHelper
+
+Use it from `ConfigurableEntity::resolveQueryBuilder(...)`.
+
+Filtering behavior:
+
+- pagination uses `page`, `perPage`, or `pageSize`;
+- text/name/email/location use `LIKE`;
+- status uses boolean equality;
+- enum fields compare by integer raw value;
+- unknown params are ignored when no configured field exists.
+
+When adding a new field type that needs custom filtering, update `EntityQueryHelper` together with the field skill rules.
+
+## EntityFieldsHelper
+
+Use it in `setFieldsFromEntityData(...)` methods with one relational DTO class when the EntityDTO has a single relation:
+
+```php
+EntityFieldsHelper::setFieldsFromEntityData(
+    $entity,
+    self::ENTITYCLASS,
+    $this->getFields(),
+    $this->getEntityManager(),
+    RelatedDto::class,
+    $deepFetch
+);
+```
+
+For EntityDTOs with multiple relational fields, pass a map keyed by the configured field names:
+
+```php
+EntityFieldsHelper::setFieldsFromEntityData(
+    $entity,
+    self::ENTITYCLASS,
+    $this->getFields(),
+    $this->getEntityManager(),
+    [
+        'entryType' => EntryType::class,
+        'transaction' => Transaction::class,
+    ],
+    $deepFetch
+);
+```
+
+Rules:
+
+- validate the Doctrine entity is an instance of the expected class;
+- use the configured field getter;
+- throw when a configured getter does not exist;
+- cast id fields to int;
+- delegate relational output to `AttributeOutputHelper::setRelationalAttribute(...)`.
+- accept either one relational DTO class for all relations or a map of field name to relational DTO class.
+
+Only use the relational DTO argument when the EntityDTO has relation output that should be populated.
+
+## AttributeOutputHelper
+
+Use it from EntityDTO `output()` methods.
+
+Output behavior:
+
+- relation fields become nested objects when the value is a DTO;
+- relation fields become `{fieldName}Id` when the value is an id;
+- enum fields output `EntityFieldEnumInterface::name()`;
+- date fields use `d/m/Y`;
+- datetime fields use `d/m/Y H:i:s`;
+- datetime output is converted to `America/Sao_Paulo`;
+- `createdAt` and `updatedAt` are deferred so they appear at the end of output.
+
+Do not format dates or relations manually in controllers.
+
+## Response Helpers
+
+Use:
+
+- `EntityBuilder::factory($dto)` for single-resource responses;
+- `EntityListBuilder::factory($mappedDtos)` for lists;
+- `ResponseBuilder::addData($term, $builder)` to place the output under `data`.
+
+The builders expect configurable EntityDTOs, not Doctrine entities.
+
+## PasswordHashHelperTrait
+
+Use this trait for password operations currently implemented in the project:
+
+```php
+$hash = $this->hashPassword($password);
+$valid = $this->passwordMatches($inputPassword, $databasePassword);
+```
+
+Rules:
+
+- hash user passwords in `UserSpecificAction::preSave()` and `preUpdate()`;
+- verify login passwords in `AccessControlAction`;
+- keep the method signature `passwordMatches(string $password, string $databasePassword): bool`;
+- do not compare password hashes manually.
+
+## Adding Or Changing Helpers
+
+1. Prefer existing helpers before adding a new one.
+2. Keep helpers stateless unless there is a clear reason for dependency injection.
+3. Keep entity-specific business rules in `SpecificAction`; helpers should be reusable support code.
+4. Update EntityDTOs or Actions to use the helper through existing architecture paths.
+5. Update `docs/codex` when helper behavior changes an implementation rule.
+6. Run `php -l` on changed PHP files.
+
+## Do Not
+
+- Do not return Doctrine entities through response helpers.
+- Do not build JSON response arrays by hand when `ResponseBuilder` and builders already fit.
+- Do not duplicate query filtering in controllers.
+- Do not use helpers to bypass field validation.
