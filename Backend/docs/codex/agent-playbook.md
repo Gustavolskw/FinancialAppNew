@@ -100,7 +100,7 @@ Use `BaseSpecificAction` como base e sobrescreva somente os hooks necessários:
 - `beforeUpdate`
 - `afterUpdate`
 
-Exemplo atual: `UserSpecificAction` faz hash da senha em `preSave` e `preUpdate`.
+Exemplo atual: `UserSpecificAction` faz hash da senha em `preSave` e `preUpdate`, e cria uma carteira padrão ativa em `afterAction` depois que o usuário novo foi persistido.
 
 Ordem do fluxo de criação:
 
@@ -152,22 +152,24 @@ Parâmetros reconhecidos como paginação:
 - `perPage`
 - `pageSize`
 
-Os demais viram filtros. Texto, nome, email e localização usam `LIKE`. Status usa igualdade booleana. Outros campos usam igualdade simples.
+Os demais viram filtros. Texto, nome, email e localização usam `LIKE`. Status usa igualdade booleana. Campos relacionais aceitam `{relation}` ou `{relation}Id` e filtram pelo id da entidade relacionada. Outros campos usam igualdade simples.
+
+Rotas relacionais explícitas, como `GET /wallet/user/{userId}` e `GET /transaction/wallet/{walletId}`, devem apenas preservar `$request->query->all()`, adicionar o filtro relacional (`userId` ou `walletId`) e delegar para `ActionManager` com `QueryParams::fromArray(...)`.
 
 ## Relações
 
 Antes de implementar escrita de relações, leia as Skills de Fields, EntityDTOs e Actions.
 
-O projeto já consegue ler relações e retorná-las como objeto ou id. A escrita de relações ainda precisa de desenho melhor, porque `Action::applyFieldsToEntity()` pula `RELATIONALFIELD`.
+O projeto consegue ler relações, retorná-las como objeto ou id, validar ids relacionais informados e aplicar relações unitárias em create/update.
 
-Antes de adicionar criação de entidades com relações obrigatórias, implemente uma estratégia clara:
+Ao adicionar criação de entidades com relações obrigatórias:
 
 - aceitar `{relation}Id` no Form DTO;
-- buscar a entidade relacionada no repository;
-- aplicar o setter correto;
-- validar erro 404 quando a relação não existir.
+- configurar `setRelationalField()` no EntityDTO com o getter real da entidade;
+- deixar `BaseSpecificAction::preActionValidation()` validar a existência do id relacionado;
+- deixar `Action::applyFieldsToEntity()` resolver a entidade relacionada e aplicar o setter derivado do getter.
 
-Essa lógica pode ficar em `SpecificAction` ou em um helper dedicado, desde que seja reutilizável.
+Use `SpecificAction` para regras de ciclo de vida específicas, como remover `Entry` ou `Expense` dependente antes de excluir uma `Transaction`.
 
 ## Delete E Status
 
@@ -178,6 +180,8 @@ Essa lógica pode ficar em `SpecificAction` ou em um helper dedicado, desde que 
 - Antes dos hooks de delete/status, o DTO configurável é preenchido com os dados atuais da entidade; no status, o campo `status` recebe o novo valor solicitado antes dos hooks.
 - Se qualquer hook específico retornar `false`, a ação deve retornar erro de regra de negócio e não concluir a operação.
 - Controllers de delete devem receber `id` na rota para evitar apagar sem alvo claro.
+- `UserController` e `WalletController` não devem expor delete físico; use a rota `{id}/status` para desativação.
+- Entidades operacionais como `EntryType`, `ExpenseType`, `PaymentMethod`, `Entry`, `Expense` e `Transaction` podem expor delete físico quando houver rota/controller.
 
 ## Segurança
 
@@ -189,8 +193,14 @@ Security Bundle está instalado. O projeto já possui um controle de acesso inic
 - `AccessControlAction::login()` busca usuário por email, valida senha com `PasswordHashHelperTrait::passwordMatches()` e gera JWT HS256 assinado com `APP_SECRET`.
 - O retorno de login usa `ResponseBuilder` e `AuthSessionDataDto`, com `data.auth.token`, `tokenType`, `expiresIn`, `expiresAt` e dados básicos do usuário.
 - `logoff()` é stateless: apenas retorna sucesso para o cliente descartar o token.
+- Rotas CRUD/status que passam pelo `ActionManager` são protegidas por `JwtAuthenticationHelperTrait`, exceto `POST /user`, que é público para cadastro normal sem `role` no payload. Antes do dispatch para as demais rotas, o manager valida `Authorization: Bearer <token>`, assinatura HS256 com `APP_SECRET`, issuer `AppFinancasNew`, campos obrigatórios e expiração.
+- Depois da autenticação, `RecordAuthorizationHelperTrait` aplica autorização por dono do registro: ADMIN pode tudo; usuário comum só pode operar o próprio `User`, a própria `Wallet` e registros financeiros ligados à própria carteira.
+- Criação normal de usuário não aceita `role` no payload e sempre usa o default `USER`; criação de administrador é exceção ao bypass geral de ADMIN e deve usar `POST /user/admin`.
+- Cadastros globais (`EntryType`, `ExpenseType`, `PaymentMethod`) são leitura para usuários autenticados, mas escrita apenas para ADMIN.
+- Listagens de `User`, `Wallet`, `Transaction`, `Entry` e `Expense` devem receber restrição de `QueryBuilder` para não vazar registros de outro usuário.
+- `handleStatus()` também recebe `Request` para aplicar a mesma validação em rotas como `/user/{id}/status` e `/wallet/{id}/status`.
 
-Ainda não há firewall/autenticador validando o bearer token nas demais rotas. Não assuma usuário logado ou roles em controllers/handlers. Se evoluir autenticação/autorização:
+Ainda não há firewall/autenticador Symfony nativo. Se evoluir autenticação/autorização:
 
 - atualize `config/packages/security.yaml`;
 - faça `App\Entity\User` implementar interfaces necessárias do Symfony quando aplicável;

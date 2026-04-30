@@ -8,8 +8,9 @@ Contexto complementar para agentes Codex:
 
 Este projeto é um backend Symfony/PHP para finanças pessoais. Preserve o padrão atual:
 controllers finos, DTOs configuráveis em src/Infrastructure/DTO/EntityDto, ActionManager/Action
-para orquestração CRUD, FieldsAttribute para metadados/validação/campos de saída e ResponseBuilder
-para respostas JSON padronizadas.
+para orquestração CRUD com validação Bearer JWT e autorização por dono/ADMIN no ActionManager,
+FieldsAttribute para metadados/validação/campos de saída e ResponseBuilder para respostas JSON
+padronizadas.
 
 Antes de mexer nos diretórios abaixo, leia a Skill local correspondente:
 - src/Infrastructure/DTO/EntityAttributes -> skills/appfinancasnew-backend-fields/SKILL.md

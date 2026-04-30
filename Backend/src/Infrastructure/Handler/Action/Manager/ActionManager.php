@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Handler\Action\Manager;
 
+use App\Entity\User as UserEntity;
 use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
 use App\Infrastructure\DTO\Forms\FormDtoInterface;
 use App\Infrastructure\DTO\Forms\StatusFormDto;
@@ -13,10 +14,15 @@ use App\Infrastructure\Handler\Action\ActionInterface;
 use App\Infrastructure\Handler\Action\Manager\interface\ActionManagerInterface;
 use App\Infrastructure\Handler\Response\JsonResponseHandler;
 use App\Infrastructure\Handler\Response\JsonResponseHandlerInterface;
+use App\Infrastructure\Helper\Auth\JwtAuthenticationHelperTrait;
+use App\Infrastructure\Helper\Auth\RecordAuthorizationHelperTrait;
 use Symfony\Component\HttpFoundation\Request;
 
 final class ActionManager implements ActionManagerInterface
 {
+    use JwtAuthenticationHelperTrait;
+    use RecordAuthorizationHelperTrait;
+
     public function handle(
         BaseEntityClassInterface $baseEntityClass,
         Request $request,
@@ -24,7 +30,27 @@ final class ActionManager implements ActionManagerInterface
         ?FormDtoInterface $formDto = null,
         ?int $id = null
     ): JsonResponseHandlerInterface {
-        $action = Action::build($baseEntityClass);
+        if ($this->isPublicUserCreate($baseEntityClass, $request, $id)) {
+            if ($this->requestPayloadHas($request, 'role')) {
+                return $this->response('Perfil de acesso não pode ser enviado na criação normal de usuário', 403);
+            }
+
+            return $this->handleSave($baseEntityClass, Action::build($baseEntityClass), $formDto);
+        }
+
+        $authenticationResponse = $this->authenticateRequest($request);
+
+        if ($authenticationResponse !== null) {
+            return $authenticationResponse;
+        }
+
+        $authorizationResponse = $this->authorizeRecordAccess($baseEntityClass, $request, $formDto, $id);
+
+        if ($authorizationResponse !== null) {
+            return $authorizationResponse;
+        }
+
+        $action = Action::build($baseEntityClass, $this->recordListQueryRestriction($baseEntityClass));
 
         return match ($request->getMethod()) {
             Request::METHOD_GET => $this->handleGet($action, $queryParams, $id),
@@ -38,9 +64,22 @@ final class ActionManager implements ActionManagerInterface
 
     public function handleStatus(
         BaseEntityClassInterface $baseEntityClass,
+        Request $request,
         int $id,
         StatusFormDto $formDto
     ): JsonResponseHandlerInterface {
+        $authenticationResponse = $this->authenticateRequest($request);
+
+        if ($authenticationResponse !== null) {
+            return $authenticationResponse;
+        }
+
+        $authorizationResponse = $this->authorizeRecordAccess($baseEntityClass, $request, $formDto, $id);
+
+        if ($authorizationResponse !== null) {
+            return $authorizationResponse;
+        }
+
         if ($id <= 0) {
             return $this->response("ID inválido para atualização de status", 400);
         }
@@ -134,6 +173,25 @@ final class ActionManager implements ActionManagerInterface
         }
 
         return is_numeric($id) ? (int) $id : 0;
+    }
+
+    private function isPublicUserCreate(BaseEntityClassInterface $baseEntityClass, Request $request, ?int $id): bool
+    {
+        return $baseEntityClass->getEntityClass() === UserEntity::class
+            && $request->getMethod() === Request::METHOD_POST
+            && $request->attributes->get('_route') === 'userPost'
+            && $id === null;
+    }
+
+    private function requestPayloadHas(Request $request, string $property): bool
+    {
+        if ($request->getContent() === '') {
+            return false;
+        }
+
+        $payload = json_decode($request->getContent(), true);
+
+        return is_array($payload) && array_key_exists($property, $payload);
     }
 
     private function response(string $message, int $statusCode): JsonResponseHandlerInterface

@@ -1,0 +1,1198 @@
+{
+    "info": {
+        "_postman_id": "f0d53d37-4ff5-4f70-8d3f-8f5fc4a28f1b",
+        "name": "AppFinancasNew Backend API",
+        "description": "Collection gerada para o backend AppFinancasNew. Configure baseUrl e execute Login para preencher token automaticamente.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": []
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": []
+            }
+        }
+    ],
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:9500"
+        },
+        {
+            "key": "token",
+            "value": ""
+        },
+        {
+            "key": "userId",
+            "value": "1"
+        },
+        {
+            "key": "walletId",
+            "value": "1"
+        },
+        {
+            "key": "entryTypeId",
+            "value": "1"
+        },
+        {
+            "key": "expenseTypeId",
+            "value": "1"
+        },
+        {
+            "key": "paymentMethodId",
+            "value": "1"
+        },
+        {
+            "key": "entryId",
+            "value": "1"
+        },
+        {
+            "key": "expenseId",
+            "value": "1"
+        },
+        {
+            "key": "transactionId",
+            "value": "1"
+        }
+    ],
+    "item": [
+        {
+            "name": "Auth",
+            "item": [
+                {
+                    "name": "Login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "const response = pm.response.json();",
+                                    "if (response.data && response.data.auth && response.data.auth.token) {",
+                                    "    pm.collectionVariables.set('token', response.data.auth.token);",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"admin@appfinancas.test\",\n  \"password\": \"Senha@123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/login",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["login"]
+                        },
+                        "description": "Retorna data.auth.token e grava automaticamente em {{token}}."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Logoff",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/logoff",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["logoff"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "User",
+            "item": [
+                {
+                    "name": "List Users",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/user?page=1&perPage=20&name=&email=&status=",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["user"],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "perPage",
+                                    "value": "20"
+                                },
+                                {
+                                    "key": "name",
+                                    "value": "",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "email",
+                                    "value": "",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "status",
+                                    "value": "",
+                                    "disabled": true
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "View User",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/user/{{userId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["user", "{{userId}}"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create User",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Usuario Teste\",\n  \"email\": \"usuario@appfinancas.test\",\n  \"password\": \"Senha@123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/user",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["user"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Admin User",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Admin Teste\",\n  \"email\": \"novo-admin@appfinancas.test\",\n  \"password\": \"Senha@123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/user/admin",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["user", "admin"]
+                        },
+                        "description": "Rota protegida: somente um usuario ADMIN autenticado pode criar outro ADMIN. O role e definido pelo backend."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Insert Or Edit User",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"id\": {{userId}},\n  \"name\": \"Usuario Atualizado\",\n  \"email\": \"usuario@appfinancas.test\",\n  \"password\": \"Senha@123\",\n  \"role\": 1\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/user",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["user"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Edit User",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"id\": {{userId}},\n  \"name\": \"Usuario Editado\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/user",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["user"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Change User Status",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"status\": true\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/user/{{userId}}/status",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["user", "{{userId}}", "status"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Wallet",
+            "item": [
+                {
+                    "name": "List Wallets",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/wallet?page=1&perPage=20",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["wallet"],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "perPage",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "View Wallet",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/wallet/{{walletId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["wallet", "{{walletId}}"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Find Wallet By User",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/wallet/user/{{userId}}?page=1&perPage=20",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["wallet", "user", "{{userId}}"],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "perPage",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Wallet",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Carteira Principal\",\n  \"description\": \"Carteira de uso diario\",\n  \"userId\": {{userId}}\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/wallet",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["wallet"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Insert Or Edit Wallet",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"id\": {{walletId}},\n  \"title\": \"Carteira Principal\",\n  \"description\": \"Carteira atualizada\",\n  \"userId\": {{userId}}\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/wallet",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["wallet"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Edit Wallet",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"id\": {{walletId}},\n  \"title\": \"Carteira Editada\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/wallet",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["wallet"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Change Wallet Status",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"status\": true\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/wallet/{{walletId}}/status",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["wallet", "{{walletId}}", "status"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Entry Type",
+            "item": [
+                {
+                    "name": "List Entry Types",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/entry-type?page=1&perPage=20",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["entry-type"],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "perPage",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "View Entry Type",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/entry-type/{{entryTypeId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["entry-type", "{{entryTypeId}}"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Entry Type",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Salario\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/entry-type",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["entry-type"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Insert Or Edit Entry Type",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"id\": {{entryTypeId}},\n  \"name\": \"Salario Atualizado\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/entry-type",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["entry-type"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Edit Entry Type",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"id\": {{entryTypeId}},\n  \"name\": \"Salario Editado\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/entry-type",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["entry-type"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Entry Type",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/entry-type/{{entryTypeId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["entry-type", "{{entryTypeId}}"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Expense Type",
+            "item": [
+                {
+                    "name": "List Expense Types",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/expense-type?page=1&perPage=20",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["expense-type"],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "perPage",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "View Expense Type",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/expense-type/{{expenseTypeId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["expense-type", "{{expenseTypeId}}"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Expense Type",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Alimentacao\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/expense-type",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["expense-type"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Insert Or Edit Expense Type",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"id\": {{expenseTypeId}},\n  \"name\": \"Alimentacao Atualizada\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/expense-type",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["expense-type"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Edit Expense Type",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"id\": {{expenseTypeId}},\n  \"name\": \"Alimentacao Editada\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/expense-type",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["expense-type"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Expense Type",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/expense-type/{{expenseTypeId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["expense-type", "{{expenseTypeId}}"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Payment Method",
+            "item": [
+                {
+                    "name": "List Payment Methods",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/payment-method?page=1&perPage=20",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["payment-method"],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "perPage",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "View Payment Method",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/payment-method/{{paymentMethodId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["payment-method", "{{paymentMethodId}}"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Payment Method",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Cartao de Credito\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/payment-method",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["payment-method"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Insert Or Edit Payment Method",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"id\": {{paymentMethodId}},\n  \"name\": \"Cartao Atualizado\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/payment-method",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["payment-method"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Edit Payment Method",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"id\": {{paymentMethodId}},\n  \"name\": \"Cartao Editado\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/payment-method",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["payment-method"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Payment Method",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/payment-method/{{paymentMethodId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["payment-method", "{{paymentMethodId}}"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Entry",
+            "item": [
+                {
+                    "name": "List Entries",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/entry?page=1&perPage=20",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["entry"],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "perPage",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "View Entry",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/entry/{{entryId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["entry", "{{entryId}}"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Entry",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"entryTypeId\": {{entryTypeId}},\n  \"transactionId\": {{transactionId}}\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/entry",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["entry"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Insert Or Edit Entry",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"id\": {{entryId}},\n  \"entryTypeId\": {{entryTypeId}},\n  \"transactionId\": {{transactionId}}\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/entry",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["entry"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Edit Entry",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"id\": {{entryId}},\n  \"entryTypeId\": {{entryTypeId}}\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/entry",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["entry"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Entry",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/entry/{{entryId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["entry", "{{entryId}}"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Expense",
+            "item": [
+                {
+                    "name": "List Expenses",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/expense?page=1&perPage=20",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["expense"],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "perPage",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "View Expense",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/expense/{{expenseId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["expense", "{{expenseId}}"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Expense",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"transactionId\": {{transactionId}},\n  \"expenseTypeId\": {{expenseTypeId}},\n  \"paymentMethodId\": {{paymentMethodId}},\n  \"installments\": 1\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/expense",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["expense"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Insert Or Edit Expense",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"id\": {{expenseId}},\n  \"transactionId\": {{transactionId}},\n  \"expenseTypeId\": {{expenseTypeId}},\n  \"paymentMethodId\": {{paymentMethodId}},\n  \"installments\": 2\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/expense",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["expense"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Edit Expense",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"id\": {{expenseId}},\n  \"installments\": 3\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/expense",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["expense"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Expense",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/expense/{{expenseId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["expense", "{{expenseId}}"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Transaction",
+            "item": [
+                {
+                    "name": "List Transactions",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/transaction?page=1&perPage=20",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["transaction"],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "perPage",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Find Transactions By Wallet",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/transaction/wallet/{{walletId}}?page=1&perPage=20",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["transaction", "wallet", "{{walletId}}"],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "perPage",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "View Transaction",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/transaction/{{transactionId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["transaction", "{{transactionId}}"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Transaction",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"amount\": \"150.75\",\n  \"location\": \"Mercado\",\n  \"description\": \"Compra do mes\",\n  \"date\": \"2026-04-29T10:00:00-03:00\",\n  \"month\": 4,\n  \"year\": 2026,\n  \"walletId\": {{walletId}}\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/transaction",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["transaction"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Insert Or Edit Transaction",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"id\": {{transactionId}},\n  \"amount\": \"200.00\",\n  \"location\": \"Mercado\",\n  \"description\": \"Compra atualizada\",\n  \"date\": \"2026-04-29T10:00:00-03:00\",\n  \"month\": 4,\n  \"year\": 2026,\n  \"walletId\": {{walletId}}\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/transaction",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["transaction"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Edit Transaction",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"id\": {{transactionId}},\n  \"description\": \"Descricao editada\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/transaction",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["transaction"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Transaction",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/transaction/{{transactionId}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["transaction", "{{transactionId}}"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ]
+}

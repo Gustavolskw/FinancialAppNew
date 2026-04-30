@@ -5,10 +5,13 @@ namespace App\Infrastructure\DTO\EntityDto;
 use App\Entity\Entry as EntryEntity;
 use App\Entity\Expense as ExpenseEntity;
 use App\Entity\Transaction as TransactionEntity;
+use App\Entity\Wallet as WalletEntity;
 use App\Infrastructure\DTO\EntityAttributes\FieldTypeEnum;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttribute;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttributeInterface;
 use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\Handler\Action\Specific\Interface\SpecificActionInterface;
+use App\Infrastructure\Handler\Action\Specific\TransactionSpecificAction;
 use App\Infrastructure\Helper\EntityHelper\EntityFieldsHelper;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -31,7 +34,8 @@ final class Transaction extends ConfigurableEntity
             ->setNumericField("month", "getMonth", required: true)
             ->setNumericField("year", "getYear", required: true)
             ->setRelationalField("expense", ExpenseEntity::class, "getTransactionExpense")
-            ->setRelationalField("entry", EntryEntity::class, "getEntryTransaction");
+            ->setRelationalField("entry", EntryEntity::class, "getEntryTransaction")
+            ->setRelationalField("wallet", WalletEntity::class, "getTransactionWallet", required: true);
     }
 
     public function setFieldsFromEntityData(object $entity, bool $deepFetch = false): self
@@ -44,6 +48,7 @@ final class Transaction extends ConfigurableEntity
             [
                 "expense" => Expense::class,
                 "entry" => Entry::class,
+                "wallet" => Wallet::class,
             ],
             $deepFetch
         );
@@ -59,5 +64,10 @@ final class Transaction extends ConfigurableEntity
     public static function build(EntityManagerInterface $entityManager): BaseEntityClassInterface
     {
         return new self(new FieldsAttribute(), self::ENTITYCLASS, $entityManager);
+    }
+
+    public function setSpecificAction(): SpecificActionInterface
+    {
+        return new TransactionSpecificAction($this);
     }
 }

@@ -21,6 +21,7 @@ interface ActionManagerInterface
 
     public function handleStatus(
         BaseEntityClassInterface $baseEntityClass,
+        Request $request,
         int $id,
         StatusFormDto $formDto
     ): JsonResponseHandlerInterface;

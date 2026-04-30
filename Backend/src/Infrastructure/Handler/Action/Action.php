@@ -5,6 +5,7 @@ namespace App\Infrastructure\Handler\Action;
 use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
 use App\Infrastructure\DTO\EntityAttributes\FieldTypeEnum;
 use App\Infrastructure\DTO\EntityAttributes\Fields\FieldsInterface;
+use App\Infrastructure\DTO\EntityAttributes\Fields\RelationalAttributeDto;
 use App\Infrastructure\DTO\Params\Interface\QueryParamsInterface;
 use App\Infrastructure\DTO\Response\ResponseBuilder;
 use App\Infrastructure\Handler\Analytics\SimpleDataAnalytics;
@@ -14,30 +15,38 @@ use App\Infrastructure\Handler\Response\JsonResponseHandlerInterface;
 use App\Infrastructure\Helper\BaseHelper;
 use App\Infrastructure\Helper\Response\EntityBuilder;
 use App\Infrastructure\Helper\Response\EntityListBuilder;
+use Closure;
 
 class Action implements ActionInterface
 {
     private BaseEntityClassInterface $baseEntityClass;
+    private ?Closure $listQueryRestriction;
 
     /**
      * @param BaseEntityClassInterface $baseEntityClass
      */
-    public function __construct(BaseEntityClassInterface $baseEntityClass)
+    public function __construct(BaseEntityClassInterface $baseEntityClass, ?Closure $listQueryRestriction = null)
     {
         $this->baseEntityClass = $baseEntityClass;
+        $this->listQueryRestriction = $listQueryRestriction;
     }
 
     public function listView(QueryParamsInterface $queryParams): JsonResponseHandlerInterface
     {
         $repo = $this->baseEntityClass->getRepository();
         $qb = $this->baseEntityClass->resolveQueryBuilder($queryParams);
+        if ($this->listQueryRestriction instanceof Closure) {
+            ($this->listQueryRestriction)($qb);
+        }
+
+        $totalCount = $this->countRestrictedResults($qb);
         $resourceList = $qb->getQuery()->getResult();
         $paginator = $queryParams->getPaginatorParams();
         $page = (int) (BaseHelper::getParamValueByName($paginator, 'page') ?? 1);
         $perPage = (int) (BaseHelper::getParamValueByName($paginator, 'perPage')
             ?? BaseHelper::getParamValueByName($paginator, 'pageSize')
             ?? 20);
-        $paginatorData = SimpleDataPaginator::build($repo, $resourceList, $page, $perPage);
+        $paginatorData = SimpleDataPaginator::build($repo, $resourceList, $page, $perPage, $totalCount);
 
         $mapped = array_map(function ($entity) {
             $dto = $this->baseEntityClass::build($this->baseEntityClass->getEntityManager());
@@ -263,9 +272,9 @@ class Action implements ActionInterface
         }
     }
 
-    public static function build(BaseEntityClassInterface $baseEntityClass): ActionInterface
+    public static function build(BaseEntityClassInterface $baseEntityClass, ?Closure $listQueryRestriction = null): ActionInterface
     {
-        return new self($baseEntityClass);
+        return new self($baseEntityClass, $listQueryRestriction);
     }
 
     private function validateFields(bool $updateOnly = false): void
@@ -278,6 +287,19 @@ class Action implements ActionInterface
 
             $field->validate();
         }
+    }
+
+    private function countRestrictedResults(\Doctrine\ORM\QueryBuilder $qb): int
+    {
+        $countQb = clone $qb;
+        $rootAlias = $countQb->getRootAliases()[0];
+
+        $countQb
+            ->select(sprintf('COUNT(DISTINCT %s.id)', $rootAlias))
+            ->setFirstResult(0)
+            ->setMaxResults(null);
+
+        return (int) $countQb->getQuery()->getSingleScalarResult();
     }
 
     private function applyFieldsToEntity(object $entity, bool $updateOnly = false): void
@@ -294,7 +316,7 @@ class Action implements ActionInterface
                 continue;
             }
 
-            $this->setEntityValue($entity, $field->getName(), $this->fieldEntityValue($field));
+            $this->setEntityValue($entity, $field, $this->fieldEntityValue($field));
         }
 
         if (!$updateOnly && method_exists($entity, 'setCreatedAt')) {
@@ -315,9 +337,6 @@ class Action implements ActionInterface
     {
         return in_array($field->getFieldType(), [
             FieldTypeEnum::IDFIELD,
-            FieldTypeEnum::RELATIONALFIELD,
-            FieldTypeEnum::DATEFIELD,
-            FieldTypeEnum::DATETIMEFIELD,
         ], true);
     }
 
@@ -327,18 +346,75 @@ class Action implements ActionInterface
             return $field->getRawValue();
         }
 
+        if ($field->getFieldType() === FieldTypeEnum::RELATIONALFIELD) {
+            return $this->relationalFieldEntityValue($field);
+        }
+
         return $field->getValue();
     }
 
-    private function setEntityValue(object $entity, string $fieldName, mixed $value): void
+    private function relationalFieldEntityValue(FieldsInterface $field): mixed
     {
-        $setter = 'set' . ucfirst($fieldName);
+        if (!$field instanceof RelationalAttributeDto) {
+            throw new \InvalidArgumentException("Campo relacional {$field->getName()} inválido");
+        }
+
+        $value = $field->getRawValue();
+        if ($value === null) {
+            return null;
+        }
+
+        $relationalEntityClass = $field->getRelationalEntityClass();
+        if ($relationalEntityClass === null) {
+            throw new \InvalidArgumentException("Classe relacional não configurada para campo {$field->getName()}");
+        }
+
+        if (is_object($value) && $value instanceof $relationalEntityClass) {
+            return $value;
+        }
+
+        if (!is_int($value)) {
+            throw new \InvalidArgumentException("Valor inválido para campo relacional {$field->getName()}");
+        }
+
+        $relatedEntity = $this->baseEntityClass->getEntityManager()
+            ->getRepository($relationalEntityClass)
+            ->find($value);
+
+        if ($relatedEntity === null) {
+            throw new \InvalidArgumentException("Registro relacionado não encontrado para campo {$field->getName()}");
+        }
+
+        return $relatedEntity;
+    }
+
+    private function setEntityValue(object $entity, FieldsInterface $field, mixed $value): void
+    {
+        $setter = $this->fieldEntitySetter($field);
 
         if (!method_exists($entity, $setter)) {
             return;
         }
 
         $entity->$setter($value);
+    }
+
+    private function fieldEntitySetter(FieldsInterface $field): string
+    {
+        if ($field->getFieldType() !== FieldTypeEnum::RELATIONALFIELD) {
+            return 'set' . ucfirst($field->getName());
+        }
+
+        $getter = $field->getEntityGetter();
+        if (str_starts_with($getter, 'get')) {
+            return 'set' . substr($getter, 3);
+        }
+
+        if (str_starts_with($getter, 'is')) {
+            return 'set' . substr($getter, 2);
+        }
+
+        return 'set' . ucfirst($field->getName());
     }
 
     private function getFieldId(): ?int

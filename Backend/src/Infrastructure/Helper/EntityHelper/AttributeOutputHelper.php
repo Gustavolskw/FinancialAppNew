@@ -50,6 +50,11 @@ class AttributeOutputHelper
             $value = $field->getValue();
             $type = $field->getFieldType();
 
+            // Never expose password fields in API output
+            if ($type === FieldTypeEnum::PASSWORDFIELD) {
+                continue;
+            }
+
             if ($type === FieldTypeEnum::RELATIONALFIELD) {
                 $relation = self::outputAttribute($value);
 

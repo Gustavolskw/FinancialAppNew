@@ -92,6 +92,7 @@ final class AccessControlAction implements AccessControlActionInterface
             'iss' => 'AppFinancasNew',
             'sub' => $user->getId(),
             'email' => $user->getEmail(),
+            'role' => $user->getRole(),
             'iat' => $issuedAt->getTimestamp(),
             'exp' => $expiresAt->getTimestamp(),
             'jti' => bin2hex(random_bytes(16)),

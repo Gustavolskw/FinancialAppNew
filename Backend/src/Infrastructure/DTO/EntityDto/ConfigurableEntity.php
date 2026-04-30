@@ -3,6 +3,7 @@
 namespace App\Infrastructure\DTO\EntityDto;
 
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttributeInterface;
+use App\Infrastructure\DTO\EntityAttributes\FieldTypeEnum;
 use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
 use App\Infrastructure\DTO\Forms\FormDtoInterface;
 use App\Infrastructure\DTO\Params\Interface\QueryParamsInterface;
@@ -73,12 +74,17 @@ abstract class ConfigurableEntity implements BaseEntityClassInterface
         foreach ($this->getFields()->getFields() as $field) {
             $name = $field->getName();
 
-            if (!property_exists($dto, $name)) {
-                continue;
+            if (property_exists($dto, $name) && $dto->$name !== null) {
+                $field->setValue($dto->$name);
             }
 
-            if ($dto->$name !== null) {
-                $field->setValue($dto->$name);
+            $relationIdName = $name . 'Id';
+            if (
+                $field->getFieldType() === FieldTypeEnum::RELATIONALFIELD
+                && property_exists($dto, $relationIdName)
+                && $dto->$relationIdName !== null
+            ) {
+                $field->setValue($dto->$relationIdName);
             }
         }
     }

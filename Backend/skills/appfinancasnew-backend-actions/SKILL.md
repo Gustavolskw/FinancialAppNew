@@ -32,15 +32,30 @@ Controllers must stay thin. Do not put database or business flow logic in contro
 
 `ActionManager::handle()` dispatches by HTTP method:
 
+- `POST /user` on the `userPost` route is public for normal user registration, must reject `role` in the payload, and must still use the generic save flow;
+- before dispatching, validate the request with `JwtAuthenticationHelperTrait::authenticateRequest()`;
+- after authentication, validate record ownership with `RecordAuthorizationHelperTrait::authorizeRecordAccess()`;
 - `GET` with id calls `view($id)`.
-- `GET` without id calls `listView($queryParams)`.
+- `GET` without id calls `listView($queryParams)` with an optional ownership `QueryBuilder` restriction for non-admin users.
 - `POST` requires a Form DTO, calls `setFieldValues($formDto)`, then `save()`.
 - `PUT` and `PATCH` require a Form DTO, call `setFieldValues($formDto)`, then call `edit()` when `id` exists.
 - `PUT` or `PATCH` without `id` currently falls back to `save()`.
 - `DELETE` requires an id and calls `delete($id)`.
-- status changes should use `handleStatus()` with `StatusFormDto`.
+- status changes should use `handleStatus()` with `Request` and `StatusFormDto` so authentication is validated there too.
 
 Do not duplicate this dispatch in individual controllers.
+
+## Record Authorization
+
+`ActionManager` is also the central record authorization point:
+
+- ADMIN (`RolesEnum::ADM`) can operate all records.
+- Normal user creation must not accept `role` in the payload and must default to `USER`; creating another admin is only allowed through the dedicated `POST /user/admin` route and must be blocked before the admin bypass on normal create paths.
+- A normal user can operate only their own `User`, their own `Wallet`, and `Transaction`/`Entry`/`Expense` records linked to their wallet.
+- `EntryType`, `ExpenseType`, and `PaymentMethod` are global catalogs: authenticated users can read them, but only ADMIN can create, edit, delete, or change them.
+- Non-admin users cannot change `User.role`, even on their own user.
+- List queries for owner-scoped entities must be restricted before `Action::listView()` executes the Doctrine query.
+- Pagination totals must come from the filtered/restricted query, not from the global repository count.
 
 ## Save Flow
 
@@ -116,6 +131,7 @@ Good examples:
 
 - `UserSpecificAction::preSave()` hashes a new password before flush.
 - `UserSpecificAction::preUpdate()` hashes an updated password before flush.
+- `UserSpecificAction::afterAction()` creates the default active wallet after a new user is persisted.
 - a future `WalletSpecificAction` may resolve and apply a required `User` relation before flush.
 
 ## Primary Actions
@@ -135,10 +151,11 @@ Keep authentication logic out of controllers and return standardized responses.
 `Action::applyFieldsToEntity()` intentionally skips:
 
 - id fields;
-- relational fields;
 - date and datetime output fields.
 
-For relation writes, add explicit behavior through a specific hook or helper. Do not silently rely on the generic action to apply relations.
+For relation writes, `Action` resolves `RELATIONALFIELD` values through the configured related entity class and applies them with the setter derived from the field getter. Example: `getExpenseType` maps to `setExpenseType`. `BaseSpecificAction::preActionValidation()` validates that informed relation ids exist before create/update continues.
+
+Use a custom `SpecificAction` only for entity-specific lifecycle work, such as `TransactionSpecificAction::beforeDelete()` removing dependent `Entry` or `Expense` records before deleting a `Transaction`.
 
 For enum persistence, keep using the field raw value: `Action::fieldEntityValue()` must persist `getRawValue()` for `ENUMFIELD`.
 

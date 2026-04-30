@@ -38,6 +38,10 @@ class Transaction
     #[ORM\OneToOne(mappedBy: 'transaction', cascade: ['persist', 'remove'])]
     private ?Entry $entryTransaction = null;
 
+    #[ORM\ManyToOne(inversedBy: 'walletTransactions')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Wallet $transactionWallet = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -152,6 +156,18 @@ class Transaction
         }
 
         $this->entryTransaction = $entryTransaction;
+
+        return $this;
+    }
+
+    public function getTransactionWallet(): ?Wallet
+    {
+        return $this->transactionWallet;
+    }
+
+    public function setTransactionWallet(?Wallet $transactionWallet): static
+    {
+        $this->transactionWallet = $transactionWallet;
 
         return $this;
     }

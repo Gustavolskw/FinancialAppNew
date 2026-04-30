@@ -133,17 +133,19 @@ Keep the hook object entity-bound and pass only `BaseEntityClassInterface` throu
 
 ## Relations
 
-Read/output relation support already exists, but generic write support is incomplete because `Action::applyFieldsToEntity()` skips `RELATIONALFIELD`.
+Read/output relation support exists through `EntityFieldsHelper` and `AttributeOutputHelper`. Write support for unit relations exists through `Action::applyFieldsToEntity()`, which resolves `RELATIONALFIELD` ids and applies them using the setter derived from the configured getter.
 
-For DTOs such as `Wallet` that require a related `User`, plan the write contract explicitly:
+Map unit relations such as `ManyToOne` and `OneToOne` with `setRelationalField()`. Do not map inverse Doctrine collections such as `OneToMany` collections until the field layer has an explicit collection field/output contract; current catalog DTOs and `Wallet` intentionally omit inverse collections.
+
+For DTOs such as `Wallet`, `Entry`, `Expense`, and `Transaction` that require related records:
 
 - add `{relation}Id` to the relevant Form DTO when needed;
 - configure a relational field for output/search metadata;
-- load the related entity in a `SpecificAction` or helper before flush;
-- call the Doctrine entity setter explicitly;
-- return a 404/business-rule response when the relation does not exist.
+- use a field name that represents the API output, such as `expenseType`, and configure the real entity getter, such as `getExpenseType`;
+- let `BaseSpecificAction::preActionValidation()` validate that the informed relation id exists;
+- let `Action` resolve and apply the related Doctrine entity before flush.
 
-Document any temporary limitation in `docs/codex/review-notes.md` if it affects future work.
+Use custom `SpecificAction` hooks for lifecycle rules that are not simple relation resolution, such as removing dependent `Entry` or `Expense` records before deleting a `Transaction`.
 
 ## Creating A New EntityDTO
 

@@ -62,13 +62,14 @@ For enum-backed fields:
 
 ## Relational Fields
 
-Relational fields are safe for reading and output, but generic writes are intentionally incomplete today:
+Relational fields support reading, output, validation, and unit-relation writes:
 
 - `EntityFieldsHelper` can populate relational fields from entity getters.
 - `AttributeOutputHelper` returns nested output when `deepFetch=true`, otherwise `{relationName}Id`.
-- `Action::applyFieldsToEntity()` skips `RELATIONALFIELD`.
+- `BaseSpecificAction::preActionValidation()` validates that informed relation ids exist.
+- `Action::applyFieldsToEntity()` resolves informed relation ids and applies the related Doctrine entity with the setter derived from the configured getter.
 
-When implementing create/update for an entity with required relations, do not assume the generic action will write the relation. Add an explicit relation strategy, usually by accepting `{relation}Id`, loading the related entity, validating not found, and applying the setter in a `SpecificAction` or dedicated helper.
+When implementing create/update for an entity with required unit relations, configure the field with `setRelationalField()` and make the Form DTO provide the same field name or an agreed `{relation}Id` mapping. Do not use `setRelationalField()` for inverse collections until the field layer has an explicit collection field contract.
 
 ## Adding A New Field Type
 
@@ -85,4 +86,4 @@ When implementing create/update for an entity with required relations, do not as
 - Do not put field validation in controllers.
 - Do not collapse enum raw database values and API labels into one concern.
 - Do not bypass `FieldsAttribute` by reading Doctrine entities directly in JSON responses.
-- Do not add relation write behavior invisibly without documenting the expected `{relation}Id` contract.
+- Do not use relation fields for inverse Doctrine collections until collection output/write rules exist.

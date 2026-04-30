@@ -14,5 +14,5 @@ interface ActionInterface
     public function delete(int $id) : JsonResponseHandlerInterface;
     public function edit() : JsonResponseHandlerInterface;
     public function status(int $id, bool $status) : JsonResponseHandlerInterface;
-    public static function build(BaseEntityClassInterface $baseEntityClass): ActionInterface;
+    public static function build(BaseEntityClassInterface $baseEntityClass, ?\Closure $listQueryRestriction = null): ActionInterface;
 }

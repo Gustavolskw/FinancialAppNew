@@ -35,6 +35,7 @@ Quando a tarefa tocar nos diretórios abaixo, leia também a Skill local especia
 - Mantenha `declare(strict_types=1);` em arquivos novos de PHP quando fizer sentido, especialmente controllers e código novo.
 - Use namespace `App\...` conforme PSR-4 de `composer.json`.
 - Controllers devem continuar finos: receber `Request`, DTOs via `MapRequestPayload`/`MapQueryString`, `EntityManagerInterface`, e delegar para `ActionManager`.
+- Rotas CRUD/status que passam por `ActionManager` devem validar `Authorization: Bearer <token>` com `JwtAuthenticationHelperTrait` e autorização de dono/ADMIN com `RecordAuthorizationHelperTrait` antes de executar ações genéricas; `/login` continua público para emitir token.
 - A lógica genérica de CRUD fica em `src/Infrastructure/Handler/Action/Action.php`.
 - Regras específicas por entidade ficam em classes de `src/Infrastructure/Handler/Action/Specific`.
 - A definição de campos, validações, output e vínculo com entidade Doctrine fica em DTOs de `src/Infrastructure/DTO/EntityDto`.
@@ -48,10 +49,12 @@ Quando a tarefa tocar nos diretórios abaixo, leia também a Skill local especia
 
 1. Controller recebe a rota e mapeia payload/query para DTO.
 2. Controller cria o DTO configurável da entidade com `User::build($entityManager)`.
-3. `ActionManager` escolhe a ação conforme método HTTP.
-4. `Action` valida campos, aplica valores na entidade Doctrine, persiste/atualiza e monta resposta.
-5. DTO configurável converte entidade para output via `setFieldsFromEntityData()` e `output()`.
-6. `JsonResponseHandler` retorna `JsonResponse` com formato padronizado.
+3. `ActionManager` valida o Bearer JWT stateless com `APP_SECRET`.
+4. `ActionManager` valida permissão por dono do registro, carteira do usuário ou ADMIN.
+5. `ActionManager` escolhe a ação conforme método HTTP.
+6. `Action` valida campos, aplica valores na entidade Doctrine, persiste/atualiza e monta resposta.
+7. DTO configurável converte entidade para output via `setFieldsFromEntityData()` e `output()`.
+8. `JsonResponseHandler` retorna `JsonResponse` com formato padronizado.
 
 Formato geral de resposta:
 

@@ -19,7 +19,10 @@ class JsonResponseHandler implements JsonResponseHandlerInterface
 
     public function output(): JsonResponse
     {
-        return new JsonResponse($this->data->jsonSerialize());
+        $data = $this->data->jsonSerialize();
+        $statusCode = isset($data['statusCode']) && is_int($data['statusCode']) ? $data['statusCode'] : 200;
+
+        return new JsonResponse($data, $statusCode);
     }
 
     public static function create(JsonSerializable $data): JsonResponseHandlerInterface

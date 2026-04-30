@@ -26,6 +26,7 @@ class SimpleDataPaginator implements PaginatorInterface, EntityClassCollection
     private array $mappedItems;
 
     private int $totalCount;
+    private ?int $filteredTotalCount;
 
     private int $lastPage;
 
@@ -33,13 +34,21 @@ class SimpleDataPaginator implements PaginatorInterface, EntityClassCollection
      * @param EntityRepository $repository
      * @param ArrayCollection $analyses
      */
-    public function __construct(EntityRepository $repository, ArrayCollection $analyses, array $mappedItems, int $page, int $perPage)
+    public function __construct(
+        EntityRepository $repository,
+        ArrayCollection $analyses,
+        array $mappedItems,
+        int $page,
+        int $perPage,
+        ?int $filteredTotalCount = null
+    )
     {
         $this->repository = $repository;
         $this->paginators = $analyses;
         $this->page = $page;
         $this->perPage = $perPage;
         $this->mappedItems = $mappedItems;
+        $this->filteredTotalCount = $filteredTotalCount;
 
         $this
             ->totalItems()
@@ -56,14 +65,20 @@ class SimpleDataPaginator implements PaginatorInterface, EntityClassCollection
      * @param EntityRepository $repository
      * @return PaginatorInterface
      */
-    public static function build(EntityRepository $repository, array $mappedItems, int $page, int $perPage): PaginatorInterface
+    public static function build(
+        EntityRepository $repository,
+        array $mappedItems,
+        int $page,
+        int $perPage,
+        ?int $filteredTotalCount = null
+    ): PaginatorInterface
     {
-        return new self($repository, new ArrayCollection(), $mappedItems,  $page, $perPage);
+        return new self($repository, new ArrayCollection(), $mappedItems,  $page, $perPage, $filteredTotalCount);
     }
 
     private function totalItems(): self
     {
-        $this->totalCount = $this->repository->count();
+        $this->totalCount = $this->filteredTotalCount ?? $this->repository->count();
         $this->paginators->add(new PaginatorDataDto("totalItems", $this->totalCount));
         return $this;
     }

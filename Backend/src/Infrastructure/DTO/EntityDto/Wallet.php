@@ -24,9 +24,10 @@ final class Wallet extends MainConfigurableEntity
 
         return $fields
             ->setIdField("id")
-            ->setTextField("title", "getTitle")
-            ->setTextField("description", "getDescription")
-            ->setRelationalField("user", User::class, "getWalletUser");
+            ->setTextField("title", "getTitle", required: true)
+            ->setTextField("description", "getDescription", required: true)
+            ->setStatusField("status")
+            ->setRelationalField("user", User::class, "getWalletUser", required: true);
     }
 
 

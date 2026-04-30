@@ -27,23 +27,17 @@ Arquivo: `src/Infrastructure/Handler/Action/Manager/ActionManager.php`
 
 `handleUpdate()` chama `save()` quando o Form DTO não tem `id`. Isso combina com o nome `insertEdit`, mas deve ser documentado em API pública.
 
-### Campos Relacionais Não São Aplicados Na Escrita
-
-Arquivo: `src/Infrastructure/Handler/Action/Action.php`
-
-`applyFieldsToEntity()` pula `RELATIONALFIELD`. Entidades como `Wallet`, `Expense` e `Entry` têm relações obrigatórias, então criação/edição delas precisa de lógica adicional.
-
 ### `User` Não Implementa Security Interfaces
 
 Arquivo: `src/Entity/User.php`
 
-Security Bundle existe, mas `User` ainda não implementa `UserInterface`/`PasswordAuthenticatedUserInterface`. Não há login real.
+Security Bundle existe, mas `User` ainda não implementa `UserInterface`/`PasswordAuthenticatedUserInterface`. A proteção atual valida JWT stateless e autorização por dono/ADMIN no `ActionManager`, sem autenticar o usuário pelo firewall nativo do Symfony.
 
-### Login JWT Ainda Não Protege Rotas
+### JWT Stateless Sem Revogação Server-Side
 
 Arquivos: `src/Controller/AccessControlController.php`, `src/Infrastructure/Handler/Action/PrimaryAction/AccessControlAction.php`
 
-O endpoint `/login` gera JWT stateless assinado com `APP_SECRET`, mas ainda não existe firewall/autenticador que valide o bearer token nas demais rotas. O `/logoff` apenas confirma o encerramento para o cliente descartar o token; revogação server-side exigirá blacklist/persistência de sessões ou tokens opacos armazenados.
+O endpoint `/login` gera JWT stateless assinado com `APP_SECRET` e o `ActionManager` valida bearer token e autorização por registro nas rotas CRUD/status. O `/logoff` apenas confirma o encerramento para o cliente descartar o token; revogação server-side exigirá blacklist/persistência de sessões ou tokens opacos armazenados.
 
 ### Falta De Testes Automatizados
 
@@ -51,7 +45,7 @@ Não há `phpunit.xml`, pasta `tests` ou scripts de teste no `composer.json`. Mu
 
 ## Recomendações Para Próximas Iterações
 
-- Criar um padrão para escrita de relações por id.
+- Criar um field/output próprio para coleções inversas (`OneToMany`) quando a API precisar expor listas como `Wallet.walletTransactions`.
 - Adicionar testes de unidade para Fields/Query/Response e testes funcionais para `UserController`.
 - Padronizar `declare(strict_types=1);` em arquivos novos.
-- Se autenticação for prioridade, implementar `UserInterface`, password hasher do Symfony e firewall real.
+- Se autenticação avançar, implementar `UserInterface`, password hasher do Symfony e firewall/autenticador real.

@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Infrastructure\DTO\EntityDto\User;
 use App\Infrastructure\DTO\Forms\StatusFormDto;
+use App\Infrastructure\DTO\Forms\User\UserAdminPostFormDto;
 use App\Infrastructure\DTO\Forms\User\UserEditFormDto;
 use App\Infrastructure\DTO\Forms\User\UserInsertEditFormDto;
 use App\Infrastructure\DTO\Forms\User\UserPostFormDto;
@@ -60,6 +61,18 @@ class UserController extends AbstractController
             ->output();
     }
 
+    #[Route('/user/admin', name:'userAdminPost', methods: ['POST'], format: 'json')]
+    public function adminPost(
+        Request $request,
+        #[MapRequestPayload] UserAdminPostFormDto $formDto,
+        EntityManagerInterface $entityManager
+    ): JsonResponse
+    {
+        return (new ActionManager())
+            ->handle(User::build($entityManager), $request, formDto: $formDto)
+            ->output();
+    }
+
     #[Route('/user', name:'userInsertEdit', methods: ['PUT'], format: 'json')]
     public function insertEdit(
         Request $request,
@@ -84,23 +97,16 @@ class UserController extends AbstractController
             ->output();
     }
 
-    #[Route('/user/{id}', name:'userDelete', requirements: ['id' => '\d+'], methods: ['DELETE'], format: 'json')]
-    public function delete(int $id, Request $request, EntityManagerInterface $entityManager): JsonResponse
-    {
-        return (new ActionManager())
-            ->handle(User::build($entityManager), $request, id: $id)
-            ->output();
-    }
-
     #[Route('/user/{id}/status', name:'userStatus', requirements: ['id' => '\d+'], methods: ['PATCH'], format: 'json')]
     public function status(
         int $id,
+        Request $request,
         #[MapRequestPayload] StatusFormDto $formDto,
         EntityManagerInterface $entityManager
     ): JsonResponse
     {
         return (new ActionManager())
-            ->handleStatus(User::build($entityManager), $id, $formDto)
+            ->handleStatus(User::build($entityManager), $request, $id, $formDto)
             ->output();
     }
 }
