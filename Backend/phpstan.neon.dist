@@ -7,6 +7,6 @@ parameters:
     bootstrapFiles:
         - vendor/autoload.php
     excludePaths:
-        - var
-        - vendor
-        - coverage
+        - var (?)
+        - vendor (?)
+        - coverage (?)

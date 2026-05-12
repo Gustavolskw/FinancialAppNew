@@ -48,6 +48,10 @@ Quando a tarefa tocar o frontend, leia tambem:
 
 - Subir a stack atual: `docker compose up --build`
 - Subir em segundo plano: `docker compose up -d --build`
+- Setup global de envs: `./scripts/setup-env.sh`
+- Subir stack completa em dev: `./scripts/start-dev.sh`
+- Subir stack completa em modo build, com frontend compilado: `./scripts/start-build.sh`
+- Preparar variáveis Docker: `cp .env.example .env`
 - Parar containers: `docker compose down`
 - Ver logs do backend: `docker compose logs -f backend`
 - Ver logs do frontend: `docker compose logs -f frontend`

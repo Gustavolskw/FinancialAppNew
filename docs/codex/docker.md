@@ -10,6 +10,11 @@ Este arquivo documenta a infraestrutura Docker da raiz do AppFinancasNew.
 - `backend`: API Symfony servida pelo Dockerfile em `Backend/Dockerfile`.
 - `frontend`: React Router/Vite servido pelo Dockerfile em `frontEnd/Dockerfile`, alternando entre desenvolvimento e build de produção por `frontEnd/.env`.
 - `nginx`: proxy reverso público para frontend e backend, com HTTP/HTTPS.
+- `.env`: arquivo local da raiz usado pelo Docker Compose para parametrizar banco e variáveis do backend em container.
+- `.env.example`: modelo versionável das variáveis esperadas pelo Docker Compose.
+- `scripts/setup-env.sh`: cria `.env` da raiz, backend e frontend a partir dos exemplos sem sobrescrever arquivos existentes.
+- `scripts/start-dev.sh`: prepara envs e sobe a stack completa com frontend em modo desenvolvimento.
+- `scripts/start-build.sh`: prepara envs e sobe a stack completa com frontend em modo compilado/produção.
 - `postgres-fin-new-app-volume`: volume persistente do banco.
 - `frontend-node-modules`: volume persistente para dependências Node dentro do container.
 - `nginx-certs`: volume persistente para certificados TLS do NGINX.
@@ -20,18 +25,26 @@ Este arquivo documenta a infraestrutura Docker da raiz do AppFinancasNew.
 Serviço: `postgres-fin-new-app`
 
 - Imagem: `postgres:16`
-- Porta host local: `127.0.0.1:5432`
-- Porta container: `5432`
+- Porta host local: `${POSTGRES_HOST_BIND}:${POSTGRES_HOST_PORT}`
+- Porta container: `${POSTGRES_CONTAINER_PORT}`
 - Volume: `postgres-fin-new-app-volume:/var/lib/postgresql/data`
-- Init script: `./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql`
+- Init script: `./docker/postgres/init.sh:/docker-entrypoint-initdb.d/init.sh`
 
-Variáveis com defaults:
+Variáveis lidas da raiz `.env`:
 
-- `POSTGRES_USER=${POSTGRES_USER:-postgres}`
-- `POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}`
-- `POSTGRES_DB=${POSTGRES_DB:-financial_app}`
+- `POSTGRES_IMAGE`
+- `POSTGRES_CONTAINER_NAME`
+- `POSTGRES_HOST`
+- `POSTGRES_HOST_BIND`
+- `POSTGRES_HOST_PORT`
+- `POSTGRES_CONTAINER_PORT`
+- `POSTGRES_DB`
+- `POSTGRES_USER`
+- `POSTGRES_PASSWORD`
+- `POSTGRES_SERVER_VERSION`
+- `POSTGRES_CHARSET`
 
-Scripts em `/docker-entrypoint-initdb.d` rodam apenas quando o volume do banco está vazio.
+Scripts em `/docker-entrypoint-initdb.d` rodam apenas quando o volume do banco está vazio. O `init.sh` usa `POSTGRES_DB`; não deixe nome de banco hardcoded nesse script.
 
 ## Backend
 
@@ -48,13 +61,24 @@ Serviço: `backend`
 
 Variáveis definidas no Compose:
 
-- `APP_ENV=dev`
-- `APP_DEBUG=1`
-- `DB_HOST=postgres-fin-new-app`
-- `XDEBUG_MODE=debug,develop`
-- `XDEBUG_CONFIG=client_host=host.docker.internal client_port=9003`
+- `APP_ENV=${BACKEND_APP_ENV}`
+- `APP_DEBUG=${BACKEND_APP_DEBUG}`
+- `DB_HOST=${POSTGRES_HOST}`
+- `DB_PORT=${POSTGRES_CONTAINER_PORT}`
+- `DB_NAME=${POSTGRES_DB}`
+- `DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_CONTAINER_PORT}/${POSTGRES_DB}?serverVersion=${POSTGRES_SERVER_VERSION}&charset=${POSTGRES_CHARSET}`
+- `XDEBUG_MODE=${XDEBUG_MODE}`
+- `XDEBUG_CONFIG=${XDEBUG_CONFIG}`
 
 O backend depende de `postgres-fin-new-app`.
+
+Antes de subir a stack em uma máquina nova:
+
+```bash
+./scripts/setup-env.sh
+```
+
+Depois ajuste usuário, senha, nome do banco e portas conforme o ambiente. Não versione o `.env` real.
 
 ## Frontend
 
@@ -106,7 +130,13 @@ O `frontEnd/Dockerfile` usa Node 20 em build multistage:
 O fluxo via Docker é:
 
 ```bash
-docker compose up frontend
+./scripts/start-dev.sh
+```
+
+Para subir a stack completa com frontend compilado:
+
+```bash
+./scripts/start-build.sh
 ```
 
 O fluxo local fora do Docker continua disponível:
@@ -172,22 +202,28 @@ NGINX_SELF_SIGNED_CERT_SUBJECT="/CN=app.local" docker compose up -d --build ngin
 
 ## Comandos
 
+Preparar todos os `.env` locais:
+
+```bash
+./scripts/setup-env.sh
+```
+
 Validar Compose:
 
 ```bash
 docker compose config
 ```
 
-Subir a stack:
+Subir a stack em desenvolvimento:
 
 ```bash
-docker compose up --build
+./scripts/start-dev.sh
 ```
 
-Subir em segundo plano:
+Subir a stack com frontend compilado:
 
 ```bash
-docker compose up -d --build
+./scripts/start-build.sh
 ```
 
 Ver logs:

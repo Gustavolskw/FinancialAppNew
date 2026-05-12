@@ -1,87 +1,85 @@
-# Welcome to React Router!
+# Frontend
 
-A modern, production-ready template for building full-stack React applications using React Router.
+Aplicação web React Router/Vite do AppFinancasNew.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+## Responsabilidade
 
-## Features
+O frontend implementa a experiência do usuário para autenticação, dashboard, gestão de transações e cadastros auxiliares. Regras de negócio e autorização permanecem no backend.
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+## Stack
 
-## Getting Started
+- React 19
+- React Router 7
+- TypeScript
+- Vite
+- Tailwind CSS
+- Chart.js
 
-### Installation
+## Estrutura Principal
 
-Install the dependencies:
+- `app/routes.ts`: declaração das rotas.
+- `app/routes/`: telas da aplicação.
+- `app/components/`: componentes reutilizáveis.
+- `app/Infrastructure/Api/`: clientes HTTP e normalização de dados.
+- `app/Infrastructure/Auth/`: sessão e proteção de rotas.
+- `app/Infrastructure/DTO/EntityAttributes/`: Fields reutilizáveis alinhados ao backend.
+- `scripts/quality-gate.mjs`: checagem de code smells do quality gate.
+
+## Ambiente
+
+Crie o `.env` a partir do exemplo:
+
+```bash
+cp .env.example .env
+```
+
+Ou, pela raiz do projeto:
+
+```bash
+./scripts/setup-env.sh
+```
+
+Variável principal:
+
+- `FRONTEND_RUNTIME_MODE=development`: sobe servidor dev.
+- `FRONTEND_RUNTIME_MODE=production`: compila e serve o build.
+
+## Comandos
+
+Instalar dependências:
 
 ```bash
 npm install
 ```
 
-### Development
-
-Start the development server with HMR:
+Desenvolvimento local:
 
 ```bash
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+Quality gate:
 
-## Building for Production
+```bash
+npm run quality
+```
 
-Create a production build:
+Build:
 
 ```bash
 npm run build
 ```
 
-## Deployment
+## Docker
 
-### Docker Deployment
-
-To build and run using Docker:
+Pela raiz do projeto:
 
 ```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
+./scripts/start-dev.sh
 ```
 
-The containerized application can be deployed to any platform that supports Docker, including:
+Para subir a stack completa com frontend compilado:
 
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
+```bash
+./scripts/start-build.sh
 ```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
-
-Built with ❤️ using React Router.

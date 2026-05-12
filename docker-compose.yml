@@ -8,17 +8,17 @@ volumes:
 
 services:
   postgres-fin-new-app:
-    image: postgres:16
-    container_name: postgres-fin-new-app
+    image: ${POSTGRES_IMAGE}
+    container_name: ${POSTGRES_CONTAINER_NAME}
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: ${POSTGRES_DB:-financial_app}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "127.0.0.1:5432:5432"
+      - "${POSTGRES_HOST_BIND}:${POSTGRES_HOST_PORT}:${POSTGRES_CONTAINER_PORT}"
     volumes:
       - postgres-fin-new-app-volume:/var/lib/postgresql/data
-      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./docker/postgres/init.sh:/docker-entrypoint-initdb.d/init.sh
     networks:
       - fin-new-app
   backend:
@@ -35,11 +35,14 @@ services:
     env_file:
       - ./Backend/.env
     environment:
-      - APP_ENV=dev
-      - APP_DEBUG=1
-      - DB_HOST=postgres-fin-new-app
-      - XDEBUG_MODE=debug,develop
-      - XDEBUG_CONFIG=client_host=host.docker.internal client_port=9003
+      APP_ENV: ${BACKEND_APP_ENV}
+      APP_DEBUG: ${BACKEND_APP_DEBUG}
+      DB_HOST: ${POSTGRES_HOST}
+      DB_PORT: ${POSTGRES_CONTAINER_PORT}
+      DB_NAME: ${POSTGRES_DB}
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_CONTAINER_PORT}/${POSTGRES_DB}?serverVersion=${POSTGRES_SERVER_VERSION}&charset=${POSTGRES_CHARSET}"
+      XDEBUG_MODE: ${XDEBUG_MODE}
+      XDEBUG_CONFIG: ${XDEBUG_CONFIG}
     depends_on:
       - postgres-fin-new-app
     networks:
@@ -59,6 +62,8 @@ services:
       - frontend-node-modules:/app/node_modules
     env_file:
       - ./frontEnd/.env
+    environment:
+      FRONTEND_RUNTIME_MODE: ${FRONTEND_RUNTIME_MODE:-development}
     depends_on:
       - backend
     networks:
