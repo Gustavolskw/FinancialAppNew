@@ -24,7 +24,7 @@ class StatusFieldDto extends Field
         return $this;
     }
 
-    public function getValue(): bool
+    public function getValue(): ?bool
     {
         return $this->value;
     }

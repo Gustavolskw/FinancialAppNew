@@ -10,8 +10,6 @@ use App\Infrastructure\DTO\EntityAttributes\FieldTypeEnum;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttribute;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttributeInterface;
 use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
-use App\Infrastructure\Handler\Action\Specific\Interface\SpecificActionInterface;
-use App\Infrastructure\Handler\Action\Specific\TransactionSpecificAction;
 use App\Infrastructure\Helper\EntityHelper\EntityFieldsHelper;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -27,7 +25,7 @@ final class Transaction extends ConfigurableEntity
 
         return $fields
             ->setIdField("id")
-            ->setValueField("amount", "getAmount", required: true)
+            ->setValueField("amount", "getAmount", required: true, options: ["precision" => 10, "scale" => 2])
             ->setTextField("location", "getLocation", FieldTypeEnum::LOCATIONFIELD, required: true)
             ->setTextField("description", "getDescription")
             ->setDateField("date", "getDate", FieldTypeEnum::DATETIMEFIELD, required: true)
@@ -66,8 +64,4 @@ final class Transaction extends ConfigurableEntity
         return new self(new FieldsAttribute(), self::ENTITYCLASS, $entityManager);
     }
 
-    public function setSpecificAction(): SpecificActionInterface
-    {
-        return new TransactionSpecificAction($this);
-    }
 }

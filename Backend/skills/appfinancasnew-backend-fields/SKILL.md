@@ -22,6 +22,7 @@ Use this skill for work in `src/Infrastructure/DTO/EntityAttributes`, especially
 3. Preserve `Field::validate()` semantics: reset validation state, run required validation first, skip type validation for empty optional values, then run the concrete field validation.
 4. `fillValue()` must reset the validation state so reused DTO instances do not carry stale validation.
 5. Keep `getRawValue()` for persistence and `getValue()` for API/domain representation when those are different.
+6. Concrete field `getValue()` methods must tolerate empty optional fields and return `null` instead of throwing type errors during generic output.
 
 ## Field Factory Pattern
 

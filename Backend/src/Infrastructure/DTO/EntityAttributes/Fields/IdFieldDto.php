@@ -25,8 +25,8 @@ class IdFieldDto extends Field
         return $this;
     }
 
-    public function getValue(): int
+    public function getValue(): ?int
     {
-        return $this->value;
+        return $this->hasFilledValue() ? (int) $this->value : null;
     }
 }

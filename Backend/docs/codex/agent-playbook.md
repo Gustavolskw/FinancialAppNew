@@ -154,7 +154,9 @@ Parâmetros reconhecidos como paginação:
 
 Os demais viram filtros. Texto, nome, email e localização usam `LIKE`. Status usa igualdade booleana. Campos relacionais aceitam `{relation}` ou `{relation}Id` e filtram pelo id da entidade relacionada. Outros campos usam igualdade simples.
 
-Rotas relacionais explícitas, como `GET /wallet/user/{userId}` e `GET /transaction/wallet/{walletId}`, devem apenas preservar `$request->query->all()`, adicionar o filtro relacional (`userId` ou `walletId`) e delegar para `ActionManager` com `QueryParams::fromArray(...)`.
+Rotas relacionais explícitas, como `GET /wallet/user/{userId}`, `GET /entry/wallet/{walletId}` e `GET /expense/wallet/{walletId}`, devem apenas preservar `$request->query->all()`, adicionar o filtro relacional (`userId` ou `walletId`) e delegar para `ActionManager` com `QueryParams::fromArray(...)`.
+
+`Transaction` é agrupador interno dos dados comuns. Não crie controller nem rotas diretas para `Transaction`; os payloads de `Entry` e `Expense` devem receber os campos transacionais e seus EntityDTOs/listagens devem filtrar por esses campos via join com a transação vinculada.
 
 ## Relações
 
@@ -169,7 +171,9 @@ Ao adicionar criação de entidades com relações obrigatórias:
 - deixar `BaseSpecificAction::preActionValidation()` validar a existência do id relacionado;
 - deixar `Action::applyFieldsToEntity()` resolver a entidade relacionada e aplicar o setter derivado do getter.
 
-Use `SpecificAction` para regras de ciclo de vida específicas, como remover `Entry` ou `Expense` dependente antes de excluir uma `Transaction`.
+Use `SpecificAction` para regras de ciclo de vida específicas.
+
+Para `Entry` e `Expense`, use `SpecificAction` para criar ou atualizar a `Transaction` vinculada a partir dos campos genéricos recebidos no payload. Não exija `transactionId` no payload de criação desses recursos. Ao excluir uma entrada ou despesa, o hook específico também deve remover a `Transaction` relacionada.
 
 ## Delete E Status
 
@@ -231,4 +235,8 @@ php bin/console doctrine:schema:validate
 php bin/console make:migration
 ```
 
-Como não há suite de testes configurada, cite isso no resumo final quando não for possível validar com testes automatizados.
+Quando a mudança tocar comportamento de domínio, fields, helpers, actions ou autenticação, rode também:
+
+```bash
+composer test
+```

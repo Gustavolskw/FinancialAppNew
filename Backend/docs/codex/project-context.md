@@ -18,6 +18,7 @@ O projeto está em fase inicial/intermediária: as entidades e uma migration pri
 - Symfony Validator
 - Symfony Serializer, PropertyAccess e PropertyInfo
 - Symfony MakerBundle em dev
+- PHPUnit em dev para testes unitários
 - Docker com `php:8.4-fpm`, Nginx e Xdebug
 - PostgreSQL esperado pela configuração DBAL/Doctrine
 
@@ -53,15 +54,12 @@ Rotas atuais de carteira:
 
 Carteira não expõe delete físico; a desativação deve ser feita por status.
 
-Rotas atuais de transação:
+`Transaction` não possui controller próprio. Transação é o agrupador interno de dados comuns de entradas e despesas; criação, edição, listagem por carteira, visualização por contexto e exclusão de transações acontecem pelos endpoints de `Entry` e `Expense`.
 
-- `GET /transaction`: lista transações.
-- `GET /transaction/wallet/{walletId}`: lista transações vinculadas à carteira informada, preservando query params como `page` e `perPage` e aplicando filtro relacional por `walletId`.
-- `GET /transaction/{id}`: visualiza uma transação.
-- `POST /transaction`: cria transação.
-- `PUT /transaction`: cria ou atualiza conforme presença de `id`.
-- `PATCH /transaction`: atualiza parcialmente conforme `id`.
-- `DELETE /transaction/{id}`: exclui uma transação.
+Rotas de entrada e despesa por carteira:
+
+- `GET /entry/wallet/{walletId}`: lista entradas vinculadas à carteira informada, preservando query params como `page` e `perPage`.
+- `GET /expense/wallet/{walletId}`: lista despesas vinculadas à carteira informada, preservando query params como `page` e `perPage`.
 
 Rotas CRUD com delete físico:
 
@@ -106,6 +104,8 @@ Camada central de configuração de entidade para API.
 - `EntryType`, `ExpenseType` e `PaymentMethod`: definem catálogos/tipos do domínio financeiro.
 - `Entry` e `Expense`: definem objetos específicos vinculados a transações e catálogos.
 - `Transaction`: define a transação geral, com valor, local, descrição, data, mês, ano, relação obrigatória com carteira e relações opcionais com despesa ou entrada.
+
+`Entry` e `Expense` recebem no payload os campos genéricos de `Transaction` (`amount`, `location`, `description`, `date`, `month`, `year`, `walletId`) junto dos campos específicos. Seus hooks específicos criam ou atualizam a `Transaction` vinculada. As listagens de `Entry` e `Expense` aceitam filtros desses campos transacionais.
 
 Para novas APIs, siga esse padrão: cada entidade Doctrine exposta deve ter um DTO configurável com `ENTITYCLASS`, `LISTDATATERM`, `SINGLEDATATERM`, `configureFields()`, `setFieldsFromEntityData()`, `getEntityClass()` e `build()`. Use os defaults herdados de `ConfigurableEntity` para `output()` e `setFieldValues()`, sobrescrevendo apenas quando houver uma regra específica.
 
@@ -160,12 +160,13 @@ Orquestra CRUD.
 
 Estado atual:
 
+- `ActionManager.php` expõe apenas os métodos da `ActionManagerInterface`; helpers privados de dispatch, payload/id e resposta ficam em `src/Infrastructure/Helper/ActionManager/*Trait.php`.
 - `save` recebe campos já preenchidos pelo `ActionManager`, valida fields, executa `preActionValidation`, executa `specificAction` somente no fluxo de criação, aplica campos na entidade, executa `preSave`, reaplica fields que hooks possam ter alterado, persiste/flush e executa `afterAction`.
 - `edit` recebe campos já preenchidos pelo `ActionManager`, valida apenas campos informados, executa `preActionValidation` e `beforeUpdate`, aplica campos na entidade pelo próprio `Action.php`, executa `preUpdate`, reaplica fields que hooks possam ter alterado, faz flush e depois executa `afterUpdate` dentro de transação. O update não chama `specificAction`.
 - `preActionValidation` no `BaseSpecificAction` valida ids de `RELATIONALFIELD` informados antes de create/update prosseguir.
 - `Action::applyFieldsToEntity()` resolve `RELATIONALFIELD` por id e aplica a entidade relacionada usando o setter derivado do getter configurado no field.
 - `UserSpecificAction::afterAction()` cria automaticamente uma carteira padrão ativa para todo usuário recém-criado.
-- `TransactionSpecificAction::beforeDelete()` remove `Entry` ou `Expense` dependente antes de excluir uma `Transaction`.
+- `EntrySpecificAction` e `ExpenseSpecificAction` criam ou atualizam a `Transaction` vinculada e removem a transação relacionada quando a entrada ou despesa é excluída.
 - `Action::listView()` aceita uma restrição opcional de `QueryBuilder` para limitar listagens ao usuário autenticado quando o caller não é ADMIN.
 - `listView` aplica filtros, pagina, monta analytics simples e resposta.
 - `delete` localiza por id, executa hooks `beforeDelete`/`afterDelete`, remove e faz flush.
@@ -226,6 +227,7 @@ Helpers para consulta, output e resposta:
 - `PasswordHashHelperTrait`: `password_hash` e `password_verify`; usado no hash de cadastro/edição de usuário e na verificação do login.
 - `Auth/JwtAuthenticationHelperTrait`: valida o header `Authorization: Bearer <token>` emitido por `/login`, confirmando assinatura HS256 com `APP_SECRET`, issuer, payload obrigatório e expiração.
 - `Auth/RecordAuthorizationHelperTrait`: valida se o usuário autenticado pode acessar, criar, alterar, excluir ou mudar status do registro; ADMIN pode tudo, usuário comum fica restrito ao próprio usuário, à própria carteira e aos registros financeiros vinculados à carteira.
+- `ActionManager/*Trait.php`: mantém fora do `ActionManager.php` os helpers privados de dispatch HTTP, leitura de payload/id e criação de resposta padronizada.
 
 ### `config`
 
@@ -241,6 +243,10 @@ Configuração Symfony:
 ### `migrations`
 
 Migration principal cria tabelas do domínio financeiro. Atualize migrations quando alterar entidades.
+
+### `tests`
+
+Suíte PHPUnit inicial configurada por `phpunit.xml.dist`, com testes unitários em `tests/Unit` e fixtures em `tests/Fixtures`. Use `composer test` para executar a suíte.
 
 ### `Dockerfile`, `docker/nginx`, `start.sh`
 

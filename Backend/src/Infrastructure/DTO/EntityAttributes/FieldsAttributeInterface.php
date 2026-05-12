@@ -29,9 +29,9 @@ interface FieldsAttributeInterface
     public function setEnumField(string $name, string $entityGetter, string $enumClass, ?FieldTypeEnum $fieldType = FieldTypeEnum::ENUMFIELD, bool $required = false, ?Closure $additionalFieldValidation = null): self;
     public function setStatusField(string $name, ?string $entityGetter = "isStatus", ?FieldTypeEnum $fieldType = FieldTypeEnum::STATUSFIELD, bool $required = false, ?Closure $additionalFieldValidation = null): self;
 
-    public function setNumericField(string $name, string $entityGetter, ?FieldTypeEnum $fieldType = FieldTypeEnum::NUMERICFIELD, bool $required = false, ?Closure $additionalFieldValidation = null): self;
+    public function setNumericField(string $name, string $entityGetter, ?FieldTypeEnum $fieldType = FieldTypeEnum::NUMERICFIELD, bool $required = false, ?Closure $additionalFieldValidation = null, ?array $options = null): self;
     public function setDateField(string $name, string $entityGetter, FieldTypeEnum $fieldType = FieldTypeEnum::DATEFIELD, bool $required = false, ?Closure $additionalFieldValidation = null): self;
-    public function setValueField(string $name, string $entityGetter, ?FieldTypeEnum $fieldType = FieldTypeEnum::VALUEFIELD, bool $required = false, ?Closure $additionalFieldValidation = null): self;
+    public function setValueField(string $name, string $entityGetter, ?FieldTypeEnum $fieldType = FieldTypeEnum::VALUEFIELD, bool $required = false, ?Closure $additionalFieldValidation = null, ?array $options = null): self;
 
     /**
      * @param class-string $relationalEntityClass

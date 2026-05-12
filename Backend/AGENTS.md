@@ -74,13 +74,14 @@ Formato geral de resposta:
 - Validar schema Doctrine: `php bin/console doctrine:schema:validate`
 - Gerar migration: `php bin/console make:migration`
 - Executar migrations: `php bin/console doctrine:migrations:migrate`
+- Rodar testes unitários: `composer test`
 
-Atualmente não há `phpunit.xml`, suite de testes ou ferramenta de lint configurada no repositório.
+O repositório possui uma suíte PHPUnit inicial em `tests/Unit`, configurada por `phpunit.xml.dist`.
 
 ## Cuidados Ao Trabalhar
 
 - O worktree pode estar sujo. Nunca reverta alterações existentes sem pedido explícito.
 - Prefira mudanças pequenas e alinhadas com a arquitetura atual.
 - Ao adicionar uma nova entidade exposta por API, crie também o DTO configurável, Form DTOs, controller e SpecificAction quando houver regra específica.
-- Antes de finalizar mudanças de backend, ao menos rode `php -l` nos arquivos alterados. Quando possível, rode comandos Symfony/Doctrine relevantes.
+- Antes de finalizar mudanças de backend, ao menos rode `php -l` nos arquivos alterados e `composer test` quando a mudança tocar comportamento coberto pela suíte. Quando possível, rode comandos Symfony/Doctrine relevantes.
 - Documente qualquer limitação encontrada em `docs/codex/review-notes.md` se ela afetar próximas tarefas.

@@ -156,12 +156,13 @@ final class FieldsAttribute implements FieldsAttributeInterface
         string $entityGetter,
         ?FieldTypeEnum $fieldType = FieldTypeEnum::NUMERICFIELD,
         bool $required = false,
-        ?Closure $additionalFieldValidation = null
+        ?Closure $additionalFieldValidation = null,
+        ?array $options = null
     ): self
     {
         $field = BasicFieldDto::factory($name, $fieldType, $entityGetter);
 
-        return $this->put($this->setFieldValidation($field, $required, null, $additionalFieldValidation));
+        return $this->put($this->setFieldValidation($field, $required, $options, $additionalFieldValidation));
     }
 
     public function setDateField(
@@ -182,12 +183,13 @@ final class FieldsAttribute implements FieldsAttributeInterface
         string $entityGetter,
         ?FieldTypeEnum $fieldType = FieldTypeEnum::VALUEFIELD,
         bool $required = false,
-        ?Closure $additionalFieldValidation = null
+        ?Closure $additionalFieldValidation = null,
+        ?array $options = null
     ): self
     {
         $field = BasicFieldDto::factory($name, $fieldType, $entityGetter);
 
-        return $this->put($this->setFieldValidation($field, $required, null, $additionalFieldValidation));
+        return $this->put($this->setFieldValidation($field, $required, $options, $additionalFieldValidation));
     }
 
     public function setRelationalField(

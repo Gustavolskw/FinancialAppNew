@@ -1,6 +1,10 @@
 volumes:
   postgres-fin-new-app-volume:
     driver: local
+  frontend-node-modules:
+    driver: local
+  nginx-certs:
+    driver: local
 
 services:
   postgres-fin-new-app:
@@ -11,7 +15,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-financial_app}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres-fin-new-app-volume:/var/lib/postgresql/data
       - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -25,7 +29,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:
-      - "9500:80"
+      - "127.0.0.1:9500:80"
     volumes:
       - ./Backend:/var/www
     env_file:
@@ -38,6 +42,42 @@ services:
       - XDEBUG_CONFIG=client_host=host.docker.internal client_port=9003
     depends_on:
       - postgres-fin-new-app
+    networks:
+      - fin-new-app
+  frontend:
+    build:
+      context: ./frontEnd
+      dockerfile: Dockerfile
+      target: development-env
+    container_name: frontend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "127.0.0.1:5173:5173"
+    volumes:
+      - ./frontEnd:/app
+      - frontend-node-modules:/app/node_modules
+    env_file:
+      - ./frontEnd/.env
+    depends_on:
+      - backend
+    networks:
+      - fin-new-app
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    container_name: nginx-fin-new-app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - nginx-certs:/etc/nginx/certs
+    environment:
+      - NGINX_SELF_SIGNED_CERT_SUBJECT=${NGINX_SELF_SIGNED_CERT_SUBJECT:-/CN=localhost}
+    depends_on:
+      - backend
+      - frontend
     networks:
       - fin-new-app
 

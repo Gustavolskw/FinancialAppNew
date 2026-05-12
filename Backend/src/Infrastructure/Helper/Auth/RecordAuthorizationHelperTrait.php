@@ -154,15 +154,19 @@ trait RecordAuthorizationHelperTrait
 
     private function currentAuthenticatedUser(BaseEntityClassInterface $baseEntityClass): ?UserEntity
     {
-        if ($this->recordAuthorizationUser instanceof UserEntity) {
-            return $this->recordAuthorizationUser;
-        }
-
-        $payload = $this->authenticatedJwtPayload();
-        $userId = isset($payload['sub']) && is_numeric($payload['sub']) ? (int) $payload['sub'] : null;
+        $userId = $this->authenticatedTokenUserId();
 
         if ($userId === null || $userId <= 0) {
+            $this->recordAuthorizationUser = null;
+
             return null;
+        }
+
+        if (
+            $this->recordAuthorizationUser instanceof UserEntity
+            && $this->recordAuthorizationUser->getId() === $userId
+        ) {
+            return $this->recordAuthorizationUser;
         }
 
         $user = $baseEntityClass->getEntityManager()
@@ -176,6 +180,13 @@ trait RecordAuthorizationHelperTrait
         $this->recordAuthorizationUser = $user;
 
         return $this->recordAuthorizationUser;
+    }
+
+    private function authenticatedTokenUserId(): ?int
+    {
+        $payload = $this->authenticatedJwtPayload();
+
+        return isset($payload['sub']) && is_numeric($payload['sub']) ? (int) $payload['sub'] : null;
     }
 
     private function isAdmin(UserEntity $user): bool
@@ -221,8 +232,8 @@ trait RecordAuthorizationHelperTrait
         return match ($entityClass) {
             WalletEntity::class => $this->formInt($formDto, 'userId') === $currentUser->getId(),
             TransactionEntity::class => $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser),
-            EntryEntity::class => $this->transactionIdBelongsToUser($this->formInt($formDto, 'transactionId'), $currentUser),
-            ExpenseEntity::class => $this->transactionIdBelongsToUser($this->formInt($formDto, 'transactionId'), $currentUser),
+            EntryEntity::class => $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser),
+            ExpenseEntity::class => $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser),
             default => false,
         };
     }
@@ -234,10 +245,10 @@ trait RecordAuthorizationHelperTrait
                 || $this->formInt($formDto, 'userId') === $currentUser->getId(),
             TransactionEntity::class => $this->formInt($formDto, 'walletId') === null
                 || $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser),
-            EntryEntity::class => $this->formInt($formDto, 'transactionId') === null
-                || $this->transactionIdBelongsToUser($this->formInt($formDto, 'transactionId'), $currentUser),
-            ExpenseEntity::class => $this->formInt($formDto, 'transactionId') === null
-                || $this->transactionIdBelongsToUser($this->formInt($formDto, 'transactionId'), $currentUser),
+            EntryEntity::class => $this->formInt($formDto, 'walletId') === null
+                || $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser),
+            ExpenseEntity::class => $this->formInt($formDto, 'walletId') === null
+                || $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser),
             UserEntity::class => true,
             default => false,
         };
@@ -252,19 +263,6 @@ trait RecordAuthorizationHelperTrait
         $wallet = $currentUser->getUserWallet();
 
         return $wallet instanceof WalletEntity && $wallet->getId() === $walletId;
-    }
-
-    private function transactionIdBelongsToUser(?int $transactionId, UserEntity $currentUser): bool
-    {
-        if ($transactionId === null || $transactionId <= 0) {
-            return false;
-        }
-
-        $transaction = $currentUser->getUserWallet()?->getWalletTransactions()
-            ->filter(static fn (TransactionEntity $item): bool => $item->getId() === $transactionId)
-            ->first();
-
-        return $transaction instanceof TransactionEntity;
     }
 
     private function walletBelongsToUser(?WalletEntity $wallet, UserEntity $currentUser): bool

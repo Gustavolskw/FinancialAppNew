@@ -29,7 +29,7 @@ class PasswordFieldDto extends Field
         return $this;
     }
 
-    public function getValue(): string
+    public function getValue(): ?string
     {
         return $this->value;
     }

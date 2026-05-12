@@ -96,10 +96,6 @@ class UserSpecificAction extends BaseSpecificAction
 
     private function limitedString(string $value, int $maxLength): string
     {
-        if (function_exists('mb_strlen') && function_exists('mb_substr')) {
-            return mb_strlen($value) > $maxLength ? mb_substr($value, 0, $maxLength) : $value;
-        }
-
-        return strlen($value) > $maxLength ? substr($value, 0, $maxLength) : $value;
+        return mb_strlen($value) > $maxLength ? mb_substr($value, 0, $maxLength) : $value;
     }
 }

@@ -39,13 +39,9 @@ Arquivos: `src/Controller/AccessControlController.php`, `src/Infrastructure/Hand
 
 O endpoint `/login` gera JWT stateless assinado com `APP_SECRET` e o `ActionManager` valida bearer token e autorização por registro nas rotas CRUD/status. O `/logoff` apenas confirma o encerramento para o cliente descartar o token; revogação server-side exigirá blacklist/persistência de sessões ou tokens opacos armazenados.
 
-### Falta De Testes Automatizados
-
-Não há `phpunit.xml`, pasta `tests` ou scripts de teste no `composer.json`. Mudanças devem ser verificadas com `php -l` e comandos Symfony/Doctrine quando possível.
-
 ## Recomendações Para Próximas Iterações
 
 - Criar um field/output próprio para coleções inversas (`OneToMany`) quando a API precisar expor listas como `Wallet.walletTransactions`.
-- Adicionar testes de unidade para Fields/Query/Response e testes funcionais para `UserController`.
+- Ampliar a suíte existente com testes funcionais para controllers e fluxos HTTP reais.
 - Padronizar `declare(strict_types=1);` em arquivos novos.
 - Se autenticação avançar, implementar `UserInterface`, password hasher do Symfony e firewall/autenticador real.

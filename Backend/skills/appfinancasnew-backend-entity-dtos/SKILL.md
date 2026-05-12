@@ -147,6 +147,8 @@ For DTOs such as `Wallet`, `Entry`, `Expense`, and `Transaction` that require re
 
 Use custom `SpecificAction` hooks for lifecycle rules that are not simple relation resolution, such as removing dependent `Entry` or `Expense` records before deleting a `Transaction`.
 
+`Entry` and `Expense` do not receive `transactionId` on create. Their form DTOs receive the generic transaction payload (`amount`, `location`, `description`, `date`, `month`, `year`, `walletId`), their concrete EntityDTOs keep those values for the specific action, and their list query builders can join the linked transaction to filter by those fields.
+
 ## Creating A New EntityDTO
 
 1. Confirm the Doctrine entity and getters/setters.

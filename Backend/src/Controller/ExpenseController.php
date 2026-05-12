@@ -9,7 +9,7 @@ use App\Infrastructure\DTO\Forms\Expense\ExpenseEditFormDto;
 use App\Infrastructure\DTO\Forms\Expense\ExpenseInsertEditFormDto;
 use App\Infrastructure\DTO\Forms\Expense\ExpensePostFormDto;
 use App\Infrastructure\DTO\Params\QueryParams;
-use App\Infrastructure\DTO\Params\QueryParams\PaginatorQueryParamsDto;
+use App\Infrastructure\DTO\Params\QueryParams\ExpenseQueryParamsDto;
 use App\Infrastructure\Handler\Action\Manager\ActionManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,10 +22,21 @@ use Symfony\Component\Routing\Attribute\Route;
 final class ExpenseController extends AbstractController
 {
     #[Route('/expense', name: 'expenseList', methods: ['GET'], format: 'json')]
-    public function list(Request $request, #[MapQueryString] PaginatorQueryParamsDto $queryDto, EntityManagerInterface $entityManager): JsonResponse
+    public function list(Request $request, #[MapQueryString] ExpenseQueryParamsDto $queryDto, EntityManagerInterface $entityManager): JsonResponse
     {
         return (new ActionManager())
             ->handle(Expense::build($entityManager), $request, QueryParams::fromArray($queryDto->toArray()))
+            ->output();
+    }
+
+    #[Route('/expense/wallet/{walletId}', name: 'expenseByWallet', requirements: ['walletId' => '\d+'], methods: ['GET'], format: 'json')]
+    public function byWallet(int $walletId, Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $queryParams = $request->query->all();
+        $queryParams['walletId'] = $walletId;
+
+        return (new ActionManager())
+            ->handle(Expense::build($entityManager), $request, QueryParams::fromArray($queryParams))
             ->output();
     }
 

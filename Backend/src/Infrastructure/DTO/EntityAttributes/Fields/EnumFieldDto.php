@@ -60,10 +60,6 @@ final class EnumFieldDto extends Field
             return null;
         }
 
-        if (!$enum instanceof EntityFieldEnumInterface) {
-            throw new \InvalidArgumentException("Enum inválido para campo {$this->name}");
-        }
-
         return $enum;
     }
 

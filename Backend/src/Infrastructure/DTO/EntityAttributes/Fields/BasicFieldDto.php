@@ -35,7 +35,55 @@ final class BasicFieldDto extends Field
             throw new \InvalidArgumentException("Valor inválido para campo numérico {$this->name}");
         }
 
+        $precision = $this->options['precision'] ?? null;
+        $scale = $this->options['scale'] ?? null;
+
+        if ($precision !== null || $scale !== null) {
+            self::assertNumericPrecision($this->value, (int) $precision, (int) $scale, $this->name);
+        }
+
         return $this;
+    }
+
+    public static function assertNumericPrecision(mixed $value, int $precision, int $scale, string $fieldName): void
+    {
+        if ($precision <= 0 || $scale < 0 || $scale > $precision) {
+            throw new \InvalidArgumentException("Configuração inválida de precisão para campo {$fieldName}");
+        }
+
+        $numericValue = trim((string) $value);
+
+        if (str_starts_with($numericValue, '+')) {
+            $numericValue = substr($numericValue, 1);
+        }
+
+        if (str_starts_with($numericValue, '.')) {
+            $numericValue = '0' . $numericValue;
+        }
+
+        if (str_starts_with($numericValue, '-.')) {
+            $numericValue = '-0.' . substr($numericValue, 2);
+        }
+
+        if (!preg_match('/^-?(?<integer>\d+)(?:\.(?<fraction>\d+))?$/', $numericValue, $matches)) {
+            throw self::precisionException($fieldName, $precision, $scale);
+        }
+
+        $integerDigits = strlen(ltrim($matches['integer'], '0'));
+        $fractionDigits = isset($matches['fraction']) ? strlen($matches['fraction']) : 0;
+
+        if ($integerDigits > ($precision - $scale) || $fractionDigits > $scale) {
+            throw self::precisionException($fieldName, $precision, $scale);
+        }
+    }
+
+    private static function precisionException(string $fieldName, int $precision, int $scale): \InvalidArgumentException
+    {
+        $integerDigits = $precision - $scale;
+
+        return new \InvalidArgumentException(
+            "Campo {$fieldName} deve respeitar numeric({$precision}, {$scale}): até {$integerDigits} dígitos antes do separador decimal e {$scale} casas decimais"
+        );
     }
 
     private function optionsValidation(): static

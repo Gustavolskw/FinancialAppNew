@@ -1,0 +1,12 @@
+Leia primeiro o AGENTS.md deste diretório.
+
+Contexto complementar para agentes Codex:
+- docs/codex/project-context.md: mapa do frontend, stack e estrutura atual.
+- docs/codex/agent-playbook.md: padrões para rotas, componentes, API e estilos.
+- docs/codex/skills.md: mapa das Skills locais do frontend.
+- docs/codex/review-notes.md: riscos técnicos ativos do frontend.
+
+Este módulo é o frontend React Router/Vite do AppFinancasNew. Para integração com API,
+consulte também ../Backend/AGENTS.md e ../Backend/docs/codex.
+
+Steering obrigatório: desenvolva como especialista em React e Tailwind. Nada deve ser chumbado sem avaliação de reutilização; UI recorrente deve nascer componentizada, com props claras, variantes consistentes, Tailwind reaproveitável e sem código morto.

@@ -16,6 +16,10 @@ Use this skill for `src/Infrastructure/Handler/Action`, including:
 - `PrimaryAction/*`
 - controller-to-action delegation decisions
 
+`Action.php` should expose only the methods declared by `ActionInterface`; non-interface support behavior belongs in `src/Infrastructure/Helper/Action/ActionHelperTrait.php`.
+
+`ActionManager.php` should expose only the methods declared by `ActionManagerInterface`; non-interface support behavior belongs in cohesive helpers under `src/Infrastructure/Helper/ActionManager`.
+
 ## Architecture Contract
 
 The normal HTTP flow is:
@@ -155,7 +159,9 @@ Keep authentication logic out of controllers and return standardized responses.
 
 For relation writes, `Action` resolves `RELATIONALFIELD` values through the configured related entity class and applies them with the setter derived from the field getter. Example: `getExpenseType` maps to `setExpenseType`. `BaseSpecificAction::preActionValidation()` validates that informed relation ids exist before create/update continues.
 
-Use a custom `SpecificAction` only for entity-specific lifecycle work, such as `TransactionSpecificAction::beforeDelete()` removing dependent `Entry` or `Expense` records before deleting a `Transaction`.
+Use a custom `SpecificAction` only for entity-specific lifecycle work.
+
+`Transaction` is the shared generic data record for `Entry` and `Expense`. Do not expose a `TransactionController` or direct action routes for `Transaction`; `EntrySpecificAction` and `ExpenseSpecificAction` create or update the linked `Transaction` from payload fields such as `amount`, `location`, `date`, `month`, `year`, and `walletId`. Deleting an `Entry` or `Expense` must also delete its linked `Transaction`.
 
 For enum persistence, keep using the field raw value: `Action::fieldEntityValue()` must persist `getRawValue()` for `ENUMFIELD`.
 

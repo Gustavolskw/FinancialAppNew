@@ -9,7 +9,7 @@ use App\Infrastructure\DTO\Forms\Entry\EntryEditFormDto;
 use App\Infrastructure\DTO\Forms\Entry\EntryInsertEditFormDto;
 use App\Infrastructure\DTO\Forms\Entry\EntryPostFormDto;
 use App\Infrastructure\DTO\Params\QueryParams;
-use App\Infrastructure\DTO\Params\QueryParams\PaginatorQueryParamsDto;
+use App\Infrastructure\DTO\Params\QueryParams\EntryQueryParamsDto;
 use App\Infrastructure\Handler\Action\Manager\ActionManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,10 +22,21 @@ use Symfony\Component\Routing\Attribute\Route;
 final class EntryController extends AbstractController
 {
     #[Route('/entry', name: 'entryList', methods: ['GET'], format: 'json')]
-    public function list(Request $request, #[MapQueryString] PaginatorQueryParamsDto $queryDto, EntityManagerInterface $entityManager): JsonResponse
+    public function list(Request $request, #[MapQueryString] EntryQueryParamsDto $queryDto, EntityManagerInterface $entityManager): JsonResponse
     {
         return (new ActionManager())
             ->handle(Entry::build($entityManager), $request, QueryParams::fromArray($queryDto->toArray()))
+            ->output();
+    }
+
+    #[Route('/entry/wallet/{walletId}', name: 'entryByWallet', requirements: ['walletId' => '\d+'], methods: ['GET'], format: 'json')]
+    public function byWallet(int $walletId, Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $queryParams = $request->query->all();
+        $queryParams['walletId'] = $walletId;
+
+        return (new ActionManager())
+            ->handle(Entry::build($entityManager), $request, QueryParams::fromArray($queryParams))
             ->output();
     }
 

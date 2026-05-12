@@ -54,7 +54,7 @@ final class RelationalAttributeDto extends Field
         throw new \InvalidArgumentException("Valor inválido para campo relacional {$this->name}");
     }
 
-    public function getValue(): BaseEntityClassInterface|int|null
+    public function getValue(): mixed
     {
         return $this->value;
     }

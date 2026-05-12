@@ -27,7 +27,7 @@ class DateFieldDto extends Field
         return $this;
     }
 
-    public function getValue(): DateTimeInterface
+    public function getValue(): ?DateTimeInterface
     {
         if ($this->getFieldType() == FieldTypeEnum::DATETIMEFIELD) {
             return $this->value;
