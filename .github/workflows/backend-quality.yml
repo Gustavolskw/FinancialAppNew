@@ -36,6 +36,18 @@ jobs:
       - name: Validate Composer metadata
         run: composer validate --strict
 
+      - name: Prepare Symfony CI environment
+        run: |
+          cat > .env <<'EOF'
+          APP_ENV=test
+          APP_DEBUG=0
+          APP_SECRET=test-secret
+          DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/financial_app_test?serverVersion=16&charset=utf8
+          CORS_ALLOW_ORIGIN='^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$'
+          DEFAULT_URI=http://localhost
+          APP_SHARE_DIR=var/share
+          EOF
+
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
