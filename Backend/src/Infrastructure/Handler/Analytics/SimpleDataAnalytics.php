@@ -39,7 +39,7 @@ class SimpleDataAnalytics implements AnalyticsInterface, EntityClassCollection
 
     public function countAnalyses(): AnalyticsInterface
     {
-        $countTitle = (isset($this->entities[0]) ? $this->entities[0]::LISTDATATERM : 'items') . "Count";
+        $countTitle = (isset($this->entities[0]) ? $this->entities[0]->getListDataTerm() : 'items') . "Count";
         $this->analyses->add(new AnalysesDataDto($countTitle, count($this->entities)));
         return $this;
     }

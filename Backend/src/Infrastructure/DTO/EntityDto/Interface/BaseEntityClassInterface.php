@@ -13,6 +13,8 @@ use Doctrine\ORM\QueryBuilder;
 interface BaseEntityClassInterface
 {
     public function output(): array;
+    public function getListDataTerm(): string;
+    public function getSingleDataTerm(): string;
     public function configureFields(FieldsAttributeInterface $fields): FieldsAttributeInterface;
     public function getFields(): FieldsAttributeInterface;
     public function getEntityClass(): string;

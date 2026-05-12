@@ -4,6 +4,9 @@ namespace App\Infrastructure\Helper\Response;
 
 use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 abstract class AbstractEntityBuilder
 {
     protected BaseEntityClassInterface|array $baseEntityClass;

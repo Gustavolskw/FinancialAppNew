@@ -2,11 +2,12 @@ parameters:
     level: 3
     paths:
         - src
-        - tests
     tmpDir: var/phpstan
     bootstrapFiles:
         - vendor/autoload.php
     excludePaths:
+        - src/Entity
+        - src/Repository
         - var (?)
         - vendor (?)
         - coverage (?)

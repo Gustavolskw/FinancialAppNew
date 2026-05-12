@@ -14,5 +14,13 @@ interface PaginatorInterface
      * @param int $perPage
      * @return PaginatorInterface
      */
-    public static function build(EntityRepository $repository, array $mappedItems, int $page, int $perPage): PaginatorInterface;
+    public static function build(
+        EntityRepository $repository,
+        array $mappedItems,
+        int $page,
+        int $perPage,
+        ?int $filteredTotalCount = null
+    ): PaginatorInterface;
+
+    public function output(): array;
 }

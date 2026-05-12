@@ -200,7 +200,7 @@ trait ActionHelperTrait
         $dto->setFieldsFromEntityData($entity, true);
 
         $response = ResponseBuilder::build("Sucesso!", 200)
-            ->addData($this->baseEntityClass::SINGLEDATATERM, EntityBuilder::factory($dto));
+            ->addData($this->baseEntityClass->getSingleDataTerm(), EntityBuilder::factory($dto));
 
         return JsonResponseHandler::create($response);
     }

@@ -44,6 +44,16 @@ class DummyEntityDto implements BaseEntityClassInterface
         return AttributeOutputHelper::outputEntityFields($this->fields->getFields());
     }
 
+    public function getListDataTerm(): string
+    {
+        return self::LISTDATATERM;
+    }
+
+    public function getSingleDataTerm(): string
+    {
+        return self::SINGLEDATATERM;
+    }
+
     public function configureFields(FieldsAttributeInterface $fields): FieldsAttributeInterface
     {
         $this->fields = $fields;

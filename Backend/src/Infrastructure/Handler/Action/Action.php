@@ -49,7 +49,7 @@ class Action implements ActionInterface
             ->countAnalyses();
 
         $response = ResponseBuilder::build("Sucesso!", 200)
-            ->addData($this->baseEntityClass::LISTDATATERM, EntityListBuilder::factory($mapped))
+            ->addData($this->baseEntityClass->getListDataTerm(), EntityListBuilder::factory($mapped))
             ->addData("pagination", $paginatorData)
             ->addData('analytics', $analytics);
 
@@ -69,7 +69,7 @@ class Action implements ActionInterface
         $dto->setFieldsFromEntityData($entity, true);
 
         $response = ResponseBuilder::build("Sucesso!", 200)
-            ->addData($this->baseEntityClass::SINGLEDATATERM, EntityBuilder::factory($dto));
+            ->addData($this->baseEntityClass->getSingleDataTerm(), EntityBuilder::factory($dto));
 
         return JsonResponseHandler::create($response);
     }

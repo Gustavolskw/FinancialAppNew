@@ -119,7 +119,7 @@ class SimpleDataPaginator implements PaginatorInterface, EntityClassCollection
 
     private function totalPages(): self
     {
-        $this->lastPage = ceil($this->totalCount / $this->perPage);
+        $this->lastPage = (int) ceil($this->totalCount / $this->perPage);
         $this->paginators->add(new PaginatorDataDto("totalPages", $this->lastPage));
         return $this;
     }

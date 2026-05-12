@@ -5,6 +5,9 @@ namespace App\Infrastructure\DTO\EntityAttributes\Fields;
 use App\Infrastructure\DTO\EntityAttributes\FieldTypeEnum;
 use Closure;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 abstract class Field implements FieldsInterface
 {
     protected string $name;

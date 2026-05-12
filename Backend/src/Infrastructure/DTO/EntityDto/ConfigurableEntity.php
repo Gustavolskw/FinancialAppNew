@@ -69,6 +69,16 @@ abstract class ConfigurableEntity implements BaseEntityClassInterface
         return AttributeOutputHelper::outputEntityFields($this->getFields()->getFields());
     }
 
+    public function getListDataTerm(): string
+    {
+        return (string) constant(static::class . '::LISTDATATERM');
+    }
+
+    public function getSingleDataTerm(): string
+    {
+        return (string) constant(static::class . '::SINGLEDATATERM');
+    }
+
     public function setFieldValues(FormDtoInterface $dto): void
     {
         foreach ($this->getFields()->getFields() as $field) {
