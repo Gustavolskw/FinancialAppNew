@@ -35,6 +35,15 @@ O projeto está em fase inicial/intermediária: as entidades e uma migration pri
 - Docker com `php:8.4-fpm`, Nginx e Xdebug
 - PostgreSQL esperado pela configuração DBAL/Doctrine
 
+## CI E Quality Gates
+
+O repositório possui GitHub Actions separados por área alterada:
+
+- `.github/workflows/backend-quality.yml`: roda em `push` e `pull_request` quando houver alteração em `Backend/**`. O job instala dependências Composer e executa validação de metadados, `php -l`, PHPCS, PHPStan e PHPUnit.
+- `.github/workflows/frontend-quality.yml`: roda em `push` e `pull_request` quando houver alteração em `frontEnd/**`. O job instala dependências com `npm ci` e executa `npm run quality`, que roda typecheck, build e checagem de code smells.
+
+Os gates devem continuar separados por fronteira de módulo. Mudança exclusiva no frontend não deve disparar testes do backend, e mudança exclusiva no backend não deve disparar quality gate do frontend.
+
 ## Pastas
 
 Antes de alterar qualquer módulo coberto por Skill local, consulte também [docs/codex/skills.md](skills.md).

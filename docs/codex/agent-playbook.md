@@ -14,6 +14,18 @@ Regra de fronteira:
 - Backend decide domínio, persistência, autenticação, autorização e formato da API.
 - Frontend implementa experiência de usuário e consome a API.
 - Docker conecta serviços locais e documenta portas, volumes e variáveis.
+- CI deve preservar a mesma fronteira: alterações em `Backend/**` rodam o gate de backend, alterações em `frontEnd/**` rodam o gate de frontend.
+
+## CI E Quality Gates
+
+Os workflows ficam em `.github/workflows`:
+
+- `backend-quality.yml`: acionado por `Backend/**`; executa `composer validate`, `composer install`, sintaxe PHP, PHPCS, PHPStan e `composer test`.
+- `frontend-quality.yml`: acionado por `frontEnd/**`; executa `npm ci` e `npm run quality`.
+
+O backend usa `Backend/phpcs.xml.dist` e `Backend/phpstan.neon.dist`. O frontend usa `frontEnd/scripts/quality-gate.mjs` para bloquear smells explícitos como `console.*`, `debugger`, diretivas `@ts-ignore`/`@ts-nocheck`/`@ts-expect-error` e `eslint-disable`.
+
+Quando adicionar novos gates, mantenha os comandos reproduzíveis localmente e documente o script no módulo afetado.
 
 ## Antes De Editar
 

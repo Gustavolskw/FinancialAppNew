@@ -1,0 +1,39 @@
+name: Frontend Quality Gate
+
+on:
+  push:
+    paths:
+      - "frontEnd/**"
+      - ".github/workflows/frontend-quality.yml"
+  pull_request:
+    paths:
+      - "frontEnd/**"
+      - ".github/workflows/frontend-quality.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  frontend-quality:
+    name: TypeScript, build and code smells
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontEnd
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontEnd/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Quality gate
+        run: npm run quality

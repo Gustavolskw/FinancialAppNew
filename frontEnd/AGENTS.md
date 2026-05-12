@@ -49,6 +49,7 @@ Quando a tarefa envolver integração com a API, leia também:
 - Instalar dependências: `npm install`
 - Desenvolvimento: `npm run dev`
 - Typecheck: `npm run typecheck`
+- Quality gate: `npm run quality`
 - Build: `npm run build`
 - Start de produção local: `npm run start`
 

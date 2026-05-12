@@ -5,6 +5,8 @@
   "scripts": {
     "build": "react-router build",
     "dev": "react-router dev",
+    "quality": "npm run typecheck && npm run build && npm run quality:smells",
+    "quality:smells": "node ./scripts/quality-gate.mjs",
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc"
   },

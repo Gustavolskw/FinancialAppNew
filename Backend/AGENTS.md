@@ -74,6 +74,8 @@ Formato geral de resposta:
 - Validar schema Doctrine: `php bin/console doctrine:schema:validate`
 - Gerar migration: `php bin/console make:migration`
 - Executar migrations: `php bin/console doctrine:migrations:migrate`
+- Rodar PHPCS: `phpcs --standard=phpcs.xml.dist`
+- Rodar PHPStan: `phpstan analyse --configuration=phpstan.neon.dist --no-progress`
 - Rodar testes unitários: `composer test`
 
 O repositório possui uma suíte PHPUnit inicial em `tests/Unit`, configurada por `phpunit.xml.dist`.

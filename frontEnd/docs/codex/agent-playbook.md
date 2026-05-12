@@ -126,3 +126,11 @@ Para mudanças em rotas, build, Dockerfile ou integração maior:
 npm run typecheck
 npm run build
 ```
+
+Para reproduzir o gate do GitHub Actions:
+
+```bash
+npm run quality
+```
+
+O script `quality` executa typecheck, build e `scripts/quality-gate.mjs`, que bloqueia smells explícitos como `console.*`, `debugger`, supressões TypeScript e regras de lint desabilitadas.
