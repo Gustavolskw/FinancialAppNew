@@ -83,3 +83,7 @@ Para subir a stack completa com frontend compilado:
 ```bash
 ./scripts/start-build.sh
 ```
+
+Esse comando deve ser executado pela raiz do projeto. Ele altera `frontEnd/.env` para
+`FRONTEND_RUNTIME_MODE=production`, roda `npm run build` dentro do container do
+frontend e sobe backend, frontend, banco e NGINX pela stack Docker.

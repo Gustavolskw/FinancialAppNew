@@ -41,6 +41,10 @@ Modo build, com a stack completa e frontend compilado/produção:
 ./scripts/start-build.sh
 ```
 
+O `start-dev.sh` configura `frontEnd/.env` com `FRONTEND_RUNTIME_MODE=development`.
+O `start-build.sh` configura `frontEnd/.env` com `FRONTEND_RUNTIME_MODE=production`,
+executa o build do React dentro do container do frontend e depois sobe a stack completa.
+
 Ambos sobem a stack completa via Docker Compose. A aplicação fica disponível pelo NGINX em:
 
 ```text

@@ -2,14 +2,33 @@
 set -eu
 
 ROOT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+FRONTEND_ENV="$ROOT_DIR/frontEnd/.env"
+
+set_frontend_runtime_mode() {
+  mode="$1"
+  tmp_file="$(mktemp)"
+
+  if grep -q '^FRONTEND_RUNTIME_MODE=' "$FRONTEND_ENV"; then
+    sed "s/^FRONTEND_RUNTIME_MODE=.*/FRONTEND_RUNTIME_MODE=$mode/" "$FRONTEND_ENV" > "$tmp_file"
+  else
+    cp "$FRONTEND_ENV" "$tmp_file"
+    printf '\nFRONTEND_RUNTIME_MODE=%s\n' "$mode" >> "$tmp_file"
+  fi
+
+  mv "$tmp_file" "$FRONTEND_ENV"
+}
 
 "$ROOT_DIR/scripts/setup-env.sh"
+set_frontend_runtime_mode "production"
 
 cd "$ROOT_DIR"
+FRONTEND_RUNTIME_MODE=production docker compose build frontend
+FRONTEND_RUNTIME_MODE=production docker compose run --rm --no-deps frontend npm run build
 FRONTEND_RUNTIME_MODE=production docker compose up -d --build
 
 echo ""
 echo "Ambiente completo iniciado em modo build."
-echo "O frontend foi configurado com FRONTEND_RUNTIME_MODE=production."
+echo "O frontEnd/.env foi configurado com FRONTEND_RUNTIME_MODE=production."
+echo "O React foi compilado antes de subir a stack completa."
 echo "Acesse: https://localhost"
 echo "Logs: docker compose logs -f"

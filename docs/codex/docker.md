@@ -13,8 +13,8 @@ Este arquivo documenta a infraestrutura Docker da raiz do AppFinancasNew.
 - `.env`: arquivo local da raiz usado pelo Docker Compose para parametrizar banco e variáveis do backend em container.
 - `.env.example`: modelo versionável das variáveis esperadas pelo Docker Compose.
 - `scripts/setup-env.sh`: cria `.env` da raiz, backend e frontend a partir dos exemplos sem sobrescrever arquivos existentes.
-- `scripts/start-dev.sh`: prepara envs e sobe a stack completa com frontend em modo desenvolvimento.
-- `scripts/start-build.sh`: prepara envs e sobe a stack completa com frontend em modo compilado/produção.
+- `scripts/start-dev.sh`: prepara envs, configura `frontEnd/.env` com `FRONTEND_RUNTIME_MODE=development` e sobe a stack completa com frontend em modo desenvolvimento.
+- `scripts/start-build.sh`: prepara envs, configura `frontEnd/.env` com `FRONTEND_RUNTIME_MODE=production`, compila o React no container do frontend e sobe a stack completa com frontend em modo produção.
 - `postgres-fin-new-app-volume`: volume persistente do banco.
 - `frontend-node-modules`: volume persistente para dependências Node dentro do container.
 - `nginx-certs`: volume persistente para certificados TLS do NGINX.
@@ -127,7 +127,7 @@ O `frontEnd/Dockerfile` usa Node 20 em build multistage:
 5. expõe um target `production-env`;
 6. usa `frontEnd/docker-entrypoint.sh` para escolher desenvolvimento ou produção por `FRONTEND_RUNTIME_MODE`.
 
-O fluxo via Docker é:
+O fluxo via Docker para desenvolvimento é:
 
 ```bash
 ./scripts/start-dev.sh
@@ -138,6 +138,14 @@ Para subir a stack completa com frontend compilado:
 ```bash
 ./scripts/start-build.sh
 ```
+
+Esse script executa o fluxo completo de build:
+
+1. garante os arquivos `.env` com `./scripts/setup-env.sh`;
+2. altera `frontEnd/.env` para `FRONTEND_RUNTIME_MODE=production`;
+3. executa `FRONTEND_RUNTIME_MODE=production docker compose build frontend`;
+4. executa `FRONTEND_RUNTIME_MODE=production docker compose run --rm --no-deps frontend npm run build`;
+5. sobe todos os serviços com `FRONTEND_RUNTIME_MODE=production docker compose up -d --build`.
 
 O fluxo local fora do Docker continua disponível:
 
@@ -225,6 +233,8 @@ Subir a stack com frontend compilado:
 ```bash
 ./scripts/start-build.sh
 ```
+
+Esse comando compila o frontend antes de publicar a stack. Use esse caminho quando for validar um comportamento próximo de produção ou preparar o ambiente para exposição externa.
 
 Ver logs:
 
