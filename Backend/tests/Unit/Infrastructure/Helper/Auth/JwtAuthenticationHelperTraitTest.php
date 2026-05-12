@@ -189,8 +189,7 @@ final class JwtAuthenticationHelperTraitTest extends TestCase
         array $payload,
         array $header = ['typ' => 'JWT', 'alg' => 'HS256'],
         string $secret = 'test-secret',
-    ): string
-    {
+    ): string {
         $header = $this->base64UrlEncode(json_encode($header, JSON_THROW_ON_ERROR));
         $body = $this->base64UrlEncode(json_encode($payload, JSON_THROW_ON_ERROR));
         $signature = hash_hmac('sha256', $header . '.' . $body, $secret, true);

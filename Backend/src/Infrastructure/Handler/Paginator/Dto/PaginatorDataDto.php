@@ -17,6 +17,4 @@ class PaginatorDataDto
     {
         return [$this->title => $this->value];
     }
-
-
 }

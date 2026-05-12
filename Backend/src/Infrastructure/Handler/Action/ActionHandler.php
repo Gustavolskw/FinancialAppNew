@@ -4,18 +4,20 @@ namespace App\Infrastructure\Handler\Action;
 
 class ActionHandler implements ActionHandlerInterface
 {
-    private Action $action;
-    public function __construct(Action $action)
+    private ActionInterface $action;
+
+    public function __construct(ActionInterface $action)
     {
         $this->action = $action;
     }
-    public static function Build(ActionInterface $action): ActionHandlerInterface
+
+    public static function build(ActionInterface $action): ActionHandlerInterface
     {
         return new self($action);
     }
 
-    function execute(): ActionInterface
+    public function execute(): ActionInterface
     {
-       return $this->action;
+        return $this->action;
     }
 }

@@ -9,5 +9,4 @@ interface JsonResponseHandlerInterface
 {
     public static function create(JsonSerializable $data): JsonResponseHandlerInterface;
     public function output(): JsonResponse;
-
 }

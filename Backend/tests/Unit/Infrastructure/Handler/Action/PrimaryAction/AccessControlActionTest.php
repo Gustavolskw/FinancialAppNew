@@ -171,8 +171,7 @@ final class AccessControlActionTest extends TestCase
         ?int $role = null,
         string $email = 'ana@example.com',
         bool $withRole = true,
-    ): User
-    {
+    ): User {
         $user = (new User())
             ->setId('10')
             ->setName('Ana')

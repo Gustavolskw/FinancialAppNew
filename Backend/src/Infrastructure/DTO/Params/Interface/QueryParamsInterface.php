@@ -10,5 +10,4 @@ interface QueryParamsInterface
     public function addParam(string $paramName, mixed $paramValue): QueryParamsInterface;
     public function getSortParams(): ArrayCollection;
     public function getPaginatorParams(): ArrayCollection;
-
 }

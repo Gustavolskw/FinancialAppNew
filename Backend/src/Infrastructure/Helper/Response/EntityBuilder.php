@@ -10,5 +10,4 @@ class EntityBuilder extends AbstractEntityBuilder implements EntityClassCollecti
     {
         return $this->baseEntityClass->output();
     }
-
 }

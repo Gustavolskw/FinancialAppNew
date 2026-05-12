@@ -10,7 +10,6 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class EntityFieldsHelper
 {
-
     /**
      * @param object $entity Entidade Doctrine
      * @param class-string $entityClass FQCN esperado da entidade (ex: App\Entity\User::class)

@@ -28,8 +28,7 @@ class UserController extends AbstractController
         Request $request,
         #[MapQueryString] EntityQueryParamsDto $userDto,
         EntityManagerInterface $entityManager
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $queryParams = QueryParams::fromArray($userDto->toArray());
 
         return (new ActionManager())
@@ -42,8 +41,7 @@ class UserController extends AbstractController
         int $id,
         Request $request,
         EntityManagerInterface $entityManager
-    ): JsonResponse
-    {
+    ): JsonResponse {
         return (new ActionManager())
             ->handle(User::build($entityManager), $request, id: $id)
             ->output();
@@ -54,8 +52,7 @@ class UserController extends AbstractController
         Request $request,
         #[MapRequestPayload] UserPostFormDto $formDto,
         EntityManagerInterface $entityManager
-    ): JsonResponse
-    {
+    ): JsonResponse {
         return (new ActionManager())
             ->handle(User::build($entityManager), $request, formDto: $formDto)
             ->output();
@@ -66,8 +63,7 @@ class UserController extends AbstractController
         Request $request,
         #[MapRequestPayload] UserAdminPostFormDto $formDto,
         EntityManagerInterface $entityManager
-    ): JsonResponse
-    {
+    ): JsonResponse {
         return (new ActionManager())
             ->handle(User::build($entityManager), $request, formDto: $formDto)
             ->output();
@@ -78,8 +74,7 @@ class UserController extends AbstractController
         Request $request,
         #[MapRequestPayload] UserInsertEditFormDto $formDto,
         EntityManagerInterface $entityManager
-    ): JsonResponse
-    {
+    ): JsonResponse {
         return (new ActionManager())
             ->handle(User::build($entityManager), $request, formDto: $formDto)
             ->output();
@@ -90,8 +85,7 @@ class UserController extends AbstractController
         Request $request,
         #[MapRequestPayload] UserEditFormDto $formDto,
         EntityManagerInterface $entityManager
-    ): JsonResponse
-    {
+    ): JsonResponse {
         return (new ActionManager())
             ->handle(User::build($entityManager), $request, formDto: $formDto)
             ->output();
@@ -103,8 +97,7 @@ class UserController extends AbstractController
         Request $request,
         #[MapRequestPayload] StatusFormDto $formDto,
         EntityManagerInterface $entityManager
-    ): JsonResponse
-    {
+    ): JsonResponse {
         return (new ActionManager())
             ->handleStatus(User::build($entityManager), $request, $id, $formDto)
             ->output();

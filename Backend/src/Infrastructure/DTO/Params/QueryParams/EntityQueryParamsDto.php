@@ -7,18 +7,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 class EntityQueryParamsDto extends PaginatorQueryParamsDto
 {
     public function __construct(
-        ?int           $page = 1,
-        ?int           $perPage = 20,
-
+        ?int $page = 1,
+        ?int $perPage = 20,
         #[Assert\Length(max: 120)]
         public ?string $name = null,
-
         #[Assert\Email]
         public ?string $email = null,
-
-        public ?int    $status = null,
-    )
-    {
+        public ?int $status = null,
+    ) {
         parent::__construct($page, $perPage);
     }
 

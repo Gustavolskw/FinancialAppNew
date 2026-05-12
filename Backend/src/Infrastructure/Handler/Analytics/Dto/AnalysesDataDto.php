@@ -17,6 +17,4 @@ class AnalysesDataDto
     {
         return [$this->title => $this->value];
     }
-
-
 }

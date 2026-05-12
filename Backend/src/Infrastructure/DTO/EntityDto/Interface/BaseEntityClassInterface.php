@@ -16,7 +16,7 @@ interface BaseEntityClassInterface
     public function configureFields(FieldsAttributeInterface $fields): FieldsAttributeInterface;
     public function getFields(): FieldsAttributeInterface;
     public function getEntityClass(): string;
-    public function setFieldValues(FormDtoInterface $dto):void;
+    public function setFieldValues(FormDtoInterface $dto): void;
     public static function build(EntityManagerInterface $entityManager): BaseEntityClassInterface;
     public function setFieldsFromEntityData(object $entity, bool $deepFetch): BaseEntityClassInterface;
     public function resolveQueryBuilder(QueryParamsInterface $params): QueryBuilder;

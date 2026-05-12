@@ -4,7 +4,6 @@ namespace App\Infrastructure\DTO\EntityAttributes\Fields;
 
 class NameFieldDto extends Field
 {
-
     public function setValue(mixed $value): static
     {
         return $this->fillValue($value);

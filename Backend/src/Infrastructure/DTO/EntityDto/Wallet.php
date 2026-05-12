@@ -54,5 +54,4 @@ final class Wallet extends MainConfigurableEntity
     {
         return new self(new FieldsAttribute(), self::ENTITYCLASS, $entityManager);
     }
-
 }

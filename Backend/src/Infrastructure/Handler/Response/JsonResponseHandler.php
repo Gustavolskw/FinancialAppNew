@@ -27,6 +27,6 @@ class JsonResponseHandler implements JsonResponseHandlerInterface
 
     public static function create(JsonSerializable $data): JsonResponseHandlerInterface
     {
-        return new self ($data);
+        return new self($data);
     }
 }

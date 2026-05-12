@@ -58,7 +58,7 @@ abstract class ConfigurableEntity implements BaseEntityClassInterface
 
     public function resolveQueryBuilder(QueryParamsInterface $params): QueryBuilder
     {
-        return EntityQueryHelper::buildSearchQuery($this->entityRepository, $params, $this->getFields(),self::TABLE_ALIAS);
+        return EntityQueryHelper::buildSearchQuery($this->entityRepository, $params, $this->getFields(), self::TABLE_ALIAS);
     }
 
     /**

@@ -104,8 +104,7 @@ final class FieldsAttribute implements FieldsAttributeInterface
         ?FieldTypeEnum $fieldType = FieldTypeEnum::TEXTFIELD,
         bool $required = false,
         ?Closure $additionalFieldValidation = null
-    ): self
-    {
+    ): self {
         $field = TextFieldDto::factory($name, $fieldType, $entityGetter);
 
         return $this->put($this->setFieldValidation($field, $required, null, $additionalFieldValidation));
@@ -117,8 +116,7 @@ final class FieldsAttribute implements FieldsAttributeInterface
         ?FieldTypeEnum $fieldType = FieldTypeEnum::PASSWORDFIELD,
         bool $required = false,
         ?Closure $additionalFieldValidation = null
-    ): self
-    {
+    ): self {
         $field = PasswordFieldDto::factory($name, $fieldType, $entityGetter);
 
         return $this->put($this->setFieldValidation($field, $required, null, $additionalFieldValidation));
@@ -158,8 +156,7 @@ final class FieldsAttribute implements FieldsAttributeInterface
         bool $required = false,
         ?Closure $additionalFieldValidation = null,
         ?array $options = null
-    ): self
-    {
+    ): self {
         $field = BasicFieldDto::factory($name, $fieldType, $entityGetter);
 
         return $this->put($this->setFieldValidation($field, $required, $options, $additionalFieldValidation));
@@ -171,8 +168,7 @@ final class FieldsAttribute implements FieldsAttributeInterface
         FieldTypeEnum $fieldType = FieldTypeEnum::DATEFIELD,
         bool $required = false,
         ?Closure $additionalFieldValidation = null
-    ): self
-    {
+    ): self {
         $field = DateFieldDto::factory($name, $fieldType, $entityGetter);
 
         return $this->put($this->setFieldValidation($field, $required, null, $additionalFieldValidation));
@@ -185,8 +181,7 @@ final class FieldsAttribute implements FieldsAttributeInterface
         bool $required = false,
         ?Closure $additionalFieldValidation = null,
         ?array $options = null
-    ): self
-    {
+    ): self {
         $field = BasicFieldDto::factory($name, $fieldType, $entityGetter);
 
         return $this->put($this->setFieldValidation($field, $required, $options, $additionalFieldValidation));

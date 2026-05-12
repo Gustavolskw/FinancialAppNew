@@ -9,10 +9,10 @@ use App\Infrastructure\Handler\Response\JsonResponseHandlerInterface;
 interface ActionInterface
 {
     public function listView(QueryParamsInterface $queryParams): JsonResponseHandlerInterface;
-    public function view(int $id) : JsonResponseHandlerInterface;
-    public function save() : JsonResponseHandlerInterface;
-    public function delete(int $id) : JsonResponseHandlerInterface;
-    public function edit() : JsonResponseHandlerInterface;
-    public function status(int $id, bool $status) : JsonResponseHandlerInterface;
+    public function view(int $id): JsonResponseHandlerInterface;
+    public function save(): JsonResponseHandlerInterface;
+    public function delete(int $id): JsonResponseHandlerInterface;
+    public function edit(): JsonResponseHandlerInterface;
+    public function status(int $id, bool $status): JsonResponseHandlerInterface;
     public static function build(BaseEntityClassInterface $baseEntityClass, ?\Closure $listQueryRestriction = null): ActionInterface;
 }

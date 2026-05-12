@@ -41,8 +41,7 @@ class SimpleDataPaginator implements PaginatorInterface, EntityClassCollection
         int $page,
         int $perPage,
         ?int $filteredTotalCount = null
-    )
-    {
+    ) {
         $this->repository = $repository;
         $this->paginators = $analyses;
         $this->page = $page;
@@ -71,9 +70,8 @@ class SimpleDataPaginator implements PaginatorInterface, EntityClassCollection
         int $page,
         int $perPage,
         ?int $filteredTotalCount = null
-    ): PaginatorInterface
-    {
-        return new self($repository, new ArrayCollection(), $mappedItems,  $page, $perPage, $filteredTotalCount);
+    ): PaginatorInterface {
+        return new self($repository, new ArrayCollection(), $mappedItems, $page, $perPage, $filteredTotalCount);
     }
 
     private function totalItems(): self
@@ -88,33 +86,37 @@ class SimpleDataPaginator implements PaginatorInterface, EntityClassCollection
         $this->paginators->add(new PaginatorDataDto("mappedItems", count($this->mappedItems)));
         return $this;
     }
-    private function pageItems():self
+    private function pageItems(): self
     {
-
         $this->paginators->add(new PaginatorDataDto("perPage", min($this->perPage, count($this->mappedItems))));
         return $this;
     }
-    private function currentPage():self
+
+    private function currentPage(): self
     {
         $this->paginators->add(new PaginatorDataDto("currentPage", $this->page));
         return $this;
     }
-    private function previousPage():self
+
+    private function previousPage(): self
     {
         $prevPage = $this->page == 1 ? null : ($this->page - 1);
         $this->paginators->add(new PaginatorDataDto("previousPage", $prevPage));
         return $this;
     }
-    private function nextPage():self
+
+    private function nextPage(): self
     {
         $nextPage = $this->page == $this->lastPage ? null : ($this->page + 1);
         $this->paginators->add(new PaginatorDataDto("nextPage", $nextPage));
         return $this;
     }
-    private function lastPage():void
+
+    private function lastPage(): void
     {
         $this->paginators->add(new PaginatorDataDto("lastPage", $this->lastPage));
     }
+
     private function totalPages(): self
     {
         $this->lastPage = ceil($this->totalCount / $this->perPage);

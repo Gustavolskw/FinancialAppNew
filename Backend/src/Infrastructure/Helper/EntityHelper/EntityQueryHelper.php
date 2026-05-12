@@ -12,9 +12,12 @@ use Doctrine\ORM\QueryBuilder;
 
 class EntityQueryHelper
 {
-
-    public static function buildSearchQuery(EntityRepository $repository, QueryParamsInterface $params, FieldsAttributeInterface $fields, string $tableAlias):QueryBuilder
-    {
+    public static function buildSearchQuery(
+        EntityRepository $repository,
+        QueryParamsInterface $params,
+        FieldsAttributeInterface $fields,
+        string $tableAlias
+    ): QueryBuilder {
         $paginator = $params->getPaginatorParams();
         $page = (int) (BaseHelper::getParamValueByName($paginator, 'page') ?? 1);
         $perPage = (int) (BaseHelper::getParamValueByName($paginator, 'perPage')
@@ -48,17 +51,20 @@ class EntityQueryHelper
                 continue;
             }
 
-            if (in_array($field->getFieldType(), [
-                FieldTypeEnum::TEXTFIELD,
-                FieldTypeEnum::NAMEFIELD,
-                FieldTypeEnum::EMAILFIELD,
-                FieldTypeEnum::LOCATIONFIELD,
-            ], true)) {
+            if (
+                in_array($field->getFieldType(), [
+                    FieldTypeEnum::TEXTFIELD,
+                    FieldTypeEnum::NAMEFIELD,
+                    FieldTypeEnum::EMAILFIELD,
+                    FieldTypeEnum::LOCATIONFIELD,
+                ], true)
+            ) {
                 $qb->andWhere(sprintf('%s.%s LIKE :%s', $tableAlias, $dbField, $placeholder));
                 $qb->setParameter($placeholder, '%' . $paramValue . '%');
                 continue;
             }
-            if($field->getFieldType() == FieldTypeEnum::STATUSFIELD){
+
+            if ($field->getFieldType() == FieldTypeEnum::STATUSFIELD) {
                 $qb->andWhere(sprintf('%s.%s = :%s', $tableAlias, $dbField, $placeholder));
                 $qb->setParameter($placeholder, (bool) $paramValue);
                 continue;
@@ -70,11 +76,10 @@ class EntityQueryHelper
                 continue;
             }
 
-
             $qb->andWhere(sprintf('%s.%s = :%s', $tableAlias, $dbField, $placeholder));
             $qb->setParameter($placeholder, $paramValue);
-
         }
+
         return $qb;
     }
 
@@ -116,7 +121,4 @@ class EntityQueryHelper
 
         return $field->getName();
     }
-
-
-
 }

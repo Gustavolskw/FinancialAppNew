@@ -14,7 +14,7 @@ interface FieldsAttributeInterface
     public function setNameField(string $name, ?string $entityGetter = "getName", ?FieldTypeEnum $fieldType = FieldTypeEnum::NAMEFIELD, bool $required = false, ?Closure $additionalFieldValidation = null): self;
     public function getNameField(): ?FieldsInterface;
 
-    public function setTextField(string $name, string $entityGetter,  ?FieldTypeEnum $fieldType = FieldTypeEnum::TEXTFIELD, bool $required = false, ?Closure $additionalFieldValidation = null): self;
+    public function setTextField(string $name, string $entityGetter, ?FieldTypeEnum $fieldType = FieldTypeEnum::TEXTFIELD, bool $required = false, ?Closure $additionalFieldValidation = null): self;
     public function setPassword(string $name, ?string $entityGetter = "getPassword", ?FieldTypeEnum $fieldType = FieldTypeEnum::PASSWORDFIELD, bool $required = false, ?Closure $additionalFieldValidation = null): self;
 
     /**
@@ -59,5 +59,5 @@ interface FieldsAttributeInterface
     public function getDateField(string $name, ?FieldTypeEnum $fieldTypeEnum): ?FieldsInterface;
     public function getValueField(string $name): ?FieldsInterface;
     public function getRelationalField(string $name): ?FieldsInterface;
-    public function getFields():ArrayCollection;
+    public function getFields(): ArrayCollection;
 }

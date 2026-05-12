@@ -7,11 +7,7 @@ use App\Infrastructure\Helper\Interface\EntityClassCollection;
 final class ResponseBuilder implements ResponseBuilderInterface
 {
     private string $responseMessage;
-    private int $statusCode {
-        get {
-            return $this->statusCode;
-        }
-    }
+    private int $statusCode;
 
     /** @var ResponseDataDto[] */
     private array $data = [];

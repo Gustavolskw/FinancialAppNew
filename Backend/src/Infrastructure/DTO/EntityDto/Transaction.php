@@ -63,5 +63,4 @@ final class Transaction extends ConfigurableEntity
     {
         return new self(new FieldsAttribute(), self::ENTITYCLASS, $entityManager);
     }
-
 }
