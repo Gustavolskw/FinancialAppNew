@@ -77,11 +77,23 @@ trait RecordAuthorizationHelperTrait
         }
 
         if ($this->isGlobalCatalogEntity($entityClass)) {
-            return $this->authorizationResponse('Somente administradores podem alterar cadastros globais', Response::HTTP_FORBIDDEN);
+            if ($targetId === null) {
+                return null;
+            }
+
+            if ($this->canModifyCatalogRecord($baseEntityClass, $currentUser, $targetId)) {
+                return null;
+            }
+
+            $message = $this->catalogRecordIsDefault($baseEntityClass, $targetId)
+                ? 'Cadastros auxiliares padrão só podem ser alterados por administradores'
+                : 'Usuário sem permissão para alterar este cadastro auxiliar';
+
+            return $this->authorizationResponse($message, Response::HTTP_FORBIDDEN);
         }
 
         if ($targetId === null) {
-            return $this->canCreateRecord($entityClass, $currentUser, $formDto)
+            return $this->canCreateRecord($baseEntityClass, $currentUser, $formDto)
                 ? null
                 : $this->authorizationResponse('Usuário sem permissão para criar este registro', Response::HTTP_FORBIDDEN);
         }
@@ -90,7 +102,7 @@ trait RecordAuthorizationHelperTrait
             return $this->authorizationResponse('Usuário sem permissão para alterar este registro', Response::HTTP_FORBIDDEN);
         }
 
-        if (!$this->canApplyOwnershipChange($entityClass, $currentUser, $formDto)) {
+        if (!$this->canApplyOwnershipChange($baseEntityClass, $currentUser, $formDto)) {
             return $this->authorizationResponse('Usuário sem permissão para vincular este registro', Response::HTTP_FORBIDDEN);
         }
 
@@ -137,8 +149,39 @@ trait RecordAuthorizationHelperTrait
                 $qb->leftJoin(sprintf('%s.expenseTransaction', $alias), 'securityExpenseTransaction');
                 self::restrictByCurrentWallet($qb, 'securityExpenseTransaction.transactionWallet', $currentWallet);
             },
+            EntryTypeEntity::class,
+            ExpenseTypeEntity::class,
+            PaymentMethodEntity::class => static function (QueryBuilder $qb) use ($currentUser): void {
+                $alias = $qb->getRootAliases()[0];
+                $qb->andWhere(sprintf('(%s.isDefault = :securityDefaultCatalog OR %s.user = :securityCatalogUser)', $alias, $alias))
+                    ->setParameter('securityDefaultCatalog', true)
+                    ->setParameter('securityCatalogUser', $currentUser);
+            },
             default => null,
         };
+    }
+
+    private function applyAuthenticatedCatalogDefaults(BaseEntityClassInterface $baseEntityClass): void
+    {
+        if (!$this->isGlobalCatalogEntity($baseEntityClass->getEntityClass())) {
+            return;
+        }
+
+        $currentUser = $this->currentAuthenticatedUser($baseEntityClass);
+
+        if (!$currentUser instanceof UserEntity) {
+            return;
+        }
+
+        $isDefaultField = $baseEntityClass->getFields()->getField('isDefault');
+        if ($isDefaultField !== null) {
+            $isDefaultField->setValue(false);
+        }
+
+        $userField = $baseEntityClass->getFields()->getField('user');
+        if ($userField !== null) {
+            $userField->setValue($currentUser->getId());
+        }
     }
 
     private static function restrictByCurrentWallet(QueryBuilder $qb, string $walletPath, ?WalletEntity $currentWallet): void
@@ -222,36 +265,174 @@ trait RecordAuthorizationHelperTrait
             $entity instanceof ExpenseEntity => $this->transactionBelongsToUser($entity->getExpenseTransaction(), $currentUser),
             $entity instanceof EntryTypeEntity,
             $entity instanceof ExpenseTypeEntity,
-            $entity instanceof PaymentMethodEntity => true,
+            $entity instanceof PaymentMethodEntity => $this->catalogVisibleToUser($entity, $currentUser),
             default => false,
         };
     }
 
-    private function canCreateRecord(string $entityClass, UserEntity $currentUser, ?FormDtoInterface $formDto): bool
-    {
+    private function canCreateRecord(
+        BaseEntityClassInterface $baseEntityClass,
+        UserEntity $currentUser,
+        ?FormDtoInterface $formDto
+    ): bool {
+        $entityClass = $baseEntityClass->getEntityClass();
+
         return match ($entityClass) {
             WalletEntity::class => $this->formInt($formDto, 'userId') === $currentUser->getId(),
             TransactionEntity::class => $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser),
-            EntryEntity::class => $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser),
-            ExpenseEntity::class => $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser),
+            EntryEntity::class => $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser)
+                && $this->catalogIdVisibleToUser($baseEntityClass, EntryTypeEntity::class, $this->formInt($formDto, 'entryTypeId'), $currentUser),
+            ExpenseEntity::class => $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser)
+                && $this->catalogIdVisibleToUser($baseEntityClass, ExpenseTypeEntity::class, $this->formInt($formDto, 'expenseTypeId'), $currentUser)
+                && $this->catalogIdVisibleToUser($baseEntityClass, PaymentMethodEntity::class, $this->formInt($formDto, 'paymentMethodId'), $currentUser),
+            EntryTypeEntity::class,
+            ExpenseTypeEntity::class,
+            PaymentMethodEntity::class => true,
             default => false,
         };
     }
 
-    private function canApplyOwnershipChange(string $entityClass, UserEntity $currentUser, ?FormDtoInterface $formDto): bool
-    {
+    private function canApplyOwnershipChange(
+        BaseEntityClassInterface $baseEntityClass,
+        UserEntity $currentUser,
+        ?FormDtoInterface $formDto
+    ): bool {
+        $entityClass = $baseEntityClass->getEntityClass();
+
         return match ($entityClass) {
             WalletEntity::class => $this->formInt($formDto, 'userId') === null
                 || $this->formInt($formDto, 'userId') === $currentUser->getId(),
             TransactionEntity::class => $this->formInt($formDto, 'walletId') === null
                 || $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser),
-            EntryEntity::class => $this->formInt($formDto, 'walletId') === null
-                || $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser),
-            ExpenseEntity::class => $this->formInt($formDto, 'walletId') === null
-                || $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser),
+            EntryEntity::class => (
+                $this->formInt($formDto, 'walletId') === null
+                || $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser)
+            )
+                && $this->nullableCatalogIdVisibleToUser($baseEntityClass, EntryTypeEntity::class, $this->formInt($formDto, 'entryTypeId'), $currentUser),
+            ExpenseEntity::class => (
+                $this->formInt($formDto, 'walletId') === null
+                || $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser)
+            )
+                && $this->nullableCatalogIdVisibleToUser($baseEntityClass, ExpenseTypeEntity::class, $this->formInt($formDto, 'expenseTypeId'), $currentUser)
+                && $this->nullableCatalogIdVisibleToUser($baseEntityClass, PaymentMethodEntity::class, $this->formInt($formDto, 'paymentMethodId'), $currentUser),
             UserEntity::class => true,
+            EntryTypeEntity::class,
+            ExpenseTypeEntity::class,
+            PaymentMethodEntity::class => true,
             default => false,
         };
+    }
+
+    private function canModifyCatalogRecord(
+        BaseEntityClassInterface $baseEntityClass,
+        UserEntity $currentUser,
+        int $id
+    ): bool {
+        if ($id <= 0) {
+            return false;
+        }
+
+        $entity = $baseEntityClass->getRepository()->find($id);
+
+        if ($entity === null) {
+            return true;
+        }
+
+        if (!$this->isCatalogEntity($entity) || $this->catalogIsDefault($entity)) {
+            return false;
+        }
+
+        return $this->catalogBelongsToUser($entity, $currentUser);
+    }
+
+    private function catalogRecordIsDefault(BaseEntityClassInterface $baseEntityClass, int $id): bool
+    {
+        if ($id <= 0) {
+            return false;
+        }
+
+        $entity = $baseEntityClass->getRepository()->find($id);
+
+        return is_object($entity) && $this->catalogIsDefault($entity);
+    }
+
+    private function nullableCatalogIdVisibleToUser(
+        BaseEntityClassInterface $baseEntityClass,
+        string $catalogClass,
+        ?int $id,
+        UserEntity $currentUser
+    ): bool {
+        if ($id === null) {
+            return true;
+        }
+
+        return $this->catalogIdVisibleToUser($baseEntityClass, $catalogClass, $id, $currentUser);
+    }
+
+    private function catalogIdVisibleToUser(
+        BaseEntityClassInterface $baseEntityClass,
+        string $catalogClass,
+        ?int $id,
+        UserEntity $currentUser
+    ): bool {
+        if ($id === null || $id <= 0 || !$this->isGlobalCatalogEntity($catalogClass)) {
+            return false;
+        }
+
+        $entity = $this->recordAuthorizationCatalogEntity($baseEntityClass, $catalogClass, $id);
+
+        return $entity !== null && $this->catalogVisibleToUser($entity, $currentUser);
+    }
+
+    private function recordAuthorizationCatalogEntity(
+        BaseEntityClassInterface $baseEntityClass,
+        string $catalogClass,
+        int $id
+    ): ?object {
+        if (!$this->isGlobalCatalogEntity($catalogClass)) {
+            return null;
+        }
+
+        $entity = $baseEntityClass->getEntityManager()
+            ->getRepository($catalogClass)
+            ->find($id);
+
+        return is_object($entity) ? $entity : null;
+    }
+
+    private function catalogVisibleToUser(object $entity, UserEntity $currentUser): bool
+    {
+        return $this->catalogIsDefault($entity)
+            || $this->catalogBelongsToUser($entity, $currentUser);
+    }
+
+    private function catalogBelongsToUser(object $entity, UserEntity $currentUser): bool
+    {
+        $owner = match (true) {
+            $entity instanceof EntryTypeEntity => $entity->getUser(),
+            $entity instanceof ExpenseTypeEntity => $entity->getUser(),
+            $entity instanceof PaymentMethodEntity => $entity->getUser(),
+            default => null,
+        };
+
+        return $owner instanceof UserEntity && $owner->getId() === $currentUser->getId();
+    }
+
+    private function catalogIsDefault(object $entity): bool
+    {
+        return match (true) {
+            $entity instanceof EntryTypeEntity => $entity->isDefault() === true,
+            $entity instanceof ExpenseTypeEntity => $entity->isDefault() === true,
+            $entity instanceof PaymentMethodEntity => $entity->isDefault() === true,
+            default => false,
+        };
+    }
+
+    private function isCatalogEntity(object $entity): bool
+    {
+        return $entity instanceof EntryTypeEntity
+            || $entity instanceof ExpenseTypeEntity
+            || $entity instanceof PaymentMethodEntity;
     }
 
     private function walletIdBelongsToUser(?int $walletId, UserEntity $currentUser): bool

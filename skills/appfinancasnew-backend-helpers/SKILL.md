@@ -170,7 +170,7 @@ Rules:
 - treat `RolesEnum::ADM` as the full-access role;
 - block `role` in normal user creation payloads before applying the general ADMIN bypass; admin-user creation must use the dedicated `POST /user/admin` route;
 - allow normal users to operate only their own `User`, their own `Wallet`, and `Transaction`/`Entry`/`Expense` records linked to their wallet;
-- allow normal users to read global catalogs but require ADMIN for catalog writes;
+- allow normal users to read default auxiliary catalogs and their own catalog rows; allow writes only for their own non-default catalog rows, while ADMIN keeps broad access;
 - block normal users from changing `User.role`;
 - return standardized `JsonResponseHandlerInterface` failures instead of throwing to controllers.
 

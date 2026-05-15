@@ -83,9 +83,9 @@ Entidades Doctrine:
 - `Transaction`: valor decimal, local, descrição, data, mês, ano e relações one-to-one com despesa ou entrada.
 - `Expense`: relaciona uma transação a tipo de despesa, método de pagamento e parcelas.
 - `Entry`: relaciona uma transação a tipo de entrada.
-- `ExpenseType`: catálogo de tipos de despesa.
-- `EntryType`: catálogo de tipos de entrada.
-- `PaymentMethod`: catálogo de métodos de pagamento.
+- `ExpenseType`: catálogo de tipos de despesa, com registros padrão (`isDefault`) e registros vinculados ao usuário criador.
+- `EntryType`: catálogo de tipos de entrada, com registros padrão (`isDefault`) e registros vinculados ao usuário criador.
+- `PaymentMethod`: catálogo de métodos de pagamento, com registros padrão (`isDefault`) e registros vinculados ao usuário criador.
 
 ### `src/Repository`
 
@@ -101,7 +101,7 @@ Camada central de configuração de entidade para API.
 - `MainConfigurableEntity`: adiciona `createdAt` e `updatedAt`.
 - `User`: define campos de saída/entrada, validação de senha, role via `RolesEnum`, relação com `Wallet`, termos de resposta `users`/`user` e `UserSpecificAction`.
 - `Wallet`: define campos de carteira e relação com usuário; a coleção inversa de transações não é exposta no EntityDTO enquanto não houver field/output próprio para coleções.
-- `EntryType`, `ExpenseType` e `PaymentMethod`: definem catálogos/tipos do domínio financeiro.
+- `EntryType`, `ExpenseType` e `PaymentMethod`: definem catálogos/tipos do domínio financeiro; usuários autenticados enxergam os defaults e seus próprios registros.
 - `Entry` e `Expense`: definem objetos específicos vinculados a transações e catálogos.
 - `Transaction`: define a transação geral, com valor, local, descrição, data, mês, ano, relação obrigatória com carteira e relações opcionais com despesa ou entrada.
 
@@ -304,7 +304,7 @@ Rotas protegidas por `ActionManager`:
 6. Depois da autenticação, o `ActionManager` chama `RecordAuthorizationHelperTrait::authorizeRecordAccess()` para bloquear acesso fora do dono do registro.
 7. ADMIN (`RolesEnum::ADM`) pode executar ações administrativas, mas criação de outro admin só é permitida pela rota especial `POST /user/admin`; criação normal de usuário não aceita `role` no payload e sempre cai no default `USER`.
 8. Usuário comum só pode operar o próprio `User`, a própria `Wallet` e `Transaction`/`Entry`/`Expense` ligadas à própria carteira.
-9. Cadastros globais (`EntryType`, `ExpenseType`, `PaymentMethod`) são leitura para usuários autenticados, mas escrita apenas para ADMIN.
+9. Catálogos auxiliares (`EntryType`, `ExpenseType`, `PaymentMethod`) retornam registros default e registros do usuário autenticado; usuários comuns podem criar e alterar apenas seus próprios registros não default.
 10. Listagens de `User`, `Wallet`, `Transaction`, `Entry` e `Expense` recebem uma restrição de `QueryBuilder` para retornar apenas registros do usuário comum autenticado.
 11. `/login` continua público para emitir token; `/logoff` permanece stateless e fora do CRUD genérico.
 

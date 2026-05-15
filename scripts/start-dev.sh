@@ -20,12 +20,13 @@ set_frontend_runtime_mode() {
 
 "$ROOT_DIR/scripts/setup-env.sh"
 set_frontend_runtime_mode "development"
+"$ROOT_DIR/scripts/provision-db-user.sh"
 
 cd "$ROOT_DIR"
-FRONTEND_RUNTIME_MODE=development docker compose up -d --build
-
 echo ""
-echo "Ambiente completo iniciado em modo desenvolvimento."
+echo "Ambiente completo iniciando em modo desenvolvimento."
 echo "O frontEnd/.env foi configurado com FRONTEND_RUNTIME_MODE=development."
 echo "Acesse: https://localhost"
-echo "Logs: docker compose logs -f"
+echo "Logs do Docker ficarão anexados neste terminal. Use Ctrl+C para parar."
+
+FRONTEND_RUNTIME_MODE=development docker compose up --build

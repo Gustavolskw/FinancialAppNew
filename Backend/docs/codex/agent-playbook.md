@@ -200,7 +200,7 @@ Security Bundle está instalado. O projeto já possui um controle de acesso inic
 - Rotas CRUD/status que passam pelo `ActionManager` são protegidas por `JwtAuthenticationHelperTrait`, exceto `POST /user`, que é público para cadastro normal sem `role` no payload. Antes do dispatch para as demais rotas, o manager valida `Authorization: Bearer <token>`, assinatura HS256 com `APP_SECRET`, issuer `AppFinancasNew`, campos obrigatórios e expiração.
 - Depois da autenticação, `RecordAuthorizationHelperTrait` aplica autorização por dono do registro: ADMIN pode tudo; usuário comum só pode operar o próprio `User`, a própria `Wallet` e registros financeiros ligados à própria carteira.
 - Criação normal de usuário não aceita `role` no payload e sempre usa o default `USER`; criação de administrador é exceção ao bypass geral de ADMIN e deve usar `POST /user/admin`.
-- Cadastros globais (`EntryType`, `ExpenseType`, `PaymentMethod`) são leitura para usuários autenticados, mas escrita apenas para ADMIN.
+- Catálogos auxiliares (`EntryType`, `ExpenseType`, `PaymentMethod`) combinam registros default e registros do usuário autenticado. Usuários comuns podem criar novos itens próprios, visualizar defaults e próprios, e editar/excluir apenas os próprios registros não default; ADMIN mantém acesso amplo.
 - Listagens de `User`, `Wallet`, `Transaction`, `Entry` e `Expense` devem receber restrição de `QueryBuilder` para não vazar registros de outro usuário.
 - `handleStatus()` também recebe `Request` para aplicar a mesma validação em rotas como `/user/{id}/status` e `/wallet/{id}/status`.
 

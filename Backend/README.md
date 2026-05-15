@@ -45,7 +45,9 @@ Ou, pela raiz do projeto:
 ./scripts/setup-env.sh
 ```
 
-No Docker, a `DATABASE_URL` é sobrescrita pelo `docker-compose.yml` com base na `.env` da raiz.
+O setup da raiz gera automaticamente `APP_SECRET` forte para assinatura/validação JWT e sincroniza `DATABASE_URL` com as credenciais de aplicação da raiz.
+
+No Docker, a `DATABASE_URL` é sobrescrita pelo `docker-compose.yml` com base na `.env` da raiz. O backend deve conectar com `POSTGRES_APP_USER`/`POSTGRES_APP_PASSWORD`; `POSTGRES_USER`/`POSTGRES_PASSWORD` ficam reservados para administração inicial do PostgreSQL.
 
 ## Comandos
 

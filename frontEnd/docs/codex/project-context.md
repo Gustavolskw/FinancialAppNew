@@ -152,10 +152,12 @@ A rota `/auxiliares` gerencia EntryType, ExpenseType e PaymentMethod. Ela deve:
 - carregar dados reais do backend e transações da carteira para calcular uso por item;
 - alternar entre tipos de entrada, métodos de pagamento e tipos de despesa por abas;
 - exibir gráficos de quantidade de transações e valores movimentados por item;
+- buscar todas as páginas dos catálogos auxiliares no backend para não limitar a tela aos 20 registros padrão;
+- oferecer filtro e paginação na grid de cada catálogo;
 - permitir criação e edição com `AuxiliaryItemModal` e `FieldsForm`;
 - usar as rotas atuais `POST`, `PATCH` e `DELETE` dos catálogos auxiliares.
 
-O backend atual não expõe campo/rota de status para EntryType, ExpenseType ou PaymentMethod. Enquanto esse contrato não existir, a ação da UI deve ser "Excluir" e usar o `DELETE` disponível. Essa exclusão deve ser renderizada somente para administradores, validando o papel atual por `GET /user/{id}` e usando o `role` retornado pelo backend, nao apenas o payload salvo em localStorage. Quando o item estiver vinculado e não puder ser removido, exiba o erro retornado pela API.
+O backend atual não expõe campo/rota de status para EntryType, ExpenseType ou PaymentMethod. Enquanto esse contrato não existir, a ação da UI deve ser "Excluir" e usar o `DELETE` disponível. Itens default (`isDefault`) só podem ser editados ou excluídos por administradores; antes de renderizar essas ações para defaults, busque o usuário autenticado em `GET /user/{id}` e valide `role === "Admin"` pelo payload retornado pelo backend, não apenas pelo localStorage. Itens próprios não default podem ser editados/excluídos pelo usuário dono. Quando o usuário não tiver permissão, a ação não deve aparecer na tela, sem botão desabilitado ou marcador textual; se nenhum registro da grid ativa tiver ação disponível, remova a coluna de ações inteira. Quando o item estiver vinculado e não puder ser removido, exiba o erro retornado pela API.
 
 ## Direção De Produto
 

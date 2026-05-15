@@ -20,15 +20,17 @@ set_frontend_runtime_mode() {
 
 "$ROOT_DIR/scripts/setup-env.sh"
 set_frontend_runtime_mode "production"
+"$ROOT_DIR/scripts/provision-db-user.sh"
 
 cd "$ROOT_DIR"
 FRONTEND_RUNTIME_MODE=production docker compose build frontend
 FRONTEND_RUNTIME_MODE=production docker compose run --rm --no-deps frontend npm run build
-FRONTEND_RUNTIME_MODE=production docker compose up -d --build
 
 echo ""
-echo "Ambiente completo iniciado em modo build."
+echo "Ambiente completo iniciando em modo build."
 echo "O frontEnd/.env foi configurado com FRONTEND_RUNTIME_MODE=production."
 echo "O React foi compilado antes de subir a stack completa."
 echo "Acesse: https://localhost"
-echo "Logs: docker compose logs -f"
+echo "Logs do Docker ficarão anexados neste terminal. Use Ctrl+C para parar."
+
+FRONTEND_RUNTIME_MODE=production docker compose up --build

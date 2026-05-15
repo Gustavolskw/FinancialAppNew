@@ -50,6 +50,7 @@ Quando a tarefa envolver integração com a API, leia também:
 - Desenvolvimento: `npm run dev`
 - Typecheck: `npm run typecheck`
 - Quality gate: `npm run quality`
+- Quality gate pela raiz: `./scripts/quality-frontend.sh`
 - Build: `npm run build`
 - Start de produção local: `npm run start`
 

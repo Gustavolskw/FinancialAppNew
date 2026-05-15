@@ -3,6 +3,7 @@
 namespace App\Infrastructure\DTO\EntityDto;
 
 use App\Entity\ExpenseType as ExpenseTypeEntity;
+use App\Entity\User as UserEntity;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttribute;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttributeInterface;
 use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
@@ -21,7 +22,9 @@ final class ExpenseType extends ConfigurableEntity
 
         return $fields
             ->setIdField("id")
-            ->setNameField("name", required: true);
+            ->setNameField("name", required: true)
+            ->setStatusField("isDefault", "isDefault")
+            ->setRelationalField("user", UserEntity::class, "getUser");
     }
 
     public function setFieldsFromEntityData(object $entity, bool $deepFetch = false): self
@@ -31,7 +34,9 @@ final class ExpenseType extends ConfigurableEntity
             self::ENTITYCLASS,
             $this->getFields(),
             $this->getEntityManager(),
-            null,
+            [
+                "user" => User::class,
+            ],
             $deepFetch
         );
 

@@ -1,10 +1,11 @@
-import { apiRequest } from "./client";
+import { apiRequest, type ApiResponse } from "./client";
 import { getAuthToken } from "../Auth/session";
 
 export type AuxiliaryCatalogType = "entryType" | "expenseType" | "paymentMethod";
 
 export type AuxiliaryCatalogItem = {
   id: number;
+  isDefault: boolean;
   name: string;
 };
 
@@ -18,7 +19,13 @@ type CatalogConfig = {
   singularKey: string;
 };
 
-type ApiListResponse = Record<string, unknown>;
+type ApiListResponse = Record<string, unknown> & {
+  pagination?: {
+    nextPage?: number | null;
+  };
+};
+
+const catalogPageSize = 100;
 
 const catalogConfigs: Record<AuxiliaryCatalogType, CatalogConfig> = {
   entryType: {
@@ -39,10 +46,34 @@ const catalogConfigs: Record<AuxiliaryCatalogType, CatalogConfig> = {
 };
 
 export async function listCatalogItems(type: AuxiliaryCatalogType): Promise<AuxiliaryCatalogItem[]> {
+  const items: AuxiliaryCatalogItem[] = [];
+  let page = 1;
+  let nextPage: number | null | undefined = page;
+
+  while (nextPage !== null && nextPage !== undefined) {
+    const response = await requestCatalogPage(type, page);
+    items.push(...catalogItemsFromResponse(type, response));
+    nextPage = response.data?.pagination?.nextPage;
+    page = nextPage ?? 0;
+  }
+
+  return items;
+}
+
+async function requestCatalogPage(type: AuxiliaryCatalogType, page: number): Promise<ApiResponse<ApiListResponse>> {
   const config = catalogConfigs[type];
-  const response = await apiRequest<ApiListResponse>(config.path, {
+  const searchParams = new URLSearchParams({
+    page: String(page),
+    perPage: String(catalogPageSize),
+  });
+
+  return apiRequest<ApiListResponse>(`${config.path}?${searchParams.toString()}`, {
     token: requireAuthToken(),
   });
+}
+
+function catalogItemsFromResponse(type: AuxiliaryCatalogType, response: ApiResponse<ApiListResponse>): AuxiliaryCatalogItem[] {
+  const config = catalogConfigs[type];
   const list = response.data?.[config.listKey];
 
   if (!Array.isArray(list)) {
@@ -52,10 +83,15 @@ export async function listCatalogItems(type: AuxiliaryCatalogType): Promise<Auxi
   return list
     .filter((item): item is Record<string, unknown> => typeof item === "object" && item !== null)
     .filter((item) => typeof item.id === "number")
-    .map((item) => ({
-      id: item.id as number,
-      name: typeof item.name === "string" ? item.name : `#${item.id}`,
-    }));
+    .map(normalizeCatalogItem);
+}
+
+function normalizeCatalogItem(item: Record<string, unknown>): AuxiliaryCatalogItem {
+  return {
+    id: item.id as number,
+    isDefault: item.isDefault === true,
+    name: typeof item.name === "string" ? item.name : `#${item.id}`,
+  };
 }
 
 export async function createCatalogItem(type: AuxiliaryCatalogType, payload: CatalogPayload): Promise<AuxiliaryCatalogItem | null> {
@@ -66,7 +102,9 @@ export async function createCatalogItem(type: AuxiliaryCatalogType, payload: Cat
     token: requireAuthToken(),
   });
 
-  return response.data?.[config.singularKey] ?? null;
+  const item = response.data?.[config.singularKey];
+
+  return isCatalogRecord(item) ? normalizeCatalogItem(item) : null;
 }
 
 export async function updateCatalogItem(
@@ -81,7 +119,9 @@ export async function updateCatalogItem(
     token: requireAuthToken(),
   });
 
-  return response.data?.[config.singularKey] ?? null;
+  const item = response.data?.[config.singularKey];
+
+  return isCatalogRecord(item) ? normalizeCatalogItem(item) : null;
 }
 
 export async function deleteCatalogItem(type: AuxiliaryCatalogType, id: number): Promise<void> {
@@ -101,4 +141,10 @@ function requireAuthToken(): string {
   }
 
   return token;
+}
+
+function isCatalogRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object"
+    && value !== null
+    && typeof (value as Record<string, unknown>).id === "number";
 }

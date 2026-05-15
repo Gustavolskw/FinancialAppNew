@@ -9,6 +9,7 @@ Para trabalhos iniciados na raiz, considere também:
 - `Backend`: API Symfony/PHP. Antes de alterar, leia `Backend/AGENTS.md` e `Backend/docs/codex/*.md`.
 - `frontEnd`: aplicação React Router/Vite. Antes de alterar, leia `frontEnd/AGENTS.md` e `frontEnd/docs/codex/*.md`.
 - `docker-compose.yml`: stack local com PostgreSQL e backend. Consulte `docs/codex/docker.md`.
+- `agents`: agentes especializados de raiz que compilam as instruções e Skills dos módulos principais.
 
 O backend mantém o padrão controller fino -> `ActionManager` -> `Action` -> EntityDTO configurável
 -> response builder. O frontend deve consumir essa API sem duplicar regra de negócio.
@@ -42,7 +43,21 @@ O repositório possui GitHub Actions separados por área alterada:
 - `.github/workflows/backend-quality.yml`: roda em `push` e `pull_request` quando houver alteração em `Backend/**`. O job instala dependências Composer e executa validação de metadados, `php -l`, PHPCS, PHPStan e PHPUnit.
 - `.github/workflows/frontend-quality.yml`: roda em `push` e `pull_request` quando houver alteração em `frontEnd/**`. O job instala dependências com `npm ci` e executa `npm run quality`, que roda typecheck, build e checagem de code smells.
 
+Os mesmos gates podem ser reproduzidos localmente pela raiz:
+
+- `./scripts/quality-backend.sh`: sobe `postgres-fin-new-app` e `backend` via Docker Compose e valida `composer.json`, sintaxe PHP, PHPCS, PHPStan e PHPUnit dentro do container `backend`.
+- `./scripts/quality-frontend.sh`: executa `npm run quality` no frontend.
+
 Os gates devem continuar separados por fronteira de módulo. Mudança exclusiva no frontend não deve disparar testes do backend, e mudança exclusiva no backend não deve disparar quality gate do frontend.
+
+## Banco De Dados Docker
+
+O PostgreSQL do Compose separa credenciais administrativas e credenciais da aplicação:
+
+- `POSTGRES_USER`/`POSTGRES_PASSWORD`: usuário admin de inicialização do container PostgreSQL.
+- `POSTGRES_APP_USER`/`POSTGRES_APP_PASSWORD`: usuário usado pelo backend no `DATABASE_URL`.
+
+`./scripts/setup-env.sh` gera segredos fortes para `POSTGRES_PASSWORD`, `POSTGRES_APP_PASSWORD` e `Backend/.env` `APP_SECRET`, além de sincronizar `Backend/.env` `DATABASE_URL` com o usuário de aplicação. `docker/postgres/init.sh` cria/atualiza o usuário de aplicação e concede ownership/privilégios no banco configurado. Como scripts em `/docker-entrypoint-initdb.d` só rodam automaticamente em volume vazio, `./scripts/provision-db-user.sh` reaplica esse provisionamento de forma idempotente para volumes existentes. Scripts de start, migrations e quality gate backend chamam esse provisionamento antes de usar o backend.
 
 ## Pastas
 
@@ -105,9 +120,9 @@ Entidades Doctrine:
 - `Transaction`: valor decimal, local, descrição, data, mês, ano e relações one-to-one com despesa ou entrada.
 - `Expense`: relaciona uma transação a tipo de despesa, método de pagamento e parcelas.
 - `Entry`: relaciona uma transação a tipo de entrada.
-- `ExpenseType`: catálogo de tipos de despesa.
-- `EntryType`: catálogo de tipos de entrada.
-- `PaymentMethod`: catálogo de métodos de pagamento.
+- `ExpenseType`: catálogo de tipos de despesa, com registros padrão (`isDefault`) e registros vinculados ao usuário criador.
+- `EntryType`: catálogo de tipos de entrada, com registros padrão (`isDefault`) e registros vinculados ao usuário criador.
+- `PaymentMethod`: catálogo de métodos de pagamento, com registros padrão (`isDefault`) e registros vinculados ao usuário criador.
 
 ### `src/Repository`
 
@@ -123,7 +138,7 @@ Camada central de configuração de entidade para API.
 - `MainConfigurableEntity`: adiciona `createdAt` e `updatedAt`.
 - `User`: define campos de saída/entrada, validação de senha, role via `RolesEnum`, relação com `Wallet`, termos de resposta `users`/`user` e `UserSpecificAction`.
 - `Wallet`: define campos de carteira e relação com usuário; a coleção inversa de transações não é exposta no EntityDTO enquanto não houver field/output próprio para coleções.
-- `EntryType`, `ExpenseType` e `PaymentMethod`: definem catálogos/tipos do domínio financeiro.
+- `EntryType`, `ExpenseType` e `PaymentMethod`: definem catálogos/tipos do domínio financeiro; usuários autenticados enxergam os defaults e seus próprios registros.
 - `Entry` e `Expense`: definem objetos específicos vinculados a transações e catálogos.
 - `Transaction`: define a transação geral, com valor, local, descrição, data, mês, ano, relação obrigatória com carteira e relações opcionais com despesa ou entrada.
 
@@ -334,7 +349,7 @@ Rotas protegidas por `ActionManager`:
 6. Depois da autenticação, o `ActionManager` chama `RecordAuthorizationHelperTrait::authorizeRecordAccess()` para bloquear acesso fora do dono do registro.
 7. ADMIN (`RolesEnum::ADM`) pode executar ações administrativas, mas criação de outro admin só é permitida pela rota especial `POST /user/admin`; criação normal de usuário não aceita `role` no payload e sempre cai no default `USER`.
 8. Usuário comum só pode operar o próprio `User`, a própria `Wallet` e `Transaction`/`Entry`/`Expense` ligadas à própria carteira.
-9. Cadastros globais (`EntryType`, `ExpenseType`, `PaymentMethod`) são leitura para usuários autenticados, mas escrita apenas para ADMIN.
+9. Catálogos auxiliares (`EntryType`, `ExpenseType`, `PaymentMethod`) retornam registros default e registros do usuário autenticado; usuários comuns podem criar e alterar apenas seus próprios registros não default.
 10. Listagens de `User`, `Wallet`, `Transaction`, `Entry` e `Expense` recebem uma restrição de `QueryBuilder` para retornar apenas registros do usuário comum autenticado.
 11. `/login` continua público para emitir token; `/logoff` permanece stateless e fora do CRUD genérico.
 

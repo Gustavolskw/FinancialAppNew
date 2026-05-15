@@ -83,8 +83,12 @@ Se a mudança envolver API, leia também `../Backend/AGENTS.md` e `../Backend/do
 - Ao paginar transações, a seleção geral da tabela deve selecionar apenas os itens da página atual; ações em massa devem usar o conjunto de ids selecionados.
 - Não crie chamada de status para Entry/Expense enquanto o backend não expuser esse contrato. A UI pode mostrar a opção como indisponível com feedback claro.
 - Para itens auxiliares (`EntryType`, `ExpenseType`, `PaymentMethod`), use cliente centralizado e componentes de `app/components/auxiliary`. A tela `/auxiliares` deve calcular uso a partir das transações reais e manter abas por catálogo.
+- As listagens de itens auxiliares devem buscar todas as páginas do backend, usando `page` e `perPage` dentro do limite aceito pela API, para não esconder itens criados após os registros default.
 - O contrato atual dos itens auxiliares expõe `GET`, `POST`, `PATCH` e `DELETE`, mas não expõe status. Não chame rota de status inexistente; a ação deve aparecer como `Excluir`, chamar o endpoint atual documentado e mostrar o erro retornado pela API quando a remoção não for aceita.
-- Exclusão de itens auxiliares é ação administrativa. Antes de renderizar essa ação, busque o usuário autenticado em `GET /user/{id}` e valide `role === "Admin"` a partir do payload retornado pelo backend, sem confiar somente no papel persistido no localStorage. Para usuários sem esse papel, o botão de exclusão não deve aparecer.
+- Itens auxiliares default (`isDefault`) são administrativos: edição e exclusão só devem aparecer para `role === "Admin"` validado por `GET /user/{id}`, sem confiar somente no papel persistido no localStorage. Usuários comuns podem editar/excluir seus próprios itens não default; para defaults, os botões não devem aparecer.
+- Quando o usuário não tiver permissão para executar uma ação, não renderize botão, item de menu ou placeholder textual como "Restrito". A UI deve simplesmente ocultar a ação e deixar o backend como barreira final de autorização.
+- Em grids, o cabeçalho/coluna de ações também deve ser condicional: se nenhum registro visível naquela grid tiver ação permitida para o usuário atual, remova a coluna inteira.
+- Grids de itens auxiliares devem ter filtro e paginação no frontend para controlar listas carregadas em múltiplas páginas da API.
 - Use `FieldsAttribute` e `FieldRenderer` quando a tela ou modal puder ser montado por metadados de campo.
 - Em formulários completos com Fields, prefira `FieldsForm` em vez de montar `<form>`, toast de erros e `FieldRenderer` manualmente.
 - Use `FieldsForm` para centralizar o frame do formulário, `noValidate`, toast/message bag, labels, placeholders, help texts, options e classes estruturais por campo.

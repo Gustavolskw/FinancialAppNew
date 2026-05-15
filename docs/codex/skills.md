@@ -6,6 +6,7 @@ Este projeto possui Skills versionadas em `skills/` para dar contexto operaciona
 
 | Skill | Quando usar | Diretório principal |
 | --- | --- | --- |
+| [appfinancasnew-project](../../skills/appfinancasnew-project/SKILL.md) | Trabalhar em qualquer parte do monorepo, especialmente setup, Docker, banco, quality gates, documentação ou mudanças que cruzem backend e frontend. | raiz do projeto |
 | [appfinancasnew-backend-fields](../../skills/appfinancasnew-backend-fields/SKILL.md) | Alterar ou criar fields, validações, enums, tipos de campo, relações ou output de atributos. | `src/Infrastructure/DTO/EntityAttributes` |
 | [appfinancasnew-backend-entity-dtos](../../skills/appfinancasnew-backend-entity-dtos/SKILL.md) | Criar ou alterar EntityDTOs configuráveis, `configureFields()`, `setFieldValues()`, `output()` e hidratação por entidade. | `src/Infrastructure/DTO/EntityDto` |
 | [appfinancasnew-backend-actions](../../skills/appfinancasnew-backend-actions/SKILL.md) | Alterar fluxo CRUD, `ActionManager`, `Action`, hooks `SpecificAction` ou ações primárias como login/logoff. | `src/Infrastructure/Handler/Action` |
@@ -19,8 +20,16 @@ Este projeto possui Skills versionadas em `skills/` para dar contexto operaciona
 2. Leia `.codex`.
 3. Leia `docs/codex/project-context.md`, `docs/codex/agent-playbook.md`, `docs/codex/docker.md`, este arquivo e `docs/codex/review-notes.md`.
 4. Identifique os diretórios que a tarefa toca.
-5. Leia as Skills correspondentes em `skills/`.
-6. Só então edite código ou documentação.
+5. Para tarefa focada em módulo, leia o agente raiz correspondente em `agents/`.
+6. Leia as Skills correspondentes em `skills/`.
+7. Só então edite código ou documentação.
+
+## Agentes Especializados De Raiz
+
+| Agente | Quando usar | Diretório principal |
+| --- | --- | --- |
+| [AppFinancas Backend Agent](../../agents/appfinancas-backend.md) | Tarefas na API Symfony/PHP, incluindo CRUD, Actions, EntityDTOs, Fields, helpers, Doctrine, migrations e quality gate backend. | `Backend` |
+| [AppFinancas Frontend Agent](../../agents/appfinancas-frontend.md) | Tarefas na aplicação React Router/Tailwind, incluindo rotas, componentes, Fields, API client, dashboards, grids, auth client e quality gate frontend. | `frontEnd` |
 
 ## Como Manter As Skills
 

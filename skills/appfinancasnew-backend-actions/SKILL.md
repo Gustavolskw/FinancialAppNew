@@ -58,7 +58,7 @@ Do not duplicate this dispatch in individual controllers.
 - ADMIN (`RolesEnum::ADM`) can operate all records.
 - Normal user creation must not accept `role` in the payload and must default to `USER`; creating another admin is only allowed through the dedicated `POST /user/admin` route and must be blocked before the admin bypass on normal create paths.
 - A normal user can operate only their own `User`, their own `Wallet`, and `Transaction`/`Entry`/`Expense` records linked to their wallet.
-- `EntryType`, `ExpenseType`, and `PaymentMethod` are global catalogs: authenticated users can read them, but only ADMIN can create, edit, delete, or change them.
+- `EntryType`, `ExpenseType`, and `PaymentMethod` are auxiliary catalogs with default rows plus user-owned rows: authenticated users can read defaults and their own rows, create new user-owned rows, and edit/delete only their own non-default rows. ADMIN keeps broad access.
 - Non-admin users cannot change `User.role`, even on their own user.
 - List queries for owner-scoped entities must be restricted before `Action::listView()` executes the Doctrine query.
 - Pagination totals must come from the filtered/restricted query, not from the global repository count.

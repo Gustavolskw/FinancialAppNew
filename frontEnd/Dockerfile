@@ -8,7 +8,7 @@ FROM development-dependencies-env AS development-env
 ENV FRONTEND_RUNTIME_MODE=development
 ENV PORT=5173
 EXPOSE 5173
-CMD ["/app/docker-entrypoint.sh"]
+CMD ["sh", "/app/docker-entrypoint.sh"]
 
 FROM node:20-alpine AS production-dependencies-env
 COPY ./package.json package-lock.json /app/
@@ -32,4 +32,4 @@ ENV FRONTEND_RUNTIME_MODE=production
 ENV NODE_ENV=production
 ENV PORT=5173
 EXPOSE 5173
-CMD ["/app/docker-entrypoint.sh"]
+CMD ["sh", "/app/docker-entrypoint.sh"]

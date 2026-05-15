@@ -72,6 +72,10 @@ function apiErrorMessage(error: unknown, fallback: string): string {
   return fallback;
 }
 
+function canManageCatalogItem(item: AuxiliaryCatalogItem, isAdmin: boolean): boolean {
+  return isAdmin || !item.isDefault;
+}
+
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Itens auxiliares | AppFinanças" },
@@ -177,13 +181,19 @@ export default function AuxiliaryItems() {
   }
 
   function openEditModal(item: AuxiliaryCatalogItem) {
+    if (!canManageCatalogItem(item, isAdmin)) {
+      setActionMessageType("error");
+      setActionMessage("Somente administradores podem editar itens auxiliares padrão.");
+      return;
+    }
+
     setModalState({ item, type: activeType });
   }
 
   async function deleteItem(item: AuxiliaryCatalogItem) {
-    if (!isAdmin) {
+    if (!canManageCatalogItem(item, isAdmin)) {
       setActionMessageType("error");
-      setActionMessage("Somente usuários administradores podem excluir itens auxiliares.");
+      setActionMessage("Somente administradores podem excluir itens auxiliares padrão.");
       return;
     }
 
@@ -257,7 +267,8 @@ export default function AuxiliaryItems() {
 
           <AuxiliaryItemsGrid
             activeType={activeType}
-            canDelete={isAdmin}
+            canDeleteItem={(item) => canManageCatalogItem(item, isAdmin)}
+            canEditItem={(item) => canManageCatalogItem(item, isAdmin)}
             emptyLabel={emptyGridLabel}
             isMutating={isMutating}
             items={activeItems}

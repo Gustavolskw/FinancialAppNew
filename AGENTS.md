@@ -16,6 +16,11 @@ Antes de alterar codigo ou documentacao, leia tambem:
 - [docs/codex/skills.md](docs/codex/skills.md)
 - [docs/codex/review-notes.md](docs/codex/review-notes.md)
 
+Agentes especializados de raiz:
+
+- [agents/appfinancas-backend.md](agents/appfinancas-backend.md): compilacao das regras, docs e Skills do backend para tarefas na API Symfony/PHP.
+- [agents/appfinancas-frontend.md](agents/appfinancas-frontend.md): compilacao das regras, docs e Skills do frontend para tarefas React Router/Tailwind.
+
 Quando a tarefa tocar o backend, leia tambem:
 
 - [Backend/AGENTS.md](Backend/AGENTS.md)
@@ -40,6 +45,7 @@ Quando a tarefa tocar o frontend, leia tambem:
 - Nao duplique logica de dominio no frontend; regras de negocio continuam no backend.
 - Nao altere `node_modules/`, `vendor/`, `var/`, `.idea/`, caches ou arquivos gerados sem pedido explicito.
 - Antes de mexer em modulos cobertos por Skill local, leia a Skill correspondente listada em `docs/codex/skills.md`.
+- Para tarefas focadas em um modulo, use tambem o agente especializado da raiz em `agents/` antes de editar.
 - Para mudancas de backend, siga o fluxo atual: controller fino -> `ActionManager` -> `Action` -> EntityDTO configuravel -> response builder.
 - Para mudancas de frontend, siga React Router 7, TypeScript, rotas em `app/routes.ts`, componentes em `app/` e estilos globais em `app/app.css` ate surgir uma convencao mais especifica.
 - Para mudancas Docker, mantenha o Compose como orquestrador local e documente portas, variaveis e dependencias entre servicos.
@@ -49,8 +55,12 @@ Quando a tarefa tocar o frontend, leia tambem:
 - Subir a stack atual: `docker compose up --build`
 - Subir em segundo plano: `docker compose up -d --build`
 - Setup global de envs: `./scripts/setup-env.sh`
+- Provisionar usuário de aplicação do banco: `./scripts/provision-db-user.sh`
 - Subir stack completa em dev: `./scripts/start-dev.sh`
 - Subir stack completa em modo build, com frontend compilado: `./scripts/start-build.sh`
+- Menu interativo de migrations do backend: `./scripts/migrations.sh`
+- Quality gate completo do backend: `./scripts/quality-backend.sh`
+- Quality gate completo do frontend: `./scripts/quality-frontend.sh`
 - Preparar variáveis Docker: `cp .env.example .env`
 - Parar containers: `docker compose down`
 - Ver logs do backend: `docker compose logs -f backend`

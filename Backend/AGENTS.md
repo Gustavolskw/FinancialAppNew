@@ -74,9 +74,11 @@ Formato geral de resposta:
 - Validar schema Doctrine: `php bin/console doctrine:schema:validate`
 - Gerar migration: `php bin/console make:migration`
 - Executar migrations: `php bin/console doctrine:migrations:migrate`
+- Provisionar usuário de aplicação do banco pela raiz: `./scripts/provision-db-user.sh`
 - Rodar PHPCS: `phpcs --standard=phpcs.xml.dist`
 - Rodar PHPStan: `phpstan analyse --configuration=phpstan.neon.dist --no-progress`
 - Rodar testes unitários: `composer test`
+- Rodar quality gate do backend pela raiz, dentro do container Docker `backend`: `./scripts/quality-backend.sh`
 
 O repositório possui uma suíte PHPUnit inicial em `tests/Unit`, configurada por `phpunit.xml.dist`.
 

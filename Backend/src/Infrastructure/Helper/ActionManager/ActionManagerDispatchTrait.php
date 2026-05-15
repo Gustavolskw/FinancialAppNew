@@ -39,6 +39,7 @@ trait ActionManagerDispatchTrait
         }
 
         $baseEntityClass->setFieldValues($formDto);
+        $this->applyAuthenticatedCatalogDefaults($baseEntityClass);
 
         return $action->save();
     }
@@ -56,6 +57,8 @@ trait ActionManagerDispatchTrait
         $baseEntityClass->setFieldValues($formDto);
 
         if ($id === null) {
+            $this->applyAuthenticatedCatalogDefaults($baseEntityClass);
+
             return $action->save();
         }
 

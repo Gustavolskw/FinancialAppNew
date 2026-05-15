@@ -18,6 +18,13 @@ class EntryType
     #[ORM\Column(length: 50)]
     private ?string $name = null;
 
+    #[ORM\Column(options: ['default' => false])]
+    private ?bool $isDefault = false;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?User $user = null;
+
     /**
      * @var Collection<int, Entry>
      */
@@ -49,6 +56,30 @@ class EntryType
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function isDefault(): ?bool
+    {
+        return $this->isDefault;
+    }
+
+    public function setIsDefault(bool $isDefault): static
+    {
+        $this->isDefault = $isDefault;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

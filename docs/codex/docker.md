@@ -12,9 +12,11 @@ Este arquivo documenta a infraestrutura Docker da raiz do AppFinancasNew.
 - `nginx`: proxy reverso público para frontend e backend, com HTTP/HTTPS.
 - `.env`: arquivo local da raiz usado pelo Docker Compose para parametrizar banco e variáveis do backend em container.
 - `.env.example`: modelo versionável das variáveis esperadas pelo Docker Compose.
-- `scripts/setup-env.sh`: cria `.env` da raiz, backend e frontend a partir dos exemplos sem sobrescrever arquivos existentes.
-- `scripts/start-dev.sh`: prepara envs, configura `frontEnd/.env` com `FRONTEND_RUNTIME_MODE=development` e sobe a stack completa com frontend em modo desenvolvimento.
-- `scripts/start-build.sh`: prepara envs, configura `frontEnd/.env` com `FRONTEND_RUNTIME_MODE=production`, compila o React no container do frontend e sobe a stack completa com frontend em modo produção.
+- `scripts/setup-env.sh`: cria `.env` da raiz, backend e frontend a partir dos exemplos, gera segredos fortes para senhas/JWT e sincroniza chaves novas sem sobrescrever valores fortes existentes.
+- `scripts/provision-db-user.sh`: sobe o PostgreSQL e executa o provisionamento idempotente do banco, criando o usuário de aplicação usado pelo backend.
+- `scripts/start-dev.sh`: prepara envs, configura `frontEnd/.env` com `FRONTEND_RUNTIME_MODE=development` e sobe a stack completa com frontend em modo desenvolvimento, mantendo os logs anexados ao terminal.
+- `scripts/start-build.sh`: prepara envs, configura `frontEnd/.env` com `FRONTEND_RUNTIME_MODE=production`, compila o React no container do frontend e sobe a stack completa com frontend em modo produção, mantendo os logs anexados ao terminal.
+- `scripts/migrations.sh`: sobe PostgreSQL e backend, abre um menu interativo e executa comandos Doctrine dentro do container `backend`.
 - `postgres-fin-new-app-volume`: volume persistente do banco.
 - `frontend-node-modules`: volume persistente para dependências Node dentro do container.
 - `nginx-certs`: volume persistente para certificados TLS do NGINX.
@@ -41,10 +43,24 @@ Variáveis lidas da raiz `.env`:
 - `POSTGRES_DB`
 - `POSTGRES_USER`
 - `POSTGRES_PASSWORD`
+- `POSTGRES_APP_USER`
+- `POSTGRES_APP_PASSWORD`
 - `POSTGRES_SERVER_VERSION`
 - `POSTGRES_CHARSET`
 
-Scripts em `/docker-entrypoint-initdb.d` rodam apenas quando o volume do banco está vazio. O `init.sh` usa `POSTGRES_DB`; não deixe nome de banco hardcoded nesse script.
+`POSTGRES_USER` e `POSTGRES_PASSWORD` são credenciais administrativas usadas pelo container oficial do PostgreSQL para inicialização. O backend não deve usar esse usuário para conectar.
+
+`POSTGRES_APP_USER` e `POSTGRES_APP_PASSWORD` definem o usuário de aplicação. O script `docker/postgres/init.sh` cria/atualiza esse usuário, garante o banco `POSTGRES_DB`, transfere ownership do banco/schema público e concede privilégios necessários para a aplicação e migrations Doctrine.
+
+`./scripts/setup-env.sh` gera automaticamente `POSTGRES_PASSWORD` e `POSTGRES_APP_PASSWORD` quando os valores estão vazios, fracos ou com placeholders conhecidos. O segredo `APP_SECRET` do backend também é gerado automaticamente e usado para assinatura/validação JWT.
+
+Scripts em `/docker-entrypoint-initdb.d` rodam automaticamente apenas quando o volume do banco está vazio. Para volumes já existentes, use:
+
+```bash
+./scripts/provision-db-user.sh
+```
+
+Os scripts `start-dev.sh`, `start-build.sh`, `migrations.sh` e `quality-backend.sh` já chamam esse provisionamento antes de usar o backend.
 
 ## Backend
 
@@ -66,7 +82,7 @@ Variáveis definidas no Compose:
 - `DB_HOST=${POSTGRES_HOST}`
 - `DB_PORT=${POSTGRES_CONTAINER_PORT}`
 - `DB_NAME=${POSTGRES_DB}`
-- `DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_CONTAINER_PORT}/${POSTGRES_DB}?serverVersion=${POSTGRES_SERVER_VERSION}&charset=${POSTGRES_CHARSET}`
+- `DATABASE_URL=postgresql://${POSTGRES_APP_USER}:${POSTGRES_APP_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_CONTAINER_PORT}/${POSTGRES_DB}?serverVersion=${POSTGRES_SERVER_VERSION}&charset=${POSTGRES_CHARSET}`
 - `XDEBUG_MODE=${XDEBUG_MODE}`
 - `XDEBUG_CONFIG=${XDEBUG_CONFIG}`
 
@@ -78,7 +94,7 @@ Antes de subir a stack em uma máquina nova:
 ./scripts/setup-env.sh
 ```
 
-Depois ajuste usuário, senha, nome do banco e portas conforme o ambiente. Não versione o `.env` real.
+Depois ajuste usuário, nome do banco e portas conforme o ambiente, se necessário. Evite trocar manualmente as senhas geradas sem reprovisionar o banco. Não versione o `.env` real.
 
 ## Frontend
 
@@ -145,7 +161,7 @@ Esse script executa o fluxo completo de build:
 2. altera `frontEnd/.env` para `FRONTEND_RUNTIME_MODE=production`;
 3. executa `FRONTEND_RUNTIME_MODE=production docker compose build frontend`;
 4. executa `FRONTEND_RUNTIME_MODE=production docker compose run --rm --no-deps frontend npm run build`;
-5. sobe todos os serviços com `FRONTEND_RUNTIME_MODE=production docker compose up -d --build`.
+5. sobe todos os serviços com `FRONTEND_RUNTIME_MODE=production docker compose up --build`, sem `-d`, mantendo os logs no terminal.
 
 O fluxo local fora do Docker continua disponível:
 
@@ -228,6 +244,8 @@ Subir a stack em desenvolvimento:
 ./scripts/start-dev.sh
 ```
 
+Esse comando roda `docker compose up --build` sem `-d`, então os logs ficam no terminal atual. Use `Ctrl+C` para parar os containers iniciados por esse processo.
+
 Subir a stack com frontend compilado:
 
 ```bash
@@ -235,6 +253,7 @@ Subir a stack com frontend compilado:
 ```
 
 Esse comando compila o frontend antes de publicar a stack. Use esse caminho quando for validar um comportamento próximo de produção ou preparar o ambiente para exposição externa.
+Assim como o modo dev, ele não usa `-d`; os logs ficam no terminal atual e `Ctrl+C` para os containers iniciados por esse processo.
 
 Ver logs:
 
@@ -258,3 +277,21 @@ docker compose down -v
 ```
 
 Use `down -v` somente quando a perda dos dados locais for aceitável.
+
+## Migrations
+
+Abrir o menu interativo:
+
+```bash
+./scripts/migrations.sh
+```
+
+Opções disponíveis:
+
+- somente rodar novos scripts: executa `doctrine:migrations:migrate --no-interaction`;
+- rodar todos novamente: executa rollback para versão `0` e depois roda as migrations novamente;
+- resetar base: dropa a base configurada, recria e executa todas as migrations;
+- excluir base: dropa a base configurada;
+- criar migration nova: executa `make:migration`.
+
+As opções destrutivas exigem confirmação digitando `CONFIRMAR`.
