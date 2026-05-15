@@ -21,10 +21,14 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class EntryController extends AbstractController
 {
+    public function __construct(private readonly ActionManager $actionManager)
+    {
+    }
+
     #[Route('/entry', name: 'entryList', methods: ['GET'], format: 'json')]
     public function list(Request $request, #[MapQueryString] EntryQueryParamsDto $queryDto, EntityManagerInterface $entityManager): JsonResponse
     {
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(Entry::build($entityManager), $request, QueryParams::fromArray($queryDto->toArray()))
             ->output();
     }
@@ -35,7 +39,7 @@ final class EntryController extends AbstractController
         $queryParams = $request->query->all();
         $queryParams['walletId'] = $walletId;
 
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(Entry::build($entityManager), $request, QueryParams::fromArray($queryParams))
             ->output();
     }
@@ -43,7 +47,7 @@ final class EntryController extends AbstractController
     #[Route('/entry/{id}', name: 'entryView', requirements: ['id' => '\d+'], methods: ['GET'], format: 'json')]
     public function view(int $id, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(Entry::build($entityManager), $request, id: $id)
             ->output();
     }
@@ -51,7 +55,7 @@ final class EntryController extends AbstractController
     #[Route('/entry', name: 'entryPost', methods: ['POST'], format: 'json')]
     public function post(Request $request, #[MapRequestPayload] EntryPostFormDto $formDto, EntityManagerInterface $entityManager): JsonResponse
     {
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(Entry::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
@@ -59,7 +63,7 @@ final class EntryController extends AbstractController
     #[Route('/entry', name: 'entryInsertEdit', methods: ['PUT'], format: 'json')]
     public function insertEdit(Request $request, #[MapRequestPayload] EntryInsertEditFormDto $formDto, EntityManagerInterface $entityManager): JsonResponse
     {
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(Entry::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
@@ -67,7 +71,7 @@ final class EntryController extends AbstractController
     #[Route('/entry', name: 'entryEdit', methods: ['PATCH'], format: 'json')]
     public function edit(Request $request, #[MapRequestPayload] EntryEditFormDto $formDto, EntityManagerInterface $entityManager): JsonResponse
     {
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(Entry::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
@@ -75,7 +79,7 @@ final class EntryController extends AbstractController
     #[Route('/entry/{id}', name: 'entryDelete', requirements: ['id' => '\d+'], methods: ['DELETE'], format: 'json')]
     public function delete(int $id, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(Entry::build($entityManager), $request, id: $id)
             ->output();
     }

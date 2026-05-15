@@ -33,6 +33,7 @@ The normal HTTP flow is:
 5. `Action` validates fields, runs hooks, applies values to the Doctrine entity, persists/flushes, and builds a standardized response.
 
 Controllers must stay thin. Do not put database or business flow logic in controllers.
+Controllers that use generic CRUD should receive `ActionManager` from the Symfony container, not instantiate it manually, because cross-cutting services such as request cache are injected there.
 
 ## ActionManager Rules
 
@@ -48,6 +49,8 @@ Controllers must stay thin. Do not put database or business flow logic in contro
 - `PUT` or `PATCH` without `id` currently falls back to `save()`.
 - `DELETE` requires an id and calls `delete($id)`.
 - status changes should use `handleStatus()` with `Request` and `StatusFormDto` so authentication is validated there too.
+- cacheable `GET` requests are resolved through `RequestCacheHandler` after authentication and authorization.
+- successful mutations for cacheable entities invalidate the request-cache tag so the next `GET` recomputes data.
 
 Do not duplicate this dispatch in individual controllers.
 
@@ -151,6 +154,18 @@ AccessControlAction::build($baseEntityClass)
 ```
 
 Keep authentication logic out of controllers and return standardized responses.
+
+## Request Cache
+
+Use `RequestCacheHandler` for generic request caching:
+
+- cache only `GET` requests for `Wallet`, `User`, `EntryType`, `ExpenseType`, and `PaymentMethod`;
+- never cache `Entry` and `Expense`;
+- keep cache lookup after JWT authentication and record authorization;
+- include entity, route, path, query params, id, user id, and user role in the cache key;
+- invalidate cache after 2xx `POST`, `PUT`, `PATCH`, `DELETE`, or status changes for cacheable entities.
+
+Keep cache logic out of controllers and entity-specific hooks.
 
 ## Persistence And Relations
 

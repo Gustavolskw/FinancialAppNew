@@ -40,6 +40,7 @@ Use helpers to keep controllers, actions, and EntityDTOs focused:
 - `Auth/RecordAuthorizationHelperTrait` centralizes owner/ADMIN authorization for records handled by `ActionManager`.
 - `ActionHelperTrait` contains the non-interface helper methods used by `Action.php`.
 - `ActionManager/*Trait.php` contains dispatch, request/payload, and response helpers used by `ActionManager.php`.
+- `Handler/Cache/RequestCacheHandler` is the generic request-cache service consumed by `ActionManager`.
 
 Do not move business rules into helpers unless they are truly reusable and not tied to a single entity lifecycle.
 
@@ -127,6 +128,19 @@ Use:
 
 The builders expect configurable EntityDTOs, not Doctrine entities.
 `JsonResponseHandler::output()` must keep the JSON body and the HTTP status aligned by using the serialized `statusCode`.
+
+## Request Cache Handler
+
+`RequestCacheHandler` wraps Symfony application cache for GET responses.
+
+Rules:
+
+- use the `app.request_cache` pool configured in `config/packages/cache.yaml`;
+- use tags and invalidate the general tag after successful mutations;
+- cache only entities with relatively stable reads: `Wallet`, `User`, `EntryType`, `ExpenseType`, and `PaymentMethod`;
+- do not cache `Entry` and `Expense`;
+- store serialized response payloads, not Doctrine entities;
+- include authenticated user id and role in keys because list restrictions differ by user.
 
 ## PasswordHashHelperTrait
 

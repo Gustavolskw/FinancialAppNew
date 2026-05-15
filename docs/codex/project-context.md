@@ -194,6 +194,7 @@ Orquestra CRUD.
 - `Action`: implementa `listView`, `view`, `save`, `edit`, `delete`, `status`.
 - `PrimaryAction/AccessControlAction`: implementa ações primárias de autenticação (`login` e `logoff`) fora do CRUD genérico.
 - `Specific`: hooks específicos por entidade antes/depois de salvar, atualizar, deletar ou trocar status.
+- `RequestCacheHandler`: integra cache de aplicação do Symfony no fluxo do `ActionManager` para GETs de `Wallet`, `User`, `EntryType`, `ExpenseType` e `PaymentMethod`; `Entry` e `Expense` ficam sem cache.
 
 Estado atual:
 
@@ -265,6 +266,11 @@ Helpers para consulta, output e resposta:
 - `Auth/JwtAuthenticationHelperTrait`: valida o header `Authorization: Bearer <token>` emitido por `/login`, confirmando assinatura HS256 com `APP_SECRET`, issuer, payload obrigatório e expiração.
 - `Auth/RecordAuthorizationHelperTrait`: valida se o usuário autenticado pode acessar, criar, alterar, excluir ou mudar status do registro; ADMIN pode tudo, usuário comum fica restrito ao próprio usuário, à própria carteira e aos registros financeiros vinculados à carteira.
 - `ActionManager/*Trait.php`: mantém fora do `ActionManager.php` os helpers privados de dispatch HTTP, leitura de payload/id e criação de resposta padronizada.
+- `ActionManagerDispatchTrait`: centraliza leitura cacheada de GET e invalidação de cache após mutações 2xx em entidades cacheáveis.
+
+### `src/Infrastructure/Handler/Cache`
+
+O backend usa `app.request_cache`, configurado em `config/packages/cache.yaml`, como pool de aplicação com tags. GETs cacheáveis são chaveados por entidade, rota, path, query params, id, usuário autenticado e role. Mutação bem-sucedida em entidade cacheável invalida a tag geral para que o próximo GET recomponha os dados.
 
 ### `config`
 

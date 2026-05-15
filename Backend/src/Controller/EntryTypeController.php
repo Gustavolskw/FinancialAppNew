@@ -21,10 +21,14 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class EntryTypeController extends AbstractController
 {
+    public function __construct(private readonly ActionManager $actionManager)
+    {
+    }
+
     #[Route('/entry-type', name: 'entryTypeList', methods: ['GET'], format: 'json')]
     public function list(Request $request, #[MapQueryString] EntityQueryParamsDto $queryDto, EntityManagerInterface $entityManager): JsonResponse
     {
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(EntryType::build($entityManager), $request, QueryParams::fromArray($queryDto->toArray()))
             ->output();
     }
@@ -32,7 +36,7 @@ final class EntryTypeController extends AbstractController
     #[Route('/entry-type/{id}', name: 'entryTypeView', requirements: ['id' => '\d+'], methods: ['GET'], format: 'json')]
     public function view(int $id, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(EntryType::build($entityManager), $request, id: $id)
             ->output();
     }
@@ -40,7 +44,7 @@ final class EntryTypeController extends AbstractController
     #[Route('/entry-type', name: 'entryTypePost', methods: ['POST'], format: 'json')]
     public function post(Request $request, #[MapRequestPayload] EntryTypePostFormDto $formDto, EntityManagerInterface $entityManager): JsonResponse
     {
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(EntryType::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
@@ -48,7 +52,7 @@ final class EntryTypeController extends AbstractController
     #[Route('/entry-type', name: 'entryTypeInsertEdit', methods: ['PUT'], format: 'json')]
     public function insertEdit(Request $request, #[MapRequestPayload] EntryTypeInsertEditFormDto $formDto, EntityManagerInterface $entityManager): JsonResponse
     {
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(EntryType::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
@@ -56,7 +60,7 @@ final class EntryTypeController extends AbstractController
     #[Route('/entry-type', name: 'entryTypeEdit', methods: ['PATCH'], format: 'json')]
     public function edit(Request $request, #[MapRequestPayload] EntryTypeEditFormDto $formDto, EntityManagerInterface $entityManager): JsonResponse
     {
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(EntryType::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
@@ -64,7 +68,7 @@ final class EntryTypeController extends AbstractController
     #[Route('/entry-type/{id}', name: 'entryTypeDelete', requirements: ['id' => '\d+'], methods: ['DELETE'], format: 'json')]
     public function delete(int $id, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(EntryType::build($entityManager), $request, id: $id)
             ->output();
     }

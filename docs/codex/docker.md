@@ -14,7 +14,7 @@ Este arquivo documenta a infraestrutura Docker da raiz do AppFinancasNew.
 - `.env.example`: modelo versionável das variáveis esperadas pelo Docker Compose.
 - `scripts/setup-env.sh`: cria `.env` da raiz, backend e frontend a partir dos exemplos, gera segredos fortes para senhas/JWT e sincroniza chaves novas sem sobrescrever valores fortes existentes.
 - `scripts/provision-db-user.sh`: sobe o PostgreSQL e executa o provisionamento idempotente do banco, criando o usuário de aplicação usado pelo backend.
-- `scripts/start-dev.sh`: prepara envs, configura `frontEnd/.env` com `FRONTEND_RUNTIME_MODE=development` e sobe a stack completa com frontend em modo desenvolvimento, mantendo os logs anexados ao terminal.
+- `scripts/start-dev.sh`: prepara envs, configura `frontEnd/.env` com `FRONTEND_RUNTIME_MODE=development` e sobe a stack completa com frontend em modo desenvolvimento, sem rebuild automático e mantendo os logs anexados ao terminal.
 - `scripts/start-build.sh`: prepara envs, configura `frontEnd/.env` com `FRONTEND_RUNTIME_MODE=production`, compila o React no container do frontend e sobe a stack completa com frontend em modo produção, mantendo os logs anexados ao terminal.
 - `scripts/migrations.sh`: sobe PostgreSQL e backend, abre um menu interativo e executa comandos Doctrine dentro do container `backend`.
 - `postgres-fin-new-app-volume`: volume persistente do banco.
@@ -244,7 +244,7 @@ Subir a stack em desenvolvimento:
 ./scripts/start-dev.sh
 ```
 
-Esse comando roda `docker compose up --build` sem `-d`, então os logs ficam no terminal atual. Use `Ctrl+C` para parar os containers iniciados por esse processo.
+Esse comando roda `docker compose up` sem `--build` e sem `-d`, então reaproveita as imagens já construídas e mantém os logs no terminal atual. Use `Ctrl+C` para parar os containers iniciados por esse processo.
 
 Subir a stack com frontend compilado:
 

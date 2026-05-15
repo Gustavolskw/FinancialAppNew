@@ -29,4 +29,4 @@ echo "O frontEnd/.env foi configurado com FRONTEND_RUNTIME_MODE=development."
 echo "Acesse: https://localhost"
 echo "Logs do Docker ficarão anexados neste terminal. Use Ctrl+C para parar."
 
-FRONTEND_RUNTIME_MODE=development docker compose up --build
+FRONTEND_RUNTIME_MODE=development docker compose up

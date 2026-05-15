@@ -22,13 +22,17 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class WalletController extends AbstractController
 {
+    public function __construct(private readonly ActionManager $actionManager)
+    {
+    }
+
     #[Route('/wallet', name: 'walletList', methods: ['GET'], format: 'json')]
     public function list(
         Request $request,
         #[MapQueryString] PaginatorQueryParamsDto $queryDto,
         EntityManagerInterface $entityManager
     ): JsonResponse {
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(Wallet::build($entityManager), $request, QueryParams::fromArray($queryDto->toArray()))
             ->output();
     }
@@ -39,7 +43,7 @@ final class WalletController extends AbstractController
         $queryParams = $request->query->all();
         $queryParams['userId'] = $userId;
 
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(Wallet::build($entityManager), $request, QueryParams::fromArray($queryParams))
             ->output();
     }
@@ -47,7 +51,7 @@ final class WalletController extends AbstractController
     #[Route('/wallet/{id}', name: 'walletView', requirements: ['id' => '\d+'], methods: ['GET'], format: 'json')]
     public function view(int $id, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(Wallet::build($entityManager), $request, id: $id)
             ->output();
     }
@@ -58,7 +62,7 @@ final class WalletController extends AbstractController
         #[MapRequestPayload] WalletPostFormDto $formDto,
         EntityManagerInterface $entityManager
     ): JsonResponse {
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(Wallet::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
@@ -69,7 +73,7 @@ final class WalletController extends AbstractController
         #[MapRequestPayload] WalletInsertEditFormDto $formDto,
         EntityManagerInterface $entityManager
     ): JsonResponse {
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(Wallet::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
@@ -80,7 +84,7 @@ final class WalletController extends AbstractController
         #[MapRequestPayload] WalletEditFormDto $formDto,
         EntityManagerInterface $entityManager
     ): JsonResponse {
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(Wallet::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
@@ -92,7 +96,7 @@ final class WalletController extends AbstractController
         #[MapRequestPayload] StatusFormDto $formDto,
         EntityManagerInterface $entityManager
     ): JsonResponse {
-        return (new ActionManager())
+        return $this->actionManager
             ->handleStatus(Wallet::build($entityManager), $request, $id, $formDto)
             ->output();
     }

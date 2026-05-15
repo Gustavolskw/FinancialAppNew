@@ -8,6 +8,7 @@ use App\Infrastructure\DTO\Forms\StatusFormDto;
 use App\Infrastructure\DTO\Params\Interface\QueryParamsInterface;
 use App\Infrastructure\Handler\Action\Action;
 use App\Infrastructure\Handler\Action\Manager\interface\ActionManagerInterface;
+use App\Infrastructure\Handler\Cache\RequestCacheHandlerInterface;
 use App\Infrastructure\Handler\Response\JsonResponseHandlerInterface;
 use App\Infrastructure\Helper\ActionManager\ActionManagerDispatchTrait;
 use App\Infrastructure\Helper\ActionManager\ActionManagerRequestTrait;
@@ -24,6 +25,10 @@ final class ActionManager implements ActionManagerInterface
     use ActionManagerRequestTrait;
     use ActionManagerResponseTrait;
 
+    public function __construct(private readonly ?RequestCacheHandlerInterface $requestCacheHandler = null)
+    {
+    }
+
     public function handle(
         BaseEntityClassInterface $baseEntityClass,
         Request $request,
@@ -31,6 +36,8 @@ final class ActionManager implements ActionManagerInterface
         ?FormDtoInterface $formDto = null,
         ?int $id = null
     ): JsonResponseHandlerInterface {
+        $this->resetRecordAuthorizationState();
+
         if ($this->isPublicUserCreate($baseEntityClass, $request, $id)) {
             if ($this->actionManagerRequestPayloadHas($request, 'role')) {
                 return $this->response('Perfil de acesso não pode ser enviado na criação normal de usuário', 403);
@@ -54,11 +61,11 @@ final class ActionManager implements ActionManagerInterface
         $action = Action::build($baseEntityClass, $this->recordListQueryRestriction($baseEntityClass));
 
         return match ($request->getMethod()) {
-            Request::METHOD_GET => $this->handleGet($action, $queryParams, $id),
+            Request::METHOD_GET => $this->handleGet($baseEntityClass, $action, $request, $queryParams, $id),
             Request::METHOD_POST => $this->handleSave($baseEntityClass, $action, $formDto),
             Request::METHOD_PUT,
             Request::METHOD_PATCH => $this->handleUpdate($baseEntityClass, $action, $formDto),
-            Request::METHOD_DELETE => $this->handleDelete($action, $id),
+            Request::METHOD_DELETE => $this->handleDelete($baseEntityClass, $action, $id),
             default => $this->response("Método não permitido", 405),
         };
     }
@@ -69,6 +76,8 @@ final class ActionManager implements ActionManagerInterface
         int $id,
         StatusFormDto $formDto
     ): JsonResponseHandlerInterface {
+        $this->resetRecordAuthorizationState();
+
         $authenticationResponse = $this->authenticateRequest($request);
 
         if ($authenticationResponse !== null) {
@@ -89,6 +98,9 @@ final class ActionManager implements ActionManagerInterface
             return $this->response("Status é obrigatório", 400);
         }
 
-        return Action::build($baseEntityClass)->status($id, $formDto->status);
+        $response = Action::build($baseEntityClass)->status($id, $formDto->status);
+        $this->invalidateCacheAfterSuccessfulMutation($baseEntityClass, $response);
+
+        return $response;
     }
 }

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Handler\Action\Manager;
 
+use App\Entity\EntryType;
 use App\Entity\User;
 use App\Entity\Wallet;
 use App\Infrastructure\DTO\EntityAttributes\Enum\RolesEnum;
 use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Forms\EntryType\EntryTypeEditFormDto;
 use App\Infrastructure\DTO\Forms\StatusFormDto;
 use App\Infrastructure\Handler\Action\Manager\ActionManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -112,6 +114,55 @@ final class ActionManagerTest extends TestCase
 
         self::assertSame(400, $missingStatus->getStatusCode());
         self::assertSame('Status é obrigatório', json_decode((string) $missingStatus->getContent(), true)['message']);
+    }
+
+    public function testCatalogDefaultAuthorizationReusesLoadedRecordWhenBuildingDeniedMessage(): void
+    {
+        $user = (new User())
+            ->setId('10')
+            ->setName('User')
+            ->setEmail('user@example.com')
+            ->setPassword('hash')
+            ->setStatus(true)
+            ->setRole(RolesEnum::USER->value());
+        $entryType = (new EntryType())
+            ->setId('5')
+            ->setName('Salário')
+            ->setIsDefault(true);
+
+        $userRepository = $this->createStub(EntityRepository::class);
+        $userRepository->method('find')->willReturn($user);
+        $entryTypeRepository = $this->createMock(EntityRepository::class);
+        $entryTypeRepository->expects($this->once())
+            ->method('find')
+            ->with(5)
+            ->willReturn($entryType);
+
+        $entityManager = $this->createStub(EntityManagerInterface::class);
+        $entityManager->method('getRepository')
+            ->willReturnCallback(static fn (string $entityClass): EntityRepository => match ($entityClass) {
+                User::class => $userRepository,
+                EntryType::class => $entryTypeRepository,
+                default => throw new \RuntimeException('Unexpected repository'),
+            });
+
+        $baseEntity = $this->createStub(BaseEntityClassInterface::class);
+        $baseEntity->method('getEntityClass')->willReturn(EntryType::class);
+        $baseEntity->method('getEntityManager')->willReturn($entityManager);
+        $baseEntity->method('getRepository')->willReturn($entryTypeRepository);
+
+        $request = Request::create('/entry-type/5', Request::METHOD_PUT);
+        $request->headers->set('Authorization', 'Bearer ' . $this->jwt());
+
+        $response = (new ActionManager())
+            ->handle($baseEntity, $request, formDto: new EntryTypeEditFormDto(5, 'Novo nome'))
+            ->output();
+
+        self::assertSame(403, $response->getStatusCode());
+        self::assertSame(
+            'Cadastros auxiliares padrão só podem ser alterados por administradores',
+            json_decode((string) $response->getContent(), true)['message'],
+        );
     }
 
     private function baseEntityWithAuthenticatedAdmin(): BaseEntityClassInterface

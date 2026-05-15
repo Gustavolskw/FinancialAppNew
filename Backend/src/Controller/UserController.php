@@ -23,6 +23,10 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class UserController extends AbstractController
 {
+    public function __construct(private readonly ActionManager $actionManager)
+    {
+    }
+
     #[Route('/user', name:'userList', methods: ['GET'], format: 'json')]
     public function list(
         Request $request,
@@ -31,7 +35,7 @@ class UserController extends AbstractController
     ): JsonResponse {
         $queryParams = QueryParams::fromArray($userDto->toArray());
 
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(User::build($entityManager), $request, $queryParams)
             ->output();
     }
@@ -42,7 +46,7 @@ class UserController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager
     ): JsonResponse {
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(User::build($entityManager), $request, id: $id)
             ->output();
     }
@@ -53,7 +57,7 @@ class UserController extends AbstractController
         #[MapRequestPayload] UserPostFormDto $formDto,
         EntityManagerInterface $entityManager
     ): JsonResponse {
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(User::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
@@ -64,7 +68,7 @@ class UserController extends AbstractController
         #[MapRequestPayload] UserAdminPostFormDto $formDto,
         EntityManagerInterface $entityManager
     ): JsonResponse {
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(User::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
@@ -75,7 +79,7 @@ class UserController extends AbstractController
         #[MapRequestPayload] UserInsertEditFormDto $formDto,
         EntityManagerInterface $entityManager
     ): JsonResponse {
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(User::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
@@ -86,7 +90,7 @@ class UserController extends AbstractController
         #[MapRequestPayload] UserEditFormDto $formDto,
         EntityManagerInterface $entityManager
     ): JsonResponse {
-        return (new ActionManager())
+        return $this->actionManager
             ->handle(User::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
@@ -98,7 +102,7 @@ class UserController extends AbstractController
         #[MapRequestPayload] StatusFormDto $formDto,
         EntityManagerInterface $entityManager
     ): JsonResponse {
-        return (new ActionManager())
+        return $this->actionManager
             ->handleStatus(User::build($entityManager), $request, $id, $formDto)
             ->output();
     }

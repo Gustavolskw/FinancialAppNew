@@ -19,5 +19,12 @@ services:
     App\:
         resource: '../src/'
 
+    App\Infrastructure\Handler\Cache\RequestCacheHandlerInterface:
+        alias: App\Infrastructure\Handler\Cache\RequestCacheHandler
+
+    App\Infrastructure\Handler\Cache\RequestCacheHandler:
+        arguments:
+            $appRequestCache: '@app.request_cache'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

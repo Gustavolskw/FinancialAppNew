@@ -142,6 +142,7 @@ Modo build, com a stack completa e frontend compilado/produção:
 ```
 
 O `start-dev.sh` configura `frontEnd/.env` com `FRONTEND_RUNTIME_MODE=development`.
+Ele sobe a stack com `docker compose up`, sem rebuild automático dos containers, para uso rápido no ciclo normal de desenvolvimento.
 O `start-build.sh` configura `frontEnd/.env` com `FRONTEND_RUNTIME_MODE=production`,
 executa o build do React dentro do container do frontend e depois sobe a stack completa.
 

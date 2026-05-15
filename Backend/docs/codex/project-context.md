@@ -157,6 +157,7 @@ Orquestra CRUD.
 - `Action`: implementa `listView`, `view`, `save`, `edit`, `delete`, `status`.
 - `PrimaryAction/AccessControlAction`: implementa ações primárias de autenticação (`login` e `logoff`) fora do CRUD genérico.
 - `Specific`: hooks específicos por entidade antes/depois de salvar, atualizar, deletar ou trocar status.
+- `RequestCacheHandler`: cacheia GETs de `Wallet`, `User`, `EntryType`, `ExpenseType` e `PaymentMethod` depois da autenticação/autorização; `Entry` e `Expense` não usam cache.
 
 Estado atual:
 
@@ -172,6 +173,17 @@ Estado atual:
 - `delete` localiza por id, executa hooks `beforeDelete`/`afterDelete`, remove e faz flush.
 - `status` localiza por id, valida campo `status`, executa hooks `beforeChangeStatus`/`afterChangeStatus`, chama `setStatus()` e faz flush.
 - Hooks de delete/status recebem o DTO configurável preenchido com os dados atuais da entidade; em status, o campo `status` já contém o novo valor solicitado.
+- `POST`, `PUT`, `PATCH`, `DELETE` e status de entidades cacheáveis invalidam o cache após resposta 2xx.
+
+### `src/Infrastructure/Handler/Cache`
+
+Cache de requests GET cacheáveis.
+
+- `RequestCacheHandler`: usa o pool Symfony `app.request_cache`, com tags, para armazenar payloads JSON de GET por entidade, rota, query, id, usuário autenticado e role.
+- `RequestCacheHandlerInterface`: contrato consumido pelo `ActionManager`.
+- Entidades cacheáveis: `Wallet`, `User`, `EntryType`, `ExpenseType` e `PaymentMethod`.
+- Entidades não cacheáveis: `Entry` e `Expense`, porque sofrem muitas alterações e alimentam relatórios transacionais.
+- Invalidação: qualquer mutação 2xx em entidade cacheável invalida a tag geral `appfinancas_cacheable_requests`.
 
 ### `src/Infrastructure/Handler/Response`
 
@@ -228,6 +240,7 @@ Helpers para consulta, output e resposta:
 - `Auth/JwtAuthenticationHelperTrait`: valida o header `Authorization: Bearer <token>` emitido por `/login`, confirmando assinatura HS256 com `APP_SECRET`, issuer, payload obrigatório e expiração.
 - `Auth/RecordAuthorizationHelperTrait`: valida se o usuário autenticado pode acessar, criar, alterar, excluir ou mudar status do registro; ADMIN pode tudo, usuário comum fica restrito ao próprio usuário, à própria carteira e aos registros financeiros vinculados à carteira.
 - `ActionManager/*Trait.php`: mantém fora do `ActionManager.php` os helpers privados de dispatch HTTP, leitura de payload/id e criação de resposta padronizada.
+- `ActionManagerDispatchTrait`: centraliza leitura cacheada de GET e invalidação após mutações bem-sucedidas.
 
 ### `config`
 
@@ -235,6 +248,7 @@ Configuração Symfony:
 
 - Rotas por atributos em controllers.
 - Serviços com autowire/autoconfigure para `App\`.
+- `config/packages/cache.yaml` define o pool `app.request_cache` como cache de aplicação com tags e TTL padrão de 600 segundos.
 - Doctrine com mappings por atributos em `src/Entity`.
 - CORS aceitando métodos CRUD e headers `Content-Type`/`Authorization`.
 - Security Bundle instalado, mas ainda sem firewall/autenticador próprio; as rotas CRUD/status que passam pelo `ActionManager` validam o bearer token com `JwtAuthenticationHelperTrait` e autorização de registro com `RecordAuthorizationHelperTrait`.

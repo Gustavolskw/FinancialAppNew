@@ -33,6 +33,7 @@ Depois identifique os diretórios alterados e leia as Skills correspondentes ant
 
 - Controllers são finos e recebem `Request`, DTOs por `MapRequestPayload`/`MapQueryString` e `EntityManagerInterface`.
 - O fluxo padrão é controller -> `ActionManager` -> `Action` -> EntityDTO configurável -> response builder.
+- Controllers CRUD devem receber `ActionManager` por injeção do container, porque ele carrega serviços transversais como cache de requests.
 - Regras genéricas de CRUD ficam em `src/Infrastructure/Handler/Action/Action.php`.
 - Regras específicas por entidade ficam em `src/Infrastructure/Handler/Action/Specific`.
 - Definição de campos, validação, output e vínculos Doctrine fica em `src/Infrastructure/DTO/EntityDto`.
@@ -49,6 +50,15 @@ Depois identifique os diretórios alterados e leia as Skills correspondentes ant
 - `POST /user` público não aceita `role`; criação de admin usa apenas `POST /user/admin`.
 - User output nunca deve expor senha, hash ou qualquer campo equivalente.
 - Catálogos auxiliares combinam defaults e registros do usuário: usuários comuns leem defaults e próprios, criam próprios e editam/excluem apenas próprios não default; ADMIN tem acesso amplo.
+
+## Cache De Requests
+
+- Use `Backend/src/Infrastructure/Handler/Cache/RequestCacheHandler` para cache de GETs, nunca cache direto em controller.
+- O pool correto é `app.request_cache` em `Backend/config/packages/cache.yaml`, baseado no cache de aplicação do Symfony.
+- Cacheie `Wallet`, `User`, `EntryType`, `ExpenseType` e `PaymentMethod`.
+- Não cacheie `Entry` e `Expense`.
+- A chave precisa considerar entidade, rota, path, query params, id, usuário autenticado e role.
+- Mutações 2xx em entidade cacheável devem invalidar a tag geral para o próximo GET recompor o cache.
 
 ## Padrões CRUD
 
@@ -122,4 +132,3 @@ Para comportamento de domínio, actions, helpers, fields, autenticação ou inte
 
 Quando rotas mudarem, valide também `php bin/console debug:router` dentro do contexto adequado.
 Quando entidades/mappings mudarem, valide Doctrine e gere migration quando necessário.
-

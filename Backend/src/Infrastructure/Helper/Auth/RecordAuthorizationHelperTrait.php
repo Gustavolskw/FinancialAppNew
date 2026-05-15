@@ -26,6 +26,17 @@ trait RecordAuthorizationHelperTrait
 {
     private ?UserEntity $recordAuthorizationUser = null;
 
+    /**
+     * @var array<string, object|null>
+     */
+    private array $recordAuthorizationEntityCache = [];
+
+    protected function resetRecordAuthorizationState(): void
+    {
+        $this->recordAuthorizationUser = null;
+        $this->recordAuthorizationEntityCache = [];
+    }
+
     protected function authorizeRecordAccess(
         BaseEntityClassInterface $baseEntityClass,
         Request $request,
@@ -246,7 +257,7 @@ trait RecordAuthorizationHelperTrait
             return false;
         }
 
-        $entity = $baseEntityClass->getRepository()->find($id);
+        $entity = $this->recordAuthorizationEntity($baseEntityClass, $baseEntityClass->getEntityClass(), $id);
 
         if ($entity === null) {
             return true;
@@ -332,7 +343,7 @@ trait RecordAuthorizationHelperTrait
             return false;
         }
 
-        $entity = $baseEntityClass->getRepository()->find($id);
+        $entity = $this->recordAuthorizationEntity($baseEntityClass, $baseEntityClass->getEntityClass(), $id);
 
         if ($entity === null) {
             return true;
@@ -351,7 +362,7 @@ trait RecordAuthorizationHelperTrait
             return false;
         }
 
-        $entity = $baseEntityClass->getRepository()->find($id);
+        $entity = $this->recordAuthorizationEntity($baseEntityClass, $baseEntityClass->getEntityClass(), $id);
 
         return is_object($entity) && $this->catalogIsDefault($entity);
     }
@@ -393,11 +404,31 @@ trait RecordAuthorizationHelperTrait
             return null;
         }
 
-        $entity = $baseEntityClass->getEntityManager()
-            ->getRepository($catalogClass)
-            ->find($id);
+        return $this->recordAuthorizationEntity($baseEntityClass, $catalogClass, $id);
+    }
 
-        return is_object($entity) ? $entity : null;
+    private function recordAuthorizationEntity(
+        BaseEntityClassInterface $baseEntityClass,
+        string $entityClass,
+        int $id
+    ): ?object {
+        if ($id <= 0) {
+            return null;
+        }
+
+        $cacheKey = $entityClass . '#' . $id;
+        if (array_key_exists($cacheKey, $this->recordAuthorizationEntityCache)) {
+            return $this->recordAuthorizationEntityCache[$cacheKey];
+        }
+
+        $repository = $entityClass === $baseEntityClass->getEntityClass()
+            ? $baseEntityClass->getRepository()
+            : $baseEntityClass->getEntityManager()->getRepository($entityClass);
+
+        $entity = $repository->find($id);
+        $this->recordAuthorizationEntityCache[$cacheKey] = is_object($entity) ? $entity : null;
+
+        return $this->recordAuthorizationEntityCache[$cacheKey];
     }
 
     private function catalogVisibleToUser(object $entity, UserEntity $currentUser): bool

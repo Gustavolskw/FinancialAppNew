@@ -68,17 +68,20 @@ Leia primeiro as Skills de EntityDTOs e Actions. Se o CRUD tiver validação nov
 Controllers devem ter pouca lógica:
 
 ```php
-return (new ActionManager())
+return $this->actionManager
     ->handle(EntityDto::build($entityManager), $request, $queryParams, $formDto, $id)
     ->output();
 ```
 
 Use:
 
+- `ActionManager` injetado pelo container quando a rota precisar do fluxo CRUD genérico.
 - `#[MapQueryString]` para filtros.
 - `#[MapRequestPayload]` para corpo JSON.
 - `EntityManagerInterface` injetado no método.
 - `Request` para o método HTTP.
+
+Não instancie `new ActionManager()` em controllers novos; a instância injetada carrega serviços transversais como o cache de requests.
 
 ## Modelo De DTO Configurável
 
@@ -193,6 +196,18 @@ Os demais viram filtros. Texto, nome, email e localização usam `LIKE`. Status 
 Rotas relacionais explícitas, como `GET /wallet/user/{userId}`, `GET /entry/wallet/{walletId}` e `GET /expense/wallet/{walletId}`, devem apenas preservar `$request->query->all()`, adicionar o filtro relacional (`userId` ou `walletId`) e delegar para `ActionManager` com `QueryParams::fromArray(...)`.
 
 `Transaction` é agrupador interno dos dados comuns. Não crie controller nem rotas diretas para `Transaction`; os payloads de `Entry` e `Expense` devem receber os campos transacionais e seus EntityDTOs/listagens devem filtrar por esses campos via join com a transação vinculada.
+
+## Cache De GETs
+
+O cache de requests é genérico e fica em `Backend/src/Infrastructure/Handler/Cache`.
+
+- Use o pool Symfony `app.request_cache`, não `cache.system`, pois os dados mudam em runtime.
+- `ActionManager` deve aplicar autenticação e autorização antes de consultar o cache.
+- Cacheie apenas GETs de `Wallet`, `User`, `EntryType`, `ExpenseType` e `PaymentMethod`.
+- Não cacheie `Entry` e `Expense`.
+- A chave de cache deve considerar entidade, rota, path, query params, id, usuário autenticado e role.
+- Mutação 2xx em entidade cacheável deve invalidar a tag geral para forçar recomposição no próximo GET.
+- Mantenha a lógica no handler/dispatch genérico, sem duplicar cache em controllers.
 
 ## Relações
 
