@@ -140,19 +140,19 @@ export default function Dashboard() {
   const paymentStats = amountStats(dashboardData.transactions, "paymentMethod", "expense");
   const walletTitle = dashboardData.wallet?.title ?? (isLoadingDashboard ? "Carregando carteira" : "Carteira não encontrada");
   const emptyPeriodLabel = isLoadingDashboard
-    ? "Carregando movimentações da API..."
-    : "Nenhuma competência retornada pela API para montar entradas, despesas e saldo.";
+    ? "Carregando movimentações..."
+    : "Nenhuma competência encontrada para montar entradas, despesas e saldo.";
   const emptyEntryTypeLabel = isLoadingDashboard
-    ? "Carregando tipos de entrada da API..."
-    : "Nenhuma entrada retornada pela API para agrupar por tipo.";
+    ? "Carregando tipos de entrada..."
+    : "Nenhuma entrada encontrada para agrupar por tipo.";
   const emptyExpenseTypeLabel = isLoadingDashboard
-    ? "Carregando tipos de despesa da API..."
-    : "Nenhuma despesa retornada pela API para agrupar por categoria.";
+    ? "Carregando tipos de despesa..."
+    : "Nenhuma despesa encontrada para agrupar por categoria.";
   const emptyPaymentLabel = isLoadingDashboard
-    ? "Carregando métodos de pagamento da API..."
-    : "Nenhuma despesa com método de pagamento foi retornada pela API.";
+    ? "Carregando métodos de pagamento..."
+    : "Nenhuma despesa com método de pagamento encontrada.";
   const emptyTransactionsLabel = isLoadingDashboard
-    ? "Carregando movimentações da API..."
+    ? "Carregando movimentações..."
     : "Nenhuma movimentação encontrada para esta carteira.";
   const hasPeriodData = hasPositiveValue(periods.flatMap((period) => [period.entryTotal, period.expenseTotal, Math.abs(period.balance)]));
   const hasEntryTypeData = hasAmountStats(entryTypeStats);
@@ -271,7 +271,7 @@ export default function Dashboard() {
             Visão geral da carteira
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">
-            Dados de Wallet, Entry, Expense, EntryType, ExpenseType e PaymentMethod carregados pela API.
+            Dados de carteira, entradas, despesas, tipos e métodos de pagamento.
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:items-end">

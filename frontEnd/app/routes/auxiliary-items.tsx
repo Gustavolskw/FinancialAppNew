@@ -113,7 +113,7 @@ export default function AuxiliaryItems() {
     paymentMethod: catalogs.paymentMethod.length,
   };
   const emptyGridLabel = loadStatus === "loading"
-    ? "Carregando itens da API..."
+    ? "Carregando itens..."
     : `Nenhum item encontrado para ${catalogLabels[activeType]}.`;
 
   async function refreshData() {

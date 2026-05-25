@@ -106,7 +106,7 @@ export default function Transactions() {
     && dashboardData.expenseTypes.length > 0
     && dashboardData.paymentMethods.length > 0;
   const emptyGridLabel = isLoading
-    ? "Carregando movimentações da API..."
+    ? "Carregando movimentações..."
     : visibleTransactions.length > 0 && filteredTransactions.length === 0
       ? "Nenhuma movimentação corresponde aos filtros selecionados."
       : activeType === "entry"
