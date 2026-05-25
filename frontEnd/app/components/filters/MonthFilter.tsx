@@ -47,7 +47,7 @@ export function MonthFilter({ disabled = false, label = "Competência", onChange
     <label className="flex w-full flex-col gap-1.5 text-sm font-semibold text-slate-700 sm:w-56 dark:text-slate-200">
       <span>{label}</span>
       <input
-        className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950 shadow-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-700/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:focus:border-blue-300 dark:focus:ring-blue-300/20"
+        className="rounded-lg border border-slate-300 bg-white px-4 py-3 text-base text-slate-950 shadow-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-700/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500 sm:px-3 sm:py-2 sm:text-sm dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:focus:border-blue-300 dark:focus:ring-blue-300/20"
         disabled={disabled}
         onChange={(event) => {
           const nextValue = parseMonthInputValue(event.target.value);

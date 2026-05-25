@@ -1,0 +1,4 @@
+interface:
+  display_name: "AppFinancasNew React Mobile First"
+  short_description: "React Router mobile-first UI for AppFinancas"
+  default_prompt: "Use $appfinancasnew-react-mobile-first to build a mobile-first React Router screen for AppFinancasNew."

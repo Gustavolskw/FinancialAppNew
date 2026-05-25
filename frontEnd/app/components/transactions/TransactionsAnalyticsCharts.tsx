@@ -79,7 +79,7 @@ export function TransactionsAnalyticsCharts({ isLoading, transactions }: Transac
       <ChartCard
         emptyLabel={isLoading ? "Carregando valores de entrada e saída..." : "Nenhuma entrada ou saída encontrada."}
         hasData={entriesTotal > 0 || expensesTotal > 0}
-        subtitle="Comparativo direto entre todos os valores retornados pela API"
+        subtitle="Comparativo entre todas as entradas e saídas do período"
         title="Entradas x saídas"
       >
         <Bar data={totalsData} options={barOptions} />

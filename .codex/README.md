@@ -6,8 +6,12 @@ Contexto complementar para agentes Codex:
 - docs/codex/docker.md: documentação da stack Docker local.
 - docs/codex/skills.md: mapa das Skills locais especializadas deste projeto.
 - docs/codex/review-notes.md: pontos de atenção técnicos encontrados na avaliação.
-- agents/appfinancas-backend.md: agente raiz especializado para tarefas do backend.
-- agents/appfinancas-frontend.md: agente raiz especializado para tarefas do frontend.
+- .codex/agents/appfinancas-backend.toml: agente invocável oficial para tarefas do backend.
+- .codex/agents/appfinancas-frontend.toml: agente invocável oficial para tarefas do frontend.
+- .agents/appfinancas-backend.md: documentação humana/legada do agente de backend.
+- .agents/appfinancas-frontend.md: documentação humana/legada do agente de frontend.
+- agents/appfinancas-backend.md: compilação das regras, docs e Skills do backend.
+- agents/appfinancas-frontend.md: compilação das regras, docs e Skills do frontend.
 
 Este projeto é um monorepo do AppFinancasNew. O backend Symfony/PHP fica em Backend,
 o frontend React Router/Vite fica em frontEnd, e a stack local é orquestrada por
@@ -26,5 +30,8 @@ Antes de mexer nos diretórios abaixo, leia a Skill local correspondente:
 - Backend/src/Infrastructure/Handler/Action -> skills/appfinancasnew-backend-actions/SKILL.md
 - Backend/src/Infrastructure/Helper -> skills/appfinancasnew-backend-helpers/SKILL.md
 - frontEnd/app -> frontEnd/skills/appfinancasnew-frontend-react-router/SKILL.md
+- frontEnd/app UI mobile first -> skills/appfinancasnew-react-mobile-first/SKILL.md
+- frontEnd/app formulários/API -> skills/appfinancasnew-frontend-fields-api/SKILL.md
 
-Para tarefas focadas em backend ou frontend, leia também o agente raiz correspondente em agents/.
+Para tarefas focadas em backend ou frontend, use os agentes oficiais em .codex/agents/.
+No seletor `/`, use `/agent` e escolha `appfinancas_backend` ou `appfinancas_frontend`.

@@ -4,7 +4,7 @@ Este arquivo descreve como um agente Codex deve continuar a implementação sem 
 
 ## Antes De Editar
 
-Além de `AGENTS.md` e `.codex`, leia [docs/codex/skills.md](skills.md) e carregue as Skills locais que cobrem os diretórios alterados:
+Além de `AGENTS.md`, `.codex/README.md` na raiz e `Backend/.codex`, leia [docs/codex/skills.md](skills.md) e carregue as Skills locais que cobrem os diretórios alterados:
 
 - `src/Infrastructure/DTO/EntityAttributes`: [appfinancasnew-backend-fields](../../skills/appfinancasnew-backend-fields/SKILL.md)
 - `src/Infrastructure/DTO/EntityDto`: [appfinancasnew-backend-entity-dtos](../../skills/appfinancasnew-backend-entity-dtos/SKILL.md)

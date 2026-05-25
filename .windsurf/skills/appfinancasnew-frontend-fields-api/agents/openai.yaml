@@ -1,0 +1,4 @@
+interface:
+  display_name: "AppFinancasNew Frontend Fields API"
+  short_description: "Fields, forms, and API contracts for AppFinancas"
+  default_prompt: "Use $appfinancasnew-frontend-fields-api to implement an AppFinancasNew frontend form or API-backed CRUD flow."

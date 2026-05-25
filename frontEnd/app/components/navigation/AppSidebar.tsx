@@ -5,6 +5,7 @@ import { Link, useLocation, useNavigate } from "react-router";
 import { logoff } from "../../Infrastructure/Api/auth";
 import { clearAuthSession, readAuthSession } from "../../Infrastructure/Auth/session";
 import type { AuthSession } from "../../Infrastructure/Auth/session";
+import { useSidebarContext } from "./AuthenticatedAppShell";
 
 type NavItem = {
   icon: ReactElement;
@@ -31,7 +32,7 @@ const navItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
-  const [collapsed, setCollapsed] = useState(true);
+  const { collapsed, setCollapsed } = useSidebarContext();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [session, setSession] = useState<AuthSession | null>(null);
   const location = useLocation();
@@ -59,11 +60,10 @@ export function AppSidebar() {
 
   return (
     <aside
-      className={`sticky top-0 z-30 flex h-screen shrink-0 flex-col border-r border-slate-200 bg-white text-slate-900 shadow-sm transition-[width] duration-200 dark:border-slate-800 dark:bg-slate-950 dark:text-white ${
-        collapsed ? "w-20" : "w-72"
-      }`}
+      className={`fixed inset-x-0 bottom-0 z-40 flex max-w-full border-t border-slate-200 bg-white text-slate-900 shadow-lg shadow-slate-900/10 dark:border-slate-800 dark:bg-slate-950 dark:text-white lg:fixed lg:inset-y-0 lg:left-0 lg:h-screen lg:shrink-0 lg:flex-col lg:rounded-none lg:border-y-0 lg:border-l-0 lg:border-r lg:shadow-sm dark:lg:bg-slate-950 ${collapsed ? "lg:w-20" : "lg:w-72"
+        }`}
     >
-      <div className="flex min-h-16 items-center gap-3 border-b border-slate-200 px-4 dark:border-slate-800">
+      <div className="hidden min-h-16 items-center gap-3 border-b border-slate-200 px-4 dark:border-slate-800 lg:flex">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-700 text-white shadow-sm shadow-blue-900/20">
           <WalletIcon />
         </div>
@@ -75,16 +75,18 @@ export function AppSidebar() {
         )}
       </div>
 
-      <div className="border-b border-slate-200 px-3 py-4 dark:border-slate-800">
+      <div className="hidden border-b border-slate-200 px-3 py-4 dark:border-slate-800 lg:block">
         <SidebarAction
+          ariaControls="app-sidebar-nav"
+          ariaExpanded={!collapsed}
           collapsed={collapsed}
           icon={collapsed ? <ExpandIcon /> : <CollapseIcon />}
           label={collapsed ? "Expandir menu" : "Colapsar menu"}
-          onClick={() => setCollapsed((currentValue) => !currentValue)}
+          onClick={() => setCollapsed(!collapsed)}
         />
       </div>
 
-      <nav className="flex-1 space-y-2 px-3 py-4" aria-label="Navegação principal">
+      <nav className="flex flex-1 justify-around gap-1 px-2 py-2 lg:block lg:space-y-2 lg:px-3 lg:py-4" id="app-sidebar-nav" aria-label="Navegação principal">
         {navItems.map((item) => (
           <SidebarLink
             active={location.pathname === item.to}
@@ -97,8 +99,8 @@ export function AppSidebar() {
         ))}
       </nav>
 
-      <div className="border-t border-slate-200 p-3 dark:border-slate-800">
-        <div className={`mb-3 rounded-lg bg-slate-50 p-3 dark:bg-slate-900 ${collapsed ? "flex justify-center" : ""}`}>
+      <div className="flex items-center border-l border-slate-200 px-2 py-2 dark:border-slate-800 lg:block lg:border-l-0 lg:border-t lg:p-3">
+        <div className={`mb-3 hidden rounded-lg bg-slate-50 p-3 dark:bg-slate-900 lg:block ${collapsed ? "lg:flex lg:justify-center" : ""}`}>
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-blue-100 text-sm font-bold text-blue-700 dark:bg-blue-500/15 dark:text-blue-200">
             {userName.slice(0, 1).toUpperCase()}
           </div>
@@ -135,22 +137,24 @@ function SidebarLink({ active, collapsed, icon, label, to }: SidebarLinkProps) {
   return (
     <Link
       aria-label={label}
-      className={`group relative flex h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${
-        active
-          ? "bg-blue-700 text-white shadow-sm shadow-blue-900/20"
-          : "text-slate-600 hover:bg-slate-100 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-slate-900 dark:hover:text-white"
-      } ${collapsed ? "justify-center" : ""}`}
+      aria-current={active ? "page" : undefined}
+      className={`group relative flex h-12 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-lg px-2 text-[10px] font-semibold leading-tight transition lg:h-11 lg:flex-initial lg:flex-row lg:gap-3 lg:px-3 lg:text-sm ${active
+        ? "bg-blue-700 text-white shadow-sm shadow-blue-900/20"
+        : "text-slate-600 hover:bg-slate-100 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-slate-900 dark:hover:text-white"
+        } ${collapsed ? "lg:justify-center" : "lg:justify-start"}`}
       title={collapsed ? label : undefined}
       to={to}
     >
       <span className="flex h-5 w-5 shrink-0 items-center justify-center">{icon}</span>
-      {!collapsed && <span>{label}</span>}
+      <span className={`max-w-full truncate text-center lg:text-left ${collapsed ? "lg:hidden" : ""}`}>{label}</span>
       {collapsed && <Tooltip>{label}</Tooltip>}
     </Link>
   );
 }
 
 type SidebarActionProps = {
+  ariaControls?: string;
+  ariaExpanded?: boolean;
   collapsed: boolean;
   disabled?: boolean;
   icon: ReactElement;
@@ -159,22 +163,23 @@ type SidebarActionProps = {
   variant?: "default" | "danger";
 };
 
-function SidebarAction({ collapsed, disabled = false, icon, label, onClick, variant = "default" }: SidebarActionProps) {
+function SidebarAction({ ariaControls, ariaExpanded, collapsed, disabled = false, icon, label, onClick, variant = "default" }: SidebarActionProps) {
   return (
     <button
+      aria-controls={ariaControls}
+      aria-expanded={ariaExpanded}
       aria-label={label}
-      className={`group relative flex h-11 w-full items-center gap-3 rounded-lg px-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
-        variant === "danger"
-          ? "text-red-600 hover:bg-red-50 hover:text-red-700 dark:text-red-300 dark:hover:bg-red-500/10 dark:hover:text-red-200"
-          : "text-slate-600 hover:bg-slate-100 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-slate-900 dark:hover:text-white"
-      } ${collapsed ? "justify-center" : ""}`}
+      className={`group relative flex h-12 w-full min-w-0 flex-col items-center justify-center gap-0.5 rounded-lg px-2 text-[10px] font-semibold leading-tight transition disabled:cursor-not-allowed disabled:opacity-60 lg:h-11 lg:flex-row lg:gap-3 lg:px-3 lg:text-sm ${variant === "danger"
+        ? "text-red-600 hover:bg-red-50 hover:text-red-700 dark:text-red-300 dark:hover:bg-red-500/10 dark:hover:text-red-200"
+        : "text-slate-600 hover:bg-slate-100 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-slate-900 dark:hover:text-white"
+        } ${collapsed ? "lg:justify-center" : "lg:justify-start"}`}
       disabled={disabled}
       onClick={onClick}
       title={collapsed ? label : undefined}
       type="button"
     >
       <span className="flex h-5 w-5 shrink-0 items-center justify-center">{icon}</span>
-      {!collapsed && <span>{label}</span>}
+      <span className={`max-w-full truncate text-center lg:text-left ${collapsed ? "lg:hidden" : ""}`}>{label}</span>
       {collapsed && <Tooltip>{label}</Tooltip>}
     </button>
   );
@@ -182,7 +187,7 @@ function SidebarAction({ collapsed, disabled = false, icon, label, onClick, vari
 
 function Tooltip({ children }: { children: string }) {
   return (
-    <span className="pointer-events-none absolute left-[calc(100%+10px)] top-1/2 z-50 hidden -translate-y-1/2 whitespace-nowrap rounded-md bg-slate-950 px-2.5 py-1.5 text-xs font-semibold text-white shadow-lg group-hover:block dark:bg-white dark:text-slate-950">
+    <span className="pointer-events-none absolute left-[calc(100%+10px)] top-1/2 z-50 hidden -translate-y-1/2 whitespace-nowrap rounded-md bg-slate-950 px-2.5 py-1.5 text-xs font-semibold text-white shadow-lg dark:bg-white dark:text-slate-950 lg:group-hover:block">
       {children}
     </span>
   );

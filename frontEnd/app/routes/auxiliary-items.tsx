@@ -18,7 +18,7 @@ import { AuxiliaryItemsGrid } from "../components/auxiliary/AuxiliaryItemsGrid";
 import { ProtectedRouteFallback } from "../components/auth/ProtectedRouteFallback";
 import { DashboardStatusBanner } from "../components/dashboard/DashboardStatusBanner";
 import { FormStatusMessage } from "../components/feedback/FormStatusMessage";
-import { AppSidebar } from "../components/navigation/AppSidebar";
+import { AuthenticatedAppShell } from "../components/navigation/AuthenticatedAppShell";
 import { ApiRequestError } from "../Infrastructure/Api/client";
 import {
   deleteCatalogItem,
@@ -76,7 +76,7 @@ function canManageCatalogItem(item: AuxiliaryCatalogItem, isAdmin: boolean): boo
   return isAdmin || !item.isDefault;
 }
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [
     { title: "Itens auxiliares | AppFinanças" },
     { name: "description", content: "Gestão de tipos de entrada, tipos de despesa e métodos de pagamento." },
@@ -143,7 +143,7 @@ export default function AuxiliaryItems() {
         paymentMethod: paymentMethods,
       });
       setLoadStatus("ready");
-      setLoadMessage("Itens auxiliares carregados do backend.");
+      setLoadMessage("Itens auxiliares carregados.");
     } catch (error) {
       if (error instanceof ApiRequestError && error.statusCode === 401) {
         clearAuthSession();
@@ -220,64 +220,59 @@ export default function AuxiliaryItems() {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
-      <AppSidebar />
-      <main className="min-w-0 flex-1">
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8">
-          <header className="flex flex-col gap-4 border-b border-slate-200 pb-5 lg:flex-row lg:items-center lg:justify-between dark:border-slate-800">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.16em] text-blue-700 dark:text-blue-300">
-                Cadastros auxiliares
-              </p>
-              <h1 className="mt-2 text-3xl font-semibold tracking-normal text-slate-950 dark:text-white">
-                Gestão de itens auxiliares
-              </h1>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">
-                Gerencie tipos de entrada, métodos de pagamento e tipos de despesa usados nas transações da carteira.
-              </p>
-            </div>
-
-            <button className="btn-entrar btn-entrar--sm w-full sm:w-auto" disabled={loadStatus !== "ready"} onClick={openCreateModal} type="button">
-              <span>{catalogFieldText[activeType].buttonLabel}</span>
-            </button>
-          </header>
-
-          <DashboardStatusBanner
-            message={loadMessage}
-            onRefresh={() => void refreshData()}
-            status={loadStatus}
-          />
-
-          <FormStatusMessage message={actionMessage} type={actionMessageType} />
-
-          <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <AuxiliaryKpi label="Itens cadastrados" value={activeItems.length} />
-            <AuxiliaryKpi label="Itens usados" value={usedItemsCount} />
-            <AuxiliaryKpi label="Itens sem uso" value={unusedItemsCount} />
-            <AuxiliaryKpi label="Transações vinculadas" value={totalUsageCount} subValue={new Intl.NumberFormat("pt-BR", { currency: "BRL", style: "currency" }).format(totalMovementAmount)} />
-          </section>
-
-          <AuxiliaryCatalogCharts
-            activeType={activeType}
-            isLoading={loadStatus === "loading"}
-            stats={usageStats}
-          />
-
-          <AuxiliaryCatalogTabs activeType={activeType} counts={counts} onChange={changeActiveType} />
-
-          <AuxiliaryItemsGrid
-            activeType={activeType}
-            canDeleteItem={(item) => canManageCatalogItem(item, isAdmin)}
-            canEditItem={(item) => canManageCatalogItem(item, isAdmin)}
-            emptyLabel={emptyGridLabel}
-            isMutating={isMutating}
-            items={activeItems}
-            onDelete={(item) => void deleteItem(item)}
-            onEdit={openEditModal}
-            stats={usageStats}
-          />
+    <AuthenticatedAppShell>
+      <header className="flex flex-col gap-4 border-b border-slate-200 pb-5 lg:flex-row lg:items-center lg:justify-between dark:border-slate-800">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-[0.16em] text-blue-700 dark:text-blue-300">
+            Cadastros auxiliares
+          </p>
+          <h1 className="mt-2 text-3xl font-semibold tracking-normal text-slate-950 dark:text-white">
+            Gestão de itens auxiliares
+          </h1>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">
+            Gerencie tipos de entrada, métodos de pagamento e tipos de despesa usados nas transações da carteira.
+          </p>
         </div>
-      </main>
+
+        <button className="btn-entrar btn-entrar--sm w-full sm:w-auto" disabled={loadStatus !== "ready"} onClick={openCreateModal} type="button">
+          <span>{catalogFieldText[activeType].buttonLabel}</span>
+        </button>
+      </header>
+
+      <DashboardStatusBanner
+        message={loadMessage}
+        onRefresh={() => void refreshData()}
+        status={loadStatus}
+      />
+
+      <FormStatusMessage message={actionMessage} type={actionMessageType} />
+
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <AuxiliaryKpi label="Itens cadastrados" value={activeItems.length} />
+        <AuxiliaryKpi label="Itens usados" value={usedItemsCount} />
+        <AuxiliaryKpi label="Itens sem uso" value={unusedItemsCount} />
+        <AuxiliaryKpi label="Transações vinculadas" value={totalUsageCount} subValue={new Intl.NumberFormat("pt-BR", { currency: "BRL", style: "currency" }).format(totalMovementAmount)} />
+      </section>
+
+      <AuxiliaryCatalogCharts
+        activeType={activeType}
+        isLoading={loadStatus === "loading"}
+        stats={usageStats}
+      />
+
+      <AuxiliaryCatalogTabs activeType={activeType} counts={counts} onChange={changeActiveType} />
+
+      <AuxiliaryItemsGrid
+        activeType={activeType}
+        canDeleteItem={(item) => canManageCatalogItem(item, isAdmin)}
+        canEditItem={(item) => canManageCatalogItem(item, isAdmin)}
+        emptyLabel={emptyGridLabel}
+        isMutating={isMutating}
+        items={activeItems}
+        onDelete={(item) => void deleteItem(item)}
+        onEdit={openEditModal}
+        stats={usageStats}
+      />
 
       <AuxiliaryItemModal
         item={modalState?.item}
@@ -289,7 +284,7 @@ export default function AuxiliaryItems() {
         }}
         type={modalState?.type ?? null}
       />
-    </div>
+    </AuthenticatedAppShell>
   );
 }
 

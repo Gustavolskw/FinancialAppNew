@@ -35,7 +35,7 @@ Quando adicionar novos gates, mantenha os comandos reproduzíveis localmente e d
 
 ## Antes De Editar
 
-Além de `AGENTS.md` e `.codex`, leia [docs/codex/docker.md](docker.md), [docs/codex/skills.md](skills.md) e carregue as Skills locais que cobrem os diretórios alterados:
+Além de `AGENTS.md` e `.codex/README.md`, leia [docs/codex/docker.md](docker.md), [docs/codex/skills.md](skills.md) e carregue as Skills locais que cobrem os diretórios alterados:
 
 - `src/Infrastructure/DTO/EntityAttributes`: [appfinancasnew-backend-fields](../../skills/appfinancasnew-backend-fields/SKILL.md)
 - `src/Infrastructure/DTO/EntityDto`: [appfinancasnew-backend-entity-dtos](../../skills/appfinancasnew-backend-entity-dtos/SKILL.md)
@@ -44,8 +44,8 @@ Além de `AGENTS.md` e `.codex`, leia [docs/codex/docker.md](docker.md), [docs/c
 
 Para tarefas focadas em um dos módulos principais, use também os agentes especializados da raiz:
 
-- [AppFinancas Backend Agent](../../agents/appfinancas-backend.md), quando a mudança tocar `Backend`.
-- [AppFinancas Frontend Agent](../../agents/appfinancas-frontend.md), quando a mudança tocar `frontEnd`.
+- [AppFinancas Backend Agent Oficial](../../.codex/agents/appfinancas-backend.toml), quando a mudança tocar `Backend`.
+- [AppFinancas Frontend Agent Oficial](../../.codex/agents/appfinancas-frontend.toml), quando a mudança tocar `frontEnd`.
 
 ## Ao Adicionar Um Novo Endpoint CRUD
 

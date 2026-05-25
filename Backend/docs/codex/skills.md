@@ -14,7 +14,7 @@ Este projeto possui Skills versionadas em `skills/` para dar contexto operaciona
 ## Ordem Recomendada Para Agentes
 
 1. Leia `AGENTS.md`.
-2. Leia `.codex`.
+2. Leia `.codex/README.md` na raiz do projeto e `Backend/.codex`.
 3. Leia `docs/codex/project-context.md`, `docs/codex/agent-playbook.md`, este arquivo e `docs/codex/review-notes.md`.
 4. Identifique os diretórios que a tarefa toca.
 5. Leia as Skills correspondentes em `skills/`.

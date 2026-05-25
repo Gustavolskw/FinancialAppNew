@@ -9,7 +9,7 @@ Este repositorio e a raiz do AppFinancasNew. Ele reune:
 
 Antes de alterar codigo ou documentacao, leia tambem:
 
-- [.codex](.codex)
+- [.codex/README.md](.codex/README.md)
 - [docs/codex/project-context.md](docs/codex/project-context.md)
 - [docs/codex/agent-playbook.md](docs/codex/agent-playbook.md)
 - [docs/codex/docker.md](docs/codex/docker.md)
@@ -18,6 +18,10 @@ Antes de alterar codigo ou documentacao, leia tambem:
 
 Agentes especializados de raiz:
 
+- [.codex/agents/appfinancas-backend.toml](.codex/agents/appfinancas-backend.toml): agente oficial invocavel pelo fluxo `/agent` para tarefas na API Symfony/PHP.
+- [.codex/agents/appfinancas-frontend.toml](.codex/agents/appfinancas-frontend.toml): agente oficial invocavel pelo fluxo `/agent` para tarefas React Router/Tailwind.
+- [.agents/appfinancas-backend.md](.agents/appfinancas-backend.md): documentacao humana/legada do agente de backend.
+- [.agents/appfinancas-frontend.md](.agents/appfinancas-frontend.md): documentacao humana/legada do agente de frontend.
 - [agents/appfinancas-backend.md](agents/appfinancas-backend.md): compilacao das regras, docs e Skills do backend para tarefas na API Symfony/PHP.
 - [agents/appfinancas-frontend.md](agents/appfinancas-frontend.md): compilacao das regras, docs e Skills do frontend para tarefas React Router/Tailwind.
 
@@ -45,7 +49,7 @@ Quando a tarefa tocar o frontend, leia tambem:
 - Nao duplique logica de dominio no frontend; regras de negocio continuam no backend.
 - Nao altere `node_modules/`, `vendor/`, `var/`, `.idea/`, caches ou arquivos gerados sem pedido explicito.
 - Antes de mexer em modulos cobertos por Skill local, leia a Skill correspondente listada em `docs/codex/skills.md`.
-- Para tarefas focadas em um modulo, use tambem o agente especializado da raiz em `agents/` antes de editar.
+- Para tarefas focadas em um modulo, use tambem o agente oficial da raiz em `.codex/agents/` antes de editar.
 - Para mudancas de backend, siga o fluxo atual: controller fino -> `ActionManager` -> `Action` -> EntityDTO configuravel -> response builder.
 - Para mudancas de frontend, siga React Router 7, TypeScript, rotas em `app/routes.ts`, componentes em `app/` e estilos globais em `app/app.css` ate surgir uma convencao mais especifica.
 - Para mudancas Docker, mantenha o Compose como orquestrador local e documente portas, variaveis e dependencias entre servicos.

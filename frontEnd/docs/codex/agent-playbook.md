@@ -5,7 +5,7 @@
 Leia:
 
 1. `frontEnd/AGENTS.md`
-2. `frontEnd/.codex`
+2. `.codex/README.md` na raiz e `frontEnd/.codex`
 3. `frontEnd/docs/codex/project-context.md`
 4. `frontEnd/docs/codex/agent-playbook.md`
 5. `frontEnd/docs/codex/skills.md`

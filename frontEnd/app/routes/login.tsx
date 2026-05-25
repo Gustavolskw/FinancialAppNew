@@ -45,7 +45,7 @@ function buildLoginFields(): FieldDefinition[] {
     .getFields();
 }
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [
     { title: "Entrar | AppFinanças" },
     { name: "description", content: "Acesse sua carteira, entradas e despesas no AppFinanças." },
@@ -146,41 +146,41 @@ export default function Login() {
         title="Entre na sua conta"
       />
 
-            <FieldsForm
-              className="space-y-5 rounded-lg border border-slate-200 bg-white p-5 shadow-sm sm:p-6 dark:border-slate-800 dark:bg-slate-900"
-              fieldInputClassName="border-slate-300 focus:border-blue-700 focus:ring-blue-700/20 dark:border-slate-700 dark:focus:border-blue-300 dark:focus:ring-blue-300/20"
-              fields={fields}
-              fieldsFrameClassName="space-y-5"
-              labels={fieldLabels}
-              messages={errors}
-              onFieldChange={handleFieldChange}
-              onSubmit={handleSubmit}
-              placeholders={{
-                email: "seuemail@exemplo.com",
-                password: "Sua senha",
-              }}
-              values={values}
-            >
-              <FormStatusMessage message={formMessage} type={formMessageType} />
+      <FieldsForm
+        className="space-y-5 rounded-lg border border-slate-200 bg-white p-5 shadow-sm sm:p-6 dark:border-slate-800 dark:bg-slate-900"
+        fieldInputClassName="border-slate-300 focus:border-blue-700 focus:ring-blue-700/20 dark:border-slate-700 dark:focus:border-blue-300 dark:focus:ring-blue-300/20"
+        fields={fields}
+        fieldsFrameClassName="space-y-5"
+        labels={fieldLabels}
+        messages={errors}
+        onFieldChange={handleFieldChange}
+        onSubmit={handleSubmit}
+        placeholders={{
+          email: "seuemail@exemplo.com",
+          password: "Sua senha",
+        }}
+        values={values}
+      >
+        <FormStatusMessage message={formMessage} type={formMessageType} />
 
-              <div className="flex flex-col gap-3 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between dark:text-slate-300">
-                <span>Sessão protegida por token JWT</span>
-                <a className="font-medium text-blue-700 underline-offset-4 hover:text-blue-800 hover:underline active:text-blue-900 dark:text-blue-300 dark:hover:text-blue-200 dark:active:text-blue-100" href="/login">
-                  Esqueci minha senha
-                </a>
-              </div>
+        <div className="flex flex-col gap-3 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between dark:text-slate-300">
+          <span>Sessão segura e criptografada</span>
+          <a className="font-medium text-blue-700 underline-offset-4 hover:text-blue-800 hover:underline active:text-blue-900 dark:text-blue-300 dark:hover:text-blue-200 dark:active:text-blue-100" href="/login">
+            Esqueci minha senha
+          </a>
+        </div>
 
-              <button className="btn-entrar focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 focus:ring-offset-white disabled:cursor-not-allowed disabled:opacity-70 dark:focus:ring-blue-300 dark:focus:ring-offset-slate-900" disabled={isSubmitting} type="submit">
-                <span>{isSubmitting ? "Entrando..." : "Entrar"}</span>
-              </button>
+        <button className="btn-entrar focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 focus:ring-offset-white disabled:cursor-not-allowed disabled:opacity-70 dark:focus:ring-blue-300 dark:focus:ring-offset-slate-900" disabled={isSubmitting} type="submit">
+          <span>{isSubmitting ? "Entrando..." : "Entrar"}</span>
+        </button>
 
-              <p className="text-center text-sm text-slate-600 dark:text-slate-300">
-                Ainda não tem conta?{" "}
-                <Link className="font-semibold text-blue-700 underline-offset-4 hover:text-blue-800 hover:underline dark:text-blue-300 dark:hover:text-blue-200" to="/cadastro">
-                  Criar cadastro
-                </Link>
-              </p>
-            </FieldsForm>
+        <p className="text-center text-sm text-slate-600 dark:text-slate-300">
+          Ainda não tem conta?{" "}
+          <Link className="font-semibold text-blue-700 underline-offset-4 hover:text-blue-800 hover:underline dark:text-blue-300 dark:hover:text-blue-200" to="/cadastro">
+            Criar cadastro
+          </Link>
+        </p>
+      </FieldsForm>
     </AuthPageLayout>
   );
 }

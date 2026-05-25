@@ -31,7 +31,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:
-      - "127.0.0.1:9500:80"
+      - "9500:80"
     volumes:
       - ./Backend:/var/www
     env_file:
@@ -58,7 +58,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:
-      - "127.0.0.1:5173:5173"
+      - "5173:5173"
     volumes:
       - ./frontEnd:/app
       - frontend-node-modules:/app/node_modules

@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { currency } from "../dashboard/dashboardMetrics";
 import type { AuxiliaryCatalogItem, AuxiliaryCatalogType } from "../../Infrastructure/Api/catalogs";
 import type { CatalogUsageStat } from "./AuxiliaryCatalogCharts";
+import { AuxiliaryItemsFilters, emptyAuxiliaryFilters, type AuxiliaryFilterValues } from "./AuxiliaryItemsFilters";
+import { Select } from "../shared/Select";
 
 type AuxiliaryItemsGridProps = {
   activeType: AuxiliaryCatalogType;
@@ -22,8 +24,6 @@ const labels: Record<AuxiliaryCatalogType, string> = {
   paymentMethod: "método de pagamento",
 };
 
-type OriginFilter = "all" | "default" | "custom";
-
 const pageSizeOptions = [10, 20, 50];
 
 export function AuxiliaryItemsGrid({
@@ -37,22 +37,21 @@ export function AuxiliaryItemsGrid({
   onDelete,
   onEdit,
 }: AuxiliaryItemsGridProps) {
-  const [nameFilter, setNameFilter] = useState("");
-  const [originFilter, setOriginFilter] = useState<OriginFilter>("all");
+  const [filters, setFilters] = useState<AuxiliaryFilterValues>(emptyAuxiliaryFilters);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const statsById = useMemo(() => new Map(stats.map((stat) => [stat.id, stat])), [stats]);
-  const normalizedNameFilter = nameFilter.trim().toLowerCase();
+  const normalizedNameFilter = filters.name.trim().toLowerCase();
   const filteredItems = useMemo(
     () => items.filter((item) => {
       const matchesName = normalizedNameFilter === "" || item.name.toLowerCase().includes(normalizedNameFilter);
-      const matchesOrigin = originFilter === "all"
-        || (originFilter === "default" && item.isDefault)
-        || (originFilter === "custom" && !item.isDefault);
+      const matchesOrigin = filters.origin === ""
+        || (filters.origin === "default" && item.isDefault)
+        || (filters.origin === "custom" && !item.isDefault);
 
       return matchesName && matchesOrigin;
     }),
-    [items, normalizedNameFilter, originFilter],
+    [items, normalizedNameFilter, filters.origin],
   );
   const totalPages = Math.max(1, Math.ceil(filteredItems.length / pageSize));
   const safeCurrentPage = Math.min(currentPage, totalPages);
@@ -67,12 +66,22 @@ export function AuxiliaryItemsGrid({
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [activeType, items.length, nameFilter, originFilter, pageSize]);
+  }, [activeType, items.length, filters, pageSize]);
+
+  function handleFilterChange(newFilters: AuxiliaryFilterValues) {
+    setFilters(newFilters);
+    setCurrentPage(1);
+  }
+
+  function handleFilterReset() {
+    setFilters(emptyAuxiliaryFilters);
+    setCurrentPage(1);
+  }
 
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-      <div className="mb-4 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-        <div>
+      <div className="mb-4">
+        <div className="mb-4">
           <h2 className="text-lg font-semibold text-slate-950 dark:text-white">
             Gestão de {labels[activeType]}s
           </h2>
@@ -81,35 +90,19 @@ export function AuxiliaryItemsGrid({
           </p>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-[minmax(220px,1fr)_180px_140px] xl:w-[620px]">
-          <label className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
-            Buscar
-            <input
-              className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium normal-case tracking-normal text-slate-900 outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-700/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:focus:border-blue-300 dark:focus:ring-blue-300/20"
-              onChange={(event) => setNameFilter(event.target.value)}
-              placeholder="Nome do item"
-              type="search"
-              value={nameFilter}
-            />
-          </label>
+        <AuxiliaryItemsFilters
+          filteredCount={filteredItems.length}
+          filters={filters}
+          onChange={handleFilterChange}
+          onReset={handleFilterReset}
+          totalCount={items.length}
+        />
 
-          <label className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
-            Origem
-            <select
-              className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium normal-case tracking-normal text-slate-900 outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-700/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:focus:border-blue-300 dark:focus:ring-blue-300/20"
-              onChange={(event) => setOriginFilter(event.target.value as OriginFilter)}
-              value={originFilter}
-            >
-              <option value="all">Todos</option>
-              <option value="default">Padrão</option>
-              <option value="custom">Personalizados</option>
-            </select>
-          </label>
-
+        <div className="mt-4 flex justify-end">
           <label className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
             Por página
-            <select
-              className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium normal-case tracking-normal text-slate-900 outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-700/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:focus:border-blue-300 dark:focus:ring-blue-300/20"
+            <Select
+              className="font-medium normal-case tracking-normal"
               onChange={(event) => setPageSize(Number(event.target.value))}
               value={pageSize}
             >
@@ -118,13 +111,85 @@ export function AuxiliaryItemsGrid({
                   {option}
                 </option>
               ))}
-            </select>
+            </Select>
           </label>
         </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[760px] text-left text-sm">
+      {/* Mobile: Cards */}
+      <div className="space-y-3 md:hidden">
+        {paginatedItems.map((item) => {
+          const usage = statsById.get(item.id);
+          const transactionCount = usage?.transactionCount ?? 0;
+          const totalAmount = usage?.totalAmount ?? 0;
+          const canEdit = canEditItem(item);
+          const canDelete = canDeleteItem(item);
+
+          return (
+            <div
+              key={item.id}
+              className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+            >
+              <div className="mb-3 flex items-start justify-between">
+                <div className="flex-1">
+                  <h3 className="font-semibold text-slate-900 dark:text-white">{item.name}</h3>
+                  {item.isDefault && (
+                    <span className="mt-1 inline-block rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-blue-700 dark:bg-blue-500/10 dark:text-blue-200">
+                      Padrão
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-slate-500 dark:text-slate-400">Uso em transações</span>
+                  <span className="font-medium text-slate-900 dark:text-white">
+                    {transactionCount} transação(ões)
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500 dark:text-slate-400">Valor movimentado</span>
+                  <span className="font-semibold text-slate-900 dark:text-white">{currency(totalAmount)}</span>
+                </div>
+              </div>
+
+              {(canEdit || canDelete) && (
+                <div className="mt-4 flex gap-2 border-t border-slate-100 pt-3 dark:border-slate-800">
+                  {canEdit && (
+                    <button
+                      className="flex-1 rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-700/20 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-200 dark:hover:bg-blue-500/20"
+                      onClick={() => onEdit(item)}
+                      type="button"
+                    >
+                      Editar
+                    </button>
+                  )}
+                  {canDelete && (
+                    <button
+                      className="flex-1 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-600/20 disabled:cursor-not-allowed disabled:opacity-50 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300 dark:hover:bg-red-500/20"
+                      disabled={isMutating}
+                      onClick={() => onDelete(item)}
+                      type="button"
+                    >
+                      Excluir
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+        {paginatedItems.length === 0 && (
+          <div className="rounded-lg border border-slate-200 bg-white p-8 text-center text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
+            {emptyFilteredLabel}
+          </div>
+        )}
+      </div>
+
+      {/* Desktop: Table */}
+      <div className="hidden overflow-x-auto md:block">
+        <table className="w-full text-left text-sm">
           <thead className="border-b border-slate-200 text-xs uppercase tracking-[0.12em] text-slate-500 dark:border-slate-800 dark:text-slate-400">
             <tr>
               <th className="py-3 pr-4 font-semibold">Nome</th>

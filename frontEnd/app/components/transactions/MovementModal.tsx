@@ -253,7 +253,7 @@ export function MovementModal({
     const dateParts = backendDateParts(movementValues.date);
 
     if (!walletId) {
-      setSubmitMessage("Carregue uma carteira do backend antes de cadastrar movimentações.");
+      setSubmitMessage("Selecione uma carteira antes de cadastrar movimentações.");
       return;
     }
 
@@ -332,7 +332,7 @@ export function MovementModal({
       keepModalOpen = false;
       onClose();
     } catch (error) {
-      setSubmitMessage(apiErrorMessage(error, "Não foi possível salvar no backend. Revise os dados e tente novamente."));
+      setSubmitMessage(apiErrorMessage(error, "Não foi possível salvar. Revise os dados e tente novamente."));
     } finally {
       if (keepModalOpen) {
         setIsSubmitting(false);
@@ -342,7 +342,7 @@ export function MovementModal({
 
   return (
     <AppModal
-      description={`${mode === "edit" ? "PATCH" : "POST"} ${type === "entry" ? "/entry" : "/expense"} com dados vinculados à carteira atual.`}
+      description={mode === "edit" ? "Edite os dados da movimentação" : "Preencha os dados da nova movimentação"}
       onClose={onClose}
       title={mode === "edit" ? (type === "entry" ? "Editar entrada" : "Editar despesa") : (type === "entry" ? "Cadastrar entrada" : "Cadastrar despesa")}
       titleId="movement-modal-title"

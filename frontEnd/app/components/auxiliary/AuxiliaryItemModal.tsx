@@ -163,7 +163,7 @@ export function AuxiliaryItemModal({ item, onClose, onSaved, type }: AuxiliaryIt
 
   return (
     <AppModal
-      description={`${isEditing ? "PATCH" : "POST"} para ${catalogTitles[type]}.`}
+      description={isEditing ? `Edite os dados de ${catalogTitles[type]}` : `Adicione um novo ${catalogTitles[type]}`}
       onClose={onClose}
       title={isEditing ? `Editar ${catalogTitles[type]}` : `Adicionar ${catalogTitles[type]}`}
       titleId="auxiliary-item-modal-title"

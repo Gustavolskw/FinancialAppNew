@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { currency } from "../dashboard/dashboardMetrics";
 import type { DashboardTransaction } from "../../Infrastructure/Api/dashboard";
 import type { TransactionType } from "../../Infrastructure/Api/movements";
+import { Select } from "../shared/Select";
 
 type TransactionsManagementGridProps = {
   activeType: TransactionType;
@@ -89,7 +90,7 @@ export function TransactionsManagementGrid({
                     setBulkMenuOpen(false);
                     onStatusUnavailable();
                   }}
-                  title="Entry e Expense ainda não possuem rota de status no backend."
+                  title="Funcionalidade em desenvolvimento."
                   type="button"
                 >
                   Alterar status
@@ -100,8 +101,98 @@ export function TransactionsManagementGrid({
         )}
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[980px] text-left text-sm">
+      {/* Mobile: Cards */}
+      <div className="space-y-3 md:hidden">
+        {transactions.map((transaction) => {
+          const rowId = transaction.resourceId;
+          const isSelected = typeof rowId === "number" && selectedIds.has(rowId);
+
+          return (
+            <div
+              key={transaction.id}
+              className={`rounded-lg border p-4 shadow-sm ${isSelected
+                  ? "border-blue-300 bg-blue-50 dark:border-blue-500/50 dark:bg-blue-500/10"
+                  : "border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900"
+                }`}
+            >
+              <div className="mb-3 flex items-start justify-between">
+                <div className="flex-1">
+                  <h3 className="font-semibold text-slate-900 dark:text-white">{transaction.description}</h3>
+                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{transaction.category}</p>
+                </div>
+                {typeof rowId === "number" && (
+                  <input
+                    aria-label={`Selecionar ${transaction.description}`}
+                    checked={isSelected}
+                    className="mt-1 h-5 w-5 rounded border-slate-300 text-blue-700 focus:ring-blue-700/20"
+                    disabled={isDeleting}
+                    onChange={(event) => onSelect(rowId, event.target.checked)}
+                    type="checkbox"
+                  />
+                )}
+              </div>
+
+              <div className="space-y-2 text-sm">
+                {activeType === "expense" && (
+                  <div className="flex justify-between">
+                    <span className="text-slate-500 dark:text-slate-400">Método</span>
+                    <span className="font-medium text-slate-900 dark:text-white">{transaction.paymentMethod}</span>
+                  </div>
+                )}
+                <div className="flex justify-between">
+                  <span className="text-slate-500 dark:text-slate-400">Local</span>
+                  <span className="font-medium text-slate-900 dark:text-white">{transaction.location || "-"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500 dark:text-slate-400">Data</span>
+                  <span className="font-medium text-slate-900 dark:text-white">{transaction.date || "-"}</span>
+                </div>
+                <div className="flex justify-between border-t border-slate-100 pt-2 dark:border-slate-800">
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">Valor</span>
+                  <span className={`text-lg font-bold ${activeType === "entry" ? "text-emerald-600" : "text-red-600"}`}>
+                    {currency(transaction.amount)}
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-4 grid grid-cols-3 gap-2 border-t border-slate-100 pt-3 dark:border-slate-800">
+                <button
+                  className="rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-700/20 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-200 dark:hover:bg-blue-500/20"
+                  onClick={() => onEdit(transaction)}
+                  type="button"
+                >
+                  Editar
+                </button>
+                <button
+                  className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                  onClick={onStatusUnavailable}
+                  title="Funcionalidade em desenvolvimento."
+                  type="button"
+                >
+                  Status
+                </button>
+                <button
+                  className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-600/20 disabled:cursor-not-allowed disabled:opacity-50 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300 dark:hover:bg-red-500/20"
+                  disabled={isDeleting}
+                  onClick={() => onDelete(transaction)}
+                  type="button"
+                >
+                  Excluir
+                </button>
+              </div>
+            </div>
+          );
+        })}
+        {transactions.length === 0 && (
+          <div className="rounded-lg border border-slate-200 bg-white p-8 text-center text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
+            {emptyLabel}
+          </div>
+        )}
+      </div>
+
+      {/* Desktop: Table */}
+      <div className="hidden overflow-x-auto md:block">
+        <table className="w-full text-left text-sm">
           <thead className="border-b border-slate-200 text-xs uppercase tracking-[0.12em] text-slate-500 dark:border-slate-800 dark:text-slate-400">
             <tr>
               <th className="w-12 py-3 pr-4">
@@ -165,7 +256,7 @@ export function TransactionsManagementGrid({
                       <button
                         className="rounded-md border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-500 transition hover:-translate-y-0.5 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-400/20 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
                         onClick={onStatusUnavailable}
-                        title="Entry e Expense ainda não possuem rota de status no backend."
+                        title="Funcionalidade em desenvolvimento."
                         type="button"
                       >
                         Status
@@ -237,8 +328,8 @@ function TransactionsPagination({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <label className="flex items-center gap-2">
           <span>Por página</span>
-          <select
-            className="rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-950 outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-700/20 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+          <Select
+            className="py-1.5"
             onChange={(event) => onPageSizeChange(Number(event.target.value))}
             value={pageSize}
           >
@@ -247,7 +338,7 @@ function TransactionsPagination({
                 {option}
               </option>
             ))}
-          </select>
+          </Select>
         </label>
 
         <div className="flex items-center gap-2">

@@ -7,7 +7,7 @@ Docker do frontend ou contratos de API consumidos pelo navegador.
 ## Ordem De Leitura
 
 1. `AGENTS.md`
-2. `.codex`
+2. `.codex/README.md`
 3. `docs/codex/project-context.md`
 4. `docs/codex/agent-playbook.md`
 5. `docs/codex/docker.md`
@@ -25,8 +25,11 @@ para confirmar contratos reais do backend.
 
 ## Skills Obrigatórias Por Área
 
+- `skills/appfinancasnew-project/SKILL.md`: contexto geral do monorepo, fronteiras backend/frontend/Docker, comandos e quality gates.
 - `frontEnd/skills/appfinancasnew-frontend-react-router/SKILL.md`: rotas, layout raiz, componentes, estilos, Fields e estrutura React Router.
 - `frontEnd/skills/appfinancasnew-frontend-api/SKILL.md`: cliente HTTP, JWT, chamadas protegidas, normalização e contratos de resposta.
+- `skills/appfinancasnew-react-mobile-first/SKILL.md`: UI React Router/Tailwind mobile first, dashboards, navegação, modais, grids, tabelas, gráficos e responsividade web/mobile.
+- `skills/appfinancasnew-frontend-fields-api/SKILL.md`: formulários com Fields, modais CRUD, integrações API, sessão/JWT, contratos de resposta e payloads alinhados ao backend.
 
 ## Arquitetura Que Deve Ser Preservada
 
@@ -118,4 +121,3 @@ Para reproduzir o gate completo:
 ```bash
 ./scripts/quality-frontend.sh
 ```
-

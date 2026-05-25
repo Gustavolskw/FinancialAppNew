@@ -7,7 +7,7 @@ gate backend ou integração de contrato consumida pelo frontend.
 ## Ordem De Leitura
 
 1. `AGENTS.md`
-2. `.codex`
+2. `.codex/README.md`
 3. `docs/codex/project-context.md`
 4. `docs/codex/agent-playbook.md`
 5. `docs/codex/docker.md`
@@ -24,6 +24,7 @@ Depois identifique os diretórios alterados e leia as Skills correspondentes ant
 
 ## Skills Obrigatórias Por Área
 
+- `skills/appfinancasnew-project/SKILL.md`: contexto geral do monorepo, fronteiras backend/frontend/Docker, comandos e quality gates.
 - `skills/appfinancasnew-backend-fields/SKILL.md`: fields, validações, enums, relation fields e output de atributos.
 - `skills/appfinancasnew-backend-entity-dtos/SKILL.md`: EntityDTOs configuráveis, `configureFields()`, resposta, hidratação e contratos CRUD.
 - `skills/appfinancasnew-backend-actions/SKILL.md`: `ActionManager`, `Action`, hooks `SpecificAction`, login/logoff e fluxo CRUD.
