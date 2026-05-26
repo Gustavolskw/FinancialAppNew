@@ -12,7 +12,7 @@ Antes de alterar código, leia também:
 Quando a tarefa tocar nos diretórios abaixo, leia também a Skill local especializada antes de editar:
 
 - `src/Infrastructure/DTO/EntityAttributes`: [skills/appfinancasnew-backend-fields/SKILL.md](skills/appfinancasnew-backend-fields/SKILL.md)
-- `src/Infrastructure/DTO/EntityDto`: [skills/appfinancasnew-backend-entity-dtos/SKILL.md](skills/appfinancasnew-backend-entity-dtos/SKILL.md)
+- `src/Infrastructure/DTO/Configuration`: [skills/appfinancasnew-backend-entity-dtos/SKILL.md](skills/appfinancasnew-backend-entity-dtos/SKILL.md)
 - `src/Infrastructure/Handler/Action`: [skills/appfinancasnew-backend-actions/SKILL.md](skills/appfinancasnew-backend-actions/SKILL.md)
 - `src/Infrastructure/Helper`: [skills/appfinancasnew-backend-helpers/SKILL.md](skills/appfinancasnew-backend-helpers/SKILL.md)
 
@@ -38,7 +38,7 @@ Quando a tarefa tocar nos diretórios abaixo, leia também a Skill local especia
 - Rotas CRUD/status que passam por `ActionManager` devem validar `Authorization: Bearer <token>` com `JwtAuthenticationHelperTrait` e autorização de dono/ADMIN com `RecordAuthorizationHelperTrait` antes de executar ações genéricas; `/login` continua público para emitir token.
 - A lógica genérica de CRUD fica em `src/Infrastructure/Handler/Action/Action.php`.
 - Regras específicas por entidade ficam em classes de `src/Infrastructure/Handler/Action/Specific`.
-- A definição de campos, validações, output e vínculo com entidade Doctrine fica em DTOs de `src/Infrastructure/DTO/EntityDto`.
+- A definição de campos, validações, output e vínculo com entidade Doctrine fica em DTOs de `src/Infrastructure/DTO/Configuration`.
 - Não exponha entidade Doctrine diretamente em JSON. Use `EntityBuilder`, `EntityListBuilder`, `AttributeOutputHelper` e `ResponseBuilder`.
 - Para campos comuns, use `FieldsAttribute` e os tipos de `FieldTypeEnum`.
 - Para senha de usuário, preserve hash em `UserSpecificAction` usando `PasswordHashHelperTrait`.

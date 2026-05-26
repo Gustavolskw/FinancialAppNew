@@ -1,15 +1,15 @@
 ---
-name: appfinancasnew-backend-entity-dtos
-description: Use when creating or changing configurable EntityDTOs under src/Infrastructure/DTO/EntityDto, including field configuration, form value mapping, entity output, relation output, list/single response terms, and new CRUD DTO requirements.
+name: appfinancasnew-backend-configurations
+description: Use when creating or changing configurable Configurations under src/Infrastructure/DTO/Configuration, including field configuration, form value mapping, entity output, relation output, list/single response terms, and new CRUD Configuration requirements.
 ---
 
-# AppFinancasNew Backend EntityDTOs
+# AppFinancasNew Backend Configurations
 
 Nota para uso a partir da raiz do monorepo: os caminhos `src/...` abaixo se referem a `Backend/src/...`.
 
 ## Scope
 
-Use this skill for `src/Infrastructure/DTO/EntityDto` and for decisions that depend on EntityDTO behavior:
+Use this skill for `src/Infrastructure/DTO/Configuration` and for decisions that depend on Configuration behavior:
 
 - `ConfigurableEntity`
 - `MainConfigurableEntity`
@@ -19,7 +19,7 @@ Use this skill for `src/Infrastructure/DTO/EntityDto` and for decisions that dep
 
 ## Required Shape
 
-Every exposed Doctrine entity should have a configurable EntityDTO with:
+Every exposed Doctrine entity should have a configurable Configuration with:
 
 - `private const string ENTITYCLASS = Entity::class`;
 - `public const string LISTDATATERM`;
@@ -32,7 +32,7 @@ Every exposed Doctrine entity should have a configurable EntityDTO with:
 
 Use `MainConfigurableEntity` for entities with `createdAt` and `updatedAt`.
 
-`ConfigurableEntity` already provides the default `output()` and `setFieldValues()` implementations. Concrete EntityDTOs should inherit them unless the entity needs a real custom mapping or output rule.
+`ConfigurableEntity` already provides the default `output()` and `setFieldValues()` implementations. Concrete Configurations should inherit them unless the entity needs a real custom mapping or output rule.
 
 ## Field Configuration
 
@@ -85,7 +85,7 @@ foreach ($this->getFields()->getFields() as $field) {
 
 This preserves PATCH behavior because missing or null payload fields do not overwrite existing values in the configurable DTO.
 
-Only override `setFieldValues()` in a concrete EntityDTO when the form payload does not match field names or when a field needs entity-specific value translation before validation.
+Only override `setFieldValues()` in a concrete Configuration when the form payload does not match field names or when a field needs entity-specific value translation before validation.
 
 ## Output
 
@@ -97,7 +97,7 @@ return AttributeOutputHelper::outputEntityFields($this->getFields()->getFields()
 
 Only override `output()` when an entity needs a specific response shape that cannot be represented by configured fields and `AttributeOutputHelper`.
 
-For entity-to-DTO hydration, delegate to `EntityFieldsHelper::setFieldsFromEntityData(...)` and pass the matching relational DTO class when relation output is configured. When an EntityDTO has more than one relation, pass a map keyed by configured field name:
+For entity-to-DTO hydration, delegate to `EntityFieldsHelper::setFieldsFromEntityData(...)` and pass the matching relational DTO class when relation output is configured. When an Configuration has more than one relation, pass a map keyed by configured field name:
 
 ```php
 EntityFieldsHelper::setFieldsFromEntityData(
@@ -149,9 +149,9 @@ For DTOs such as `Wallet`, `Entry`, `Expense`, and `Transaction` that require re
 
 Use custom `SpecificAction` hooks for lifecycle rules that are not simple relation resolution, such as removing dependent `Entry` or `Expense` records before deleting a `Transaction`.
 
-`Entry` and `Expense` do not receive `transactionId` on create. Their form DTOs receive the generic transaction payload (`amount`, `location`, `description`, `date`, `month`, `year`, `walletId`), their concrete EntityDTOs keep those values for the specific action, and their list query builders can join the linked transaction to filter by those fields.
+`Entry` and `Expense` do not receive `transactionId` on create. Their form DTOs receive the generic transaction payload (`amount`, `location`, `description`, `date`, `month`, `year`, `walletId`), their concrete Configurations keep those values for the specific action, and their list query builders can join the linked transaction to filter by those fields.
 
-## Creating A New EntityDTO
+## Creating A New Configuration
 
 1. Confirm the Doctrine entity and getters/setters.
 2. Decide list and single data terms.
@@ -169,8 +169,8 @@ When migrating several Doctrine entities, follow database dependency order: cata
 
 ## Do Not
 
-- Do not put CRUD logic inside EntityDTOs.
+- Do not put CRUD logic inside Configurations.
 - Do not return Doctrine entities from `output()`.
 - Do not invent a second DTO pattern parallel to `ConfigurableEntity`.
-- Do not duplicate the default `output()` or `setFieldValues()` implementation in concrete EntityDTOs.
+- Do not duplicate the default `output()` or `setFieldValues()` implementation in concrete Configurations.
 - Do not override `setSpecificAction()` only to return `BaseSpecificAction`; inherited behavior already does that.

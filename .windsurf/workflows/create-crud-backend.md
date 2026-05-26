@@ -26,18 +26,18 @@ docker compose exec backend php bin/console make:entity
 
 Ou crie manualmente seguindo o padrão das entidades existentes.
 
-### 2. Criar o EntityDTO
+### 2. Criar o Configuration
 
-Crie o arquivo em `Backend/src/Infrastructure/DTO/EntityDto/{Entidade}Dto.php`:
+Crie o arquivo em `Backend/src/Infrastructure/DTO/Configuration/{Entidade}Dto.php`:
 
 ```php
 <?php
 
-namespace App\Infrastructure\DTO\EntityDto;
+namespace App\Infrastructure\DTO\Configuration;
 
 use App\Entity\{Entidade};
-use App\Infrastructure\DTO\EntityDto\Traits\ConfigurableEntity;
-use App\Infrastructure\DTO\EntityDto\Traits\MainConfigurableEntity;
+use App\Infrastructure\DTO\Configuration\Traits\ConfigurableEntity;
+use App\Infrastructure\DTO\Configuration\Traits\MainConfigurableEntity;
 use Doctrine\ORM\EntityManagerInterface;
 
 class {Entidade}Dto extends ConfigurableEntity
@@ -128,7 +128,7 @@ Crie em `Backend/src/Controller/{Entidade}Controller.php`:
 
 namespace App\Controller;
 
-use App\Infrastructure\DTO\EntityDto\{Entidade}Dto;
+use App\Infrastructure\DTO\Configuration\{Entidade}Dto;
 use App\Infrastructure\DTO\Forms\{Entidade}\{Entidade}FormDto;
 use App\Infrastructure\DTO\Forms\{Entidade}\{Entidade}QueryDto;
 use App\Infrastructure\DTO\Forms\StatusFormDto;

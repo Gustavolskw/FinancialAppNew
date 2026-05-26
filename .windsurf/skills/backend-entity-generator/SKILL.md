@@ -1,14 +1,14 @@
 ---
 name: backend-entity-generator
 description: >
-  Entity generation specialist combining Doctrine, Fields, EntityDTOs, and CRUD scaffolding.
+  Entity generation specialist combining Doctrine, Fields, Configurations, and CRUD scaffolding.
   Use when creating new entities with complete CRUD implementation, from database schema
   to API endpoints.
 ---
 
 # Backend Entity Generator
 
-Skill especializada em geração completa de entidades, reunindo conhecimento de Doctrine, Fields, EntityDTOs e Actions.
+Skill especializada em geração completa de entidades, reunindo conhecimento de Doctrine, Fields, Configurations e Actions.
 
 ## Scope
 
@@ -16,7 +16,7 @@ Use quando precisar:
 - Criar nova entidade Doctrine do zero
 - Scaffolding completo de CRUD
 - Definir Fields e validações
-- Criar EntityDTO configurável
+- Criar Configuration configurável
 - Gerar Form DTOs
 - Criar Controller e rotas
 - Implementar SpecificAction (quando necessário)
@@ -33,9 +33,9 @@ Use quando precisar:
 - **appfinancasnew-backend-fields**: Fields, validações, enums, relation fields
 - **backend-fields**: Fields especializados - criação, validação
 
-### EntityDTOs
-- **appfinancasnew-backend-entity-dtos**: EntityDTOs configuráveis, output, hidratação
-- **backend-entity-dto**: EntityDTOs especializados - configuração
+### Configurations
+- **appfinancasnew-backend-entity-dtos**: Configurations configuráveis, output, hidratação
+- **backend-entity-dto**: Configurations especializados - configuração
 
 ### Actions & CRUD
 - **appfinancasnew-backend-actions**: ActionManager, Actions, CRUD
@@ -230,11 +230,11 @@ class ProductFields
 }
 ```
 
-### 5. Criar EntityDTO
+### 5. Criar Configuration
 
 ```php
-// src/Infrastructure/DTO/EntityDto/ProductDTO.php
-namespace App\Infrastructure\DTO\EntityDto;
+// src/Infrastructure/DTO/Configuration/ProductDTO.php
+namespace App\Infrastructure\DTO\Configuration;
 
 use App\Entity\Product;
 use App\Infrastructure\DTO\EntityAttributes\ProductFields;
@@ -381,7 +381,7 @@ class ProductController extends AbstractController
 namespace App\Infrastructure\Handler\Action\Specific;
 
 use App\Entity\Product;
-use App\Infrastructure\DTO\EntityDto\ConfigurableEntity;
+use App\Infrastructure\DTO\Configuration\ConfigurableEntity;
 
 class ProductSpecificAction extends SpecificAction
 {
@@ -568,7 +568,7 @@ class Tag
 - [ ] Entidade Doctrine criada
 - [ ] Repository criado
 - [ ] Fields definidos
-- [ ] EntityDTO criado
+- [ ] Configuration criado
 - [ ] Form DTOs criados (FormDTO, QueryDTO)
 - [ ] Controller criado
 - [ ] SpecificAction criado (se necessário)
@@ -603,7 +603,7 @@ docker compose exec backend php bin/console debug:router
 ## Regras Importantes
 
 1. **Entity sempre tem getters/setters**
-2. **EntityDTO configura fields via `configureFields()`**
+2. **Configuration configura fields via `configureFields()`**
 3. **Form DTOs são simples classes com propriedades públicas**
 4. **Controller é fino, delega para ActionManager**
 5. **SpecificAction apenas quando há lógica específica real**

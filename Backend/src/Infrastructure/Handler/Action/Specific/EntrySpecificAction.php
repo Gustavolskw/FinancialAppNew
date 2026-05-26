@@ -3,7 +3,7 @@
 namespace App\Infrastructure\Handler\Action\Specific;
 
 use App\Entity\Entry as EntryEntity;
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 
 final class EntrySpecificAction extends BaseSpecificAction
 {

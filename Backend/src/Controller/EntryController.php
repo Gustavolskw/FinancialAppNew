@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Infrastructure\DTO\EntityDto\Entry;
+use App\Infrastructure\DTO\Configuration\EntryConfiguration;
 use App\Infrastructure\DTO\Forms\Entry\EntryEditFormDto;
 use App\Infrastructure\DTO\Forms\Entry\EntryInsertEditFormDto;
 use App\Infrastructure\DTO\Forms\Entry\EntryPostFormDto;
@@ -29,7 +29,7 @@ final class EntryController extends AbstractController
     public function list(Request $request, #[MapQueryString] EntryQueryParamsDto $queryDto, EntityManagerInterface $entityManager): JsonResponse
     {
         return $this->actionManager
-            ->handle(Entry::build($entityManager), $request, QueryParams::fromArray($queryDto->toArray()))
+            ->handle(EntryConfiguration::build($entityManager), $request, QueryParams::fromArray($queryDto->toArray()))
             ->output();
     }
 
@@ -40,7 +40,7 @@ final class EntryController extends AbstractController
         $queryParams['walletId'] = $walletId;
 
         return $this->actionManager
-            ->handle(Entry::build($entityManager), $request, QueryParams::fromArray($queryParams))
+            ->handle(EntryConfiguration::build($entityManager), $request, QueryParams::fromArray($queryParams))
             ->output();
     }
 
@@ -48,7 +48,7 @@ final class EntryController extends AbstractController
     public function view(int $id, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         return $this->actionManager
-            ->handle(Entry::build($entityManager), $request, id: $id)
+            ->handle(EntryConfiguration::build($entityManager), $request, id: $id)
             ->output();
     }
 
@@ -56,7 +56,7 @@ final class EntryController extends AbstractController
     public function post(Request $request, #[MapRequestPayload] EntryPostFormDto $formDto, EntityManagerInterface $entityManager): JsonResponse
     {
         return $this->actionManager
-            ->handle(Entry::build($entityManager), $request, formDto: $formDto)
+            ->handle(EntryConfiguration::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
 
@@ -64,7 +64,7 @@ final class EntryController extends AbstractController
     public function insertEdit(Request $request, #[MapRequestPayload] EntryInsertEditFormDto $formDto, EntityManagerInterface $entityManager): JsonResponse
     {
         return $this->actionManager
-            ->handle(Entry::build($entityManager), $request, formDto: $formDto)
+            ->handle(EntryConfiguration::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
 
@@ -72,7 +72,7 @@ final class EntryController extends AbstractController
     public function edit(Request $request, #[MapRequestPayload] EntryEditFormDto $formDto, EntityManagerInterface $entityManager): JsonResponse
     {
         return $this->actionManager
-            ->handle(Entry::build($entityManager), $request, formDto: $formDto)
+            ->handle(EntryConfiguration::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
 
@@ -80,7 +80,7 @@ final class EntryController extends AbstractController
     public function delete(int $id, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         return $this->actionManager
-            ->handle(Entry::build($entityManager), $request, id: $id)
+            ->handle(EntryConfiguration::build($entityManager), $request, id: $id)
             ->output();
     }
 }

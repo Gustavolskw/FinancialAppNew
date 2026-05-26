@@ -4,12 +4,12 @@ description: Agente especializado para trabalhar na API Symfony/PHP do backend
 
 # AppFinancas Backend Agent
 
-Use este agente para tarefas na API Symfony/PHP em `Backend/`, incluindo controllers, EntityDTOs, Forms, Actions, helpers, autenticação, autorização, Doctrine, migrations e quality gate backend.
+Use este agente para tarefas na API Symfony/PHP em `Backend/`, incluindo controllers, Configurations, Forms, Actions, helpers, autenticação, autorização, Doctrine, migrations e quality gate backend.
 
 ## Quando Usar
 
 - Criar ou alterar controllers
-- Trabalhar com EntityDTOs configuráveis
+- Trabalhar com Configurations configuráveis
 - Implementar Actions e SpecificActions
 - Criar ou alterar Fields, validações e enums
 - Trabalhar com helpers de query, output, auth
@@ -43,16 +43,16 @@ Depois identifique os diretórios alterados e leia as Skills correspondentes.
 
 Use `/skill [nome]` para invocar diretamente no chat:
 
-- `/skill backend-complete`: Guia completo e compactado de backend - CRUD, Fields, EntityDTOs, Actions
+- `/skill backend-complete`: Guia completo e compactado de backend - CRUD, Fields, Configurations, Actions
 - `/skill backend-fields`: Fields - criação, validação, enums, campos relacionais
-- `/skill backend-entity-dto`: EntityDTOs - configuração, output, hidratação
+- `/skill backend-entity-dto`: Configurations - configuração, output, hidratação
 - `/skill backend-actions`: Actions e ActionManager - fluxo CRUD, hooks, orquestração
 
 ### Skills Completas (Referência)
 
 - `.windsurf/skills/appfinancasnew-project/SKILL.md`: Contexto geral do monorepo
 - `.windsurf/skills/appfinancasnew-backend-fields/SKILL.md`: Fields, validações, enums, relation fields
-- `.windsurf/skills/appfinancasnew-backend-entity-dtos/SKILL.md`: EntityDTOs configuráveis, `configureFields()`, output
+- `.windsurf/skills/appfinancasnew-backend-entity-dtos/SKILL.md`: Configurations configuráveis, `configureFields()`, output
 - `.windsurf/skills/appfinancasnew-backend-actions/SKILL.md`: ActionManager, Action, hooks SpecificAction, login/logoff
 - `.windsurf/skills/appfinancasnew-backend-helpers/SKILL.md`: Query helpers, output helpers, response builders, JWT, auth
 
@@ -62,7 +62,7 @@ Use `/skill [nome]` para invocar diretamente no chat:
 
 ### Fluxo Padrão
 ```
-Controller fino → ActionManager → Action → EntityDTO configurável → ResponseBuilder
+Controller fino → ActionManager → Action → Configuration configurável → ResponseBuilder
 ```
 
 ### Regras De Controllers
@@ -74,7 +74,7 @@ Controller fino → ActionManager → Action → EntityDTO configurável → Res
 ### Regras De Domínio
 - Regras genéricas de CRUD ficam em `Backend/src/Infrastructure/Handler/Action/Action.php`
 - Regras específicas por entidade ficam em `Backend/src/Infrastructure/Handler/Action/Specific`
-- Definição de campos, validação, output e vínculos Doctrine fica em `Backend/src/Infrastructure/DTO/EntityDto`
+- Definição de campos, validação, output e vínculos Doctrine fica em `Backend/src/Infrastructure/DTO/Configuration`
 
 ## Contratos De Segurança
 
@@ -99,7 +99,7 @@ Catálogos (`EntryType`, `ExpenseType`, `PaymentMethod`) combinam defaults e reg
 Ao adicionar ou alterar uma API CRUD:
 
 1. Confirme a entidade Doctrine e seus getters/setters
-2. Crie ou atualize o EntityDTO em `Backend/src/Infrastructure/DTO/EntityDto`
+2. Crie ou atualize o Configuration em `Backend/src/Infrastructure/DTO/Configuration`
 3. Declare `ENTITYCLASS`, `LISTDATATERM`, `SINGLEDATATERM`, `configureFields()`, `setFieldsFromEntityData()`, `getEntityClass()` e `build()`
 4. Use `ConfigurableEntity`/`MainConfigurableEntity` e herde `output()`/`setFieldValues()` quando possível
 5. Crie Form DTOs em `Backend/src/Infrastructure/DTO/Forms/{Entidade}`
@@ -141,7 +141,7 @@ Ao adicionar ou alterar uma API CRUD:
 ### Delete
 1. Valida o id
 2. Carrega a entidade
-3. Preenche o EntityDTO dos dados atuais
+3. Preenche o Configuration dos dados atuais
 4. Define o valor do campo id
 5. Executa `beforeDelete()`
 6. Remove a entidade
@@ -150,7 +150,7 @@ Ao adicionar ou alterar uma API CRUD:
 
 ### Status
 1. Valida id e presença de `setStatus()` na entidade
-2. Preenche o EntityDTO dos dados atuais
+2. Preenche o Configuration dos dados atuais
 3. Define valores dos campos id e status
 4. Executa `beforeChangeStatus()`
 5. Chama `setStatus($status)`
@@ -223,7 +223,7 @@ Backend/
 │   ├── Entity/              # Entidades Doctrine
 │   ├── Infrastructure/
 │   │   ├── DTO/
-│   │   │   ├── EntityDto/   # EntityDTOs configuráveis
+│   │   │   ├── Configuration/   # Configurations configuráveis
 │   │   │   ├── EntityAttributes/ # Fields, validações, enums
 │   │   │   └── Forms/       # Form DTOs por entidade
 │   │   ├── Handler/

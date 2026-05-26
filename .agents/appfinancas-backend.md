@@ -1,7 +1,7 @@
 # AppFinancas Backend Agent
 
 Use este agente quando a tarefa tocar a API Symfony/PHP em `Backend`, incluindo controllers,
-EntityDTOs, Forms, Actions, helpers, autenticacao, autorizacao, Doctrine, migrations, quality
+Configurations, Forms, Actions, helpers, autenticacao, autorizacao, Doctrine, migrations, quality
 gate backend ou contratos de API consumidos pelo frontend.
 
 ## Ordem De Leitura
@@ -26,7 +26,7 @@ Depois identifique os diretorios alterados e leia as Skills correspondentes ante
 
 - `skills/appfinancasnew-project/SKILL.md`: contexto geral do monorepo, fronteiras backend/frontend/Docker, comandos e quality gates.
 - `skills/appfinancasnew-backend-fields/SKILL.md`: fields, validacoes, enums, relation fields e output de atributos.
-- `skills/appfinancasnew-backend-entity-dtos/SKILL.md`: EntityDTOs configuraveis, `configureFields()`, resposta, hidratacao e contratos CRUD.
+- `skills/appfinancasnew-backend-entity-dtos/SKILL.md`: Configurations configuraveis, `configureFields()`, resposta, hidratacao e contratos CRUD.
 - `skills/appfinancasnew-backend-actions/SKILL.md`: `ActionManager`, `Action`, hooks `SpecificAction`, login/logoff e fluxo CRUD.
 - `skills/appfinancasnew-backend-helpers/SKILL.md`: query helpers, output helpers, response builders, JWT, autorizacao e utilitarios.
 
@@ -35,11 +35,11 @@ Nao carregue Skills de frontend para tarefa somente backend. Se o backend altera
 ## Arquitetura Que Deve Ser Preservada
 
 - Controllers sao finos e recebem `Request`, DTOs por `MapRequestPayload`/`MapQueryString` e `EntityManagerInterface`.
-- O fluxo padrao e controller -> `ActionManager` -> `Action` -> EntityDTO configuravel -> response builder.
+- O fluxo padrao e controller -> `ActionManager` -> `Action` -> Configuration configuravel -> response builder.
 - Controllers CRUD devem receber `ActionManager` por injecao do container.
 - Regras genericas de CRUD ficam em `Backend/src/Infrastructure/Handler/Action/Action.php`.
 - Regras especificas por entidade ficam em `Backend/src/Infrastructure/Handler/Action/Specific`.
-- Definicao de campos, validacao, output e vinculos Doctrine fica em `Backend/src/Infrastructure/DTO/EntityDto`.
+- Definicao de campos, validacao, output e vinculos Doctrine fica em `Backend/src/Infrastructure/DTO/Configuration`.
 - Nao exponha entidade Doctrine diretamente em JSON.
 - Nao coloque regra de negocio ou banco dentro de controller.
 
@@ -57,7 +57,7 @@ Nao carregue Skills de frontend para tarefa somente backend. Se o backend altera
 Ao adicionar ou alterar uma API CRUD:
 
 1. Confirme a entidade Doctrine e seus getters/setters.
-2. Crie ou atualize o EntityDTO em `Backend/src/Infrastructure/DTO/EntityDto`.
+2. Crie ou atualize o Configuration em `Backend/src/Infrastructure/DTO/Configuration`.
 3. Declare `ENTITYCLASS`, `LISTDATATERM`, `SINGLEDATATERM`, `configureFields()`, `setFieldsFromEntityData()`, `getEntityClass()` e `build()`.
 4. Use `ConfigurableEntity`/`MainConfigurableEntity` e herde `output()`/`setFieldValues()` quando possivel.
 5. Crie Form DTOs em `Backend/src/Infrastructure/DTO/Forms/{Entidade}`.

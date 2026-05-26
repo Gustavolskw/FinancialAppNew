@@ -2,7 +2,7 @@
 
 namespace App\Infrastructure\Handler\Paginator;
 
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use Doctrine\ORM\EntityRepository;
 
 interface PaginatorInterface

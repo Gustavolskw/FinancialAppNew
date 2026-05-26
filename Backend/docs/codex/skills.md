@@ -7,7 +7,7 @@ Este projeto possui Skills versionadas em `skills/` para dar contexto operaciona
 | Skill | Quando usar | Diretório principal |
 | --- | --- | --- |
 | [appfinancasnew-backend-fields](../../skills/appfinancasnew-backend-fields/SKILL.md) | Alterar ou criar fields, validações, enums, tipos de campo, relações ou output de atributos. | `src/Infrastructure/DTO/EntityAttributes` |
-| [appfinancasnew-backend-entity-dtos](../../skills/appfinancasnew-backend-entity-dtos/SKILL.md) | Criar ou alterar EntityDTOs configuráveis, `configureFields()`, `setFieldValues()`, `output()` e hidratação por entidade. | `src/Infrastructure/DTO/EntityDto` |
+| [appfinancasnew-backend-entity-dtos](../../skills/appfinancasnew-backend-entity-dtos/SKILL.md) | Criar ou alterar Configurations configuráveis, `configureFields()`, `setFieldValues()`, `output()` e hidratação por entidade. | `src/Infrastructure/DTO/Configuration` |
 | [appfinancasnew-backend-actions](../../skills/appfinancasnew-backend-actions/SKILL.md) | Alterar fluxo CRUD, `ActionManager`, `Action`, hooks `SpecificAction` ou ações primárias como login/logoff. | `src/Infrastructure/Handler/Action` |
 | [appfinancasnew-backend-helpers](../../skills/appfinancasnew-backend-helpers/SKILL.md) | Usar, alterar ou criar helpers de query, output, hidratação, response builders, senha ou utilitários. | `src/Infrastructure/Helper` |
 

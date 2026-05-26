@@ -5,7 +5,7 @@ namespace App\Infrastructure\Helper\EntityHelper;
 use App\Infrastructure\DTO\EntityAttributes\Fields\FieldsInterface;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttributeInterface;
 use App\Infrastructure\DTO\EntityAttributes\FieldTypeEnum;
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class EntityFieldsHelper

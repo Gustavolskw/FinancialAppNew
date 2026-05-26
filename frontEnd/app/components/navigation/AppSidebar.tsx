@@ -42,6 +42,21 @@ export function AppSidebar() {
 
   useEffect(() => {
     setSession(readAuthSession());
+
+    // Listener para atualizar quando localStorage mudar (ex: após editar perfil)
+    const handleStorageChange = () => {
+      setSession(readAuthSession());
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    // Custom event para mudanças na mesma aba
+    window.addEventListener("session-updated", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("session-updated", handleStorageChange);
+    };
   }, []);
 
   async function handleLogout() {
@@ -99,18 +114,22 @@ export function AppSidebar() {
         ))}
       </nav>
 
-      <div className="flex items-center border-l border-slate-200 px-2 py-2 dark:border-slate-800 lg:block lg:border-l-0 lg:border-t lg:p-3">
-        <div className={`mb-3 hidden rounded-lg bg-slate-50 p-3 dark:bg-slate-900 lg:block ${collapsed ? "lg:flex lg:justify-center" : ""}`}>
+      <div className="flex items-center gap-2 border-l border-slate-200 px-2 py-2 dark:border-slate-800 lg:block lg:gap-0 lg:border-l-0 lg:border-t lg:p-3">
+        <Link
+          to="/perfil"
+          className={`mb-0 rounded-lg bg-slate-50 p-2 transition hover:bg-slate-100 dark:bg-slate-900 dark:hover:bg-slate-800 lg:mb-3 lg:p-3 ${collapsed ? "lg:flex lg:justify-center" : ""}`}
+          title="Editar perfil"
+        >
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-blue-100 text-sm font-bold text-blue-700 dark:bg-blue-500/15 dark:text-blue-200">
             {userName.slice(0, 1).toUpperCase()}
           </div>
           {!collapsed && (
-            <div className="mt-3 min-w-0">
-              <p className="truncate text-sm font-semibold text-slate-950 dark:text-white">{userName}</p>
-              <p className="truncate text-xs text-slate-500 dark:text-slate-400">{userEmail}</p>
+            <div className="mt-0 min-w-0 lg:mt-3">
+              <p className="hidden truncate text-sm font-semibold text-slate-950 dark:text-white lg:block">{userName}</p>
+              <p className="hidden truncate text-xs text-slate-500 dark:text-slate-400 lg:block">{userEmail}</p>
             </div>
           )}
-        </div>
+        </Link>
 
         <SidebarAction
           collapsed={collapsed}

@@ -5,7 +5,7 @@ namespace App\Infrastructure\Helper\Action;
 use App\Infrastructure\DTO\EntityAttributes\FieldTypeEnum;
 use App\Infrastructure\DTO\EntityAttributes\Fields\FieldsInterface;
 use App\Infrastructure\DTO\EntityAttributes\Fields\RelationalAttributeDto;
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use App\Infrastructure\DTO\Response\ResponseBuilder;
 use App\Infrastructure\Handler\Response\JsonResponseHandler;
 use App\Infrastructure\Handler\Response\JsonResponseHandlerInterface;

@@ -9,7 +9,7 @@ use App\Entity\ExpenseType;
 use App\Entity\PaymentMethod;
 use App\Entity\User;
 use App\Entity\Wallet;
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use App\Infrastructure\DTO\Params\Interface\QueryParamsInterface;
 use App\Infrastructure\DTO\Response\CachedResponseData;
 use App\Infrastructure\Handler\Response\JsonResponseHandler;

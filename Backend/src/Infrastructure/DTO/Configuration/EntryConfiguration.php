@@ -1,28 +1,27 @@
 <?php
 
-namespace App\Infrastructure\DTO\EntityDto;
+namespace App\Infrastructure\DTO\Configuration;
 
-use App\Entity\Expense as ExpenseEntity;
-use App\Entity\ExpenseType as ExpenseTypeEntity;
-use App\Entity\PaymentMethod as PaymentMethodEntity;
+use App\Entity\Entry as EntryEntity;
+use App\Entity\EntryType as EntryTypeEntity;
 use App\Entity\Transaction as TransactionEntity;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttribute;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttributeInterface;
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use App\Infrastructure\DTO\Forms\FormDtoInterface;
 use App\Infrastructure\DTO\Params\Interface\QueryParamsInterface;
-use App\Infrastructure\Handler\Action\Specific\ExpenseSpecificAction;
+use App\Infrastructure\Handler\Action\Specific\EntrySpecificAction;
 use App\Infrastructure\Handler\Action\Specific\Interface\SpecificActionInterface;
 use App\Infrastructure\Helper\EntityHelper\EntityFieldsHelper;
 use App\Infrastructure\Helper\EntityHelper\TransactionQueryFilterHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 
-final class Expense extends ConfigurableEntity
+final class EntryConfiguration extends ConfigurableEntity
 {
-    private const string ENTITYCLASS = ExpenseEntity::class;
-    public const string LISTDATATERM = "expenses";
-    public const string SINGLEDATATERM = "expense";
+    private const string ENTITYCLASS = EntryEntity::class;
+    public const string LISTDATATERM = "entries";
+    public const string SINGLEDATATERM = "entry";
 
     /** @var array<string, mixed> */
     private array $transactionFieldValues = [];
@@ -33,10 +32,8 @@ final class Expense extends ConfigurableEntity
 
         return $fields
             ->setIdField("id")
-            ->setRelationalField("transaction", TransactionEntity::class, "getExpenseTransaction")
-            ->setRelationalField("expenseType", ExpenseTypeEntity::class, "getExpenseType", required: true)
-            ->setRelationalField("paymentMethod", PaymentMethodEntity::class, "getExpensePaymentMethod", required: true)
-            ->setNumericField("installments", "getInstallments", required: true);
+            ->setRelationalField("entryType", EntryTypeEntity::class, "getEntryType", required: true)
+            ->setRelationalField("transaction", TransactionEntity::class, "getTransaction");
     }
 
     public function setFieldValues(FormDtoInterface $dto): void
@@ -54,9 +51,9 @@ final class Expense extends ConfigurableEntity
     public function resolveQueryBuilder(QueryParamsInterface $params): QueryBuilder
     {
         $qb = parent::resolveQueryBuilder($params);
-        $qb->leftJoin(sprintf('%s.expenseTransaction', self::TABLE_ALIAS), 'expenseTransactionFilter');
+        $qb->leftJoin(sprintf('%s.transaction', self::TABLE_ALIAS), 'entryTransactionFilter');
 
-        TransactionQueryFilterHelper::applyTransactionFilters($qb, $params, 'expenseTransactionFilter');
+        TransactionQueryFilterHelper::applyTransactionFilters($qb, $params, 'entryTransactionFilter');
 
         return $qb;
     }
@@ -69,9 +66,8 @@ final class Expense extends ConfigurableEntity
             $this->getFields(),
             $this->getEntityManager(),
             [
-                "transaction" => Transaction::class,
-                "expenseType" => ExpenseType::class,
-                "paymentMethod" => PaymentMethod::class,
+                "entryType" => EntryTypeConfiguration::class,
+                "transaction" => TransactionConfiguration::class,
             ],
             $deepFetch
         );
@@ -91,7 +87,7 @@ final class Expense extends ConfigurableEntity
 
     public function setSpecificAction(): SpecificActionInterface
     {
-        return new ExpenseSpecificAction($this);
+        return new EntrySpecificAction($this);
     }
 
     /** @return array<string, mixed> */

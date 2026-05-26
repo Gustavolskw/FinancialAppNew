@@ -5,7 +5,7 @@ namespace App\Infrastructure\Handler\Action\Specific;
 use App\Entity\User as UserEntity;
 use App\Entity\Wallet as WalletEntity;
 use App\Infrastructure\DTO\EntityAttributes\Enum\RolesEnum;
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use App\Infrastructure\Helper\PasswordHashHelperTrait;
 
 class UserSpecificAction extends BaseSpecificAction
@@ -23,6 +23,7 @@ class UserSpecificAction extends BaseSpecificAction
     public function preUpdate(BaseEntityClassInterface $baseEntityClass): bool
     {
         $this->hashPasswordField($baseEntityClass);
+        $this->updateWalletTitleIfNameChanged($baseEntityClass);
 
         return true;
     }
@@ -92,6 +93,42 @@ class UserSpecificAction extends BaseSpecificAction
         }
 
         $roleField->setValue(RolesEnum::USER->value());
+    }
+
+    private function updateWalletTitleIfNameChanged(BaseEntityClassInterface $baseEntityClass): void
+    {
+        $nameField = $baseEntityClass->getFields()->getNameField();
+
+        if ($nameField === null || !$nameField->hasValue()) {
+            return;
+        }
+
+        $entityManager = $baseEntityClass->getEntityManager();
+        $idField = $baseEntityClass->getFields()->getIdField();
+        $userId = $idField?->getValue();
+
+        if (!is_int($userId)) {
+            return;
+        }
+
+        $user = $entityManager->getRepository(UserEntity::class)->find($userId);
+        if (!$user instanceof UserEntity) {
+            return;
+        }
+
+        $wallet = $user->getUserWallet();
+        if (!$wallet instanceof WalletEntity) {
+            return;
+        }
+
+        $newName = $nameField->getValue();
+        $userName = is_string($newName) && $newName !== '' ? $newName : 'usuário';
+
+        $wallet->setTitle($this->limitedString("Carteira padrão do {$userName}", 50));
+        $wallet->setDescription($this->limitedString("Carteira criada automaticamente para o usuário {$userName}.", 255));
+        $wallet->setUpdatedAt(new \DateTimeImmutable());
+
+        $entityManager->persist($wallet);
     }
 
     private function limitedString(string $value, int $maxLength): string

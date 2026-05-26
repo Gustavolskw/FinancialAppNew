@@ -42,7 +42,7 @@ Agente geral para trabalhar em qualquer parte do monorepo, incluindo:
 
 Agente especializado para trabalhar na API Symfony/PHP, incluindo:
 - Controllers e rotas
-- EntityDTOs configuráveis
+- Configurations configuráveis
 - Actions e SpecificActions
 - Fields, validações e enums
 - Helpers de query, output e auth
@@ -78,7 +78,7 @@ Setup inicial completo do projeto:
 
 Criar um novo endpoint CRUD no backend:
 1. Criar/verificar entidade Doctrine
-2. Criar EntityDTO
+2. Criar Configuration
 3. Criar Form DTOs
 4. Criar Controller
 5. Criar SpecificAction (se necessário)
@@ -177,7 +177,7 @@ Todas as skills do projeto estão centralizadas em `.windsurf/skills/` para fác
 
 ### Backend
 - `appfinancasnew-backend-fields`: Fields, validações, enums
-- `appfinancasnew-backend-entity-dtos`: EntityDTOs configuráveis
+- `appfinancasnew-backend-entity-dtos`: Configurations configuráveis
 - `appfinancasnew-backend-actions`: ActionManager, Actions, CRUD
 - `appfinancasnew-backend-helpers`: Helpers de query, output, auth
 - `backend-*-specific`: Versões específicas do Backend/ (para referência)

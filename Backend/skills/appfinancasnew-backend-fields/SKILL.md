@@ -17,7 +17,7 @@ Use this skill for work in `src/Infrastructure/DTO/EntityAttributes`, especially
 
 ## Core Rules
 
-1. Keep field rules in the field layer. If the rule validates the value of a field, put it in the field class or in the `additionalFieldValidation` closure configured by the EntityDTO.
+1. Keep field rules in the field layer. If the rule validates the value of a field, put it in the field class or in the `additionalFieldValidation` closure configured by the Configuration.
 2. Update the interface and implementation together. When adding a field factory to `FieldsAttribute`, add the matching contract to `FieldsAttributeInterface`.
 3. Preserve `Field::validate()` semantics: reset validation state, run required validation first, skip type validation for empty optional values, then run the concrete field validation.
 4. `fillValue()` must reset the validation state so reused DTO instances do not carry stale validation.
@@ -58,7 +58,7 @@ For enum-backed fields:
 1. Define the enum under `src/Infrastructure/DTO/EntityAttributes/Enum`.
 2. Implement `EntityFieldEnumInterface`.
 3. Use a backed enum with int values when the Doctrine column stores an int.
-4. Configure it in an EntityDTO with `setEnumField('role', 'getRole', RolesEnum::class)`.
+4. Configure it in an Configuration with `setEnumField('role', 'getRole', RolesEnum::class)`.
 5. Keep persistence and output separate: `Action` uses `getRawValue()` for enum persistence, while `AttributeOutputHelper` emits the enum `name()`.
 
 ## Relational Fields

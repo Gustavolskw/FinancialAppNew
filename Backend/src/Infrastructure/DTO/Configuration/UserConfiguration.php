@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infrastructure\DTO\EntityDto;
+namespace App\Infrastructure\DTO\Configuration;
 
 use App\Entity\User as UserEntity;
 use App\Entity\Wallet;
@@ -9,14 +9,14 @@ use App\Infrastructure\DTO\EntityAttributes\Fields\FieldsInterface;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttribute;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttributeInterface;
 use App\Infrastructure\DTO\EntityAttributes\FieldTypeEnum;
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
-use App\Infrastructure\DTO\EntityDto\Wallet as WalletDto;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\WalletConfiguration;
 use App\Infrastructure\Handler\Action\Specific\Interface\SpecificActionInterface;
 use App\Infrastructure\Handler\Action\Specific\UserSpecificAction;
 use App\Infrastructure\Helper\EntityHelper\EntityFieldsHelper;
 use Doctrine\ORM\EntityManagerInterface;
 
-final class User extends MainConfigurableEntity
+final class UserConfiguration extends MainConfigurableEntity
 {
     private const string ENTITYCLASS = UserEntity::class;
     public const string LISTDATATERM = "users";
@@ -54,7 +54,7 @@ final class User extends MainConfigurableEntity
             self::ENTITYCLASS,
             $this->getFields(),
             $this->getEntityManager(),
-            WalletDto::class,
+            WalletConfiguration::class,
             $deepFetch
         );
 

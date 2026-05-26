@@ -39,6 +39,25 @@ Arquivos: `src/Controller/AccessControlController.php`, `src/Infrastructure/Hand
 
 O endpoint `/login` gera JWT stateless assinado com `APP_SECRET` e o `ActionManager` valida bearer token e autorização por registro nas rotas CRUD/status. O `/logoff` apenas confirma o encerramento para o cliente descartar o token; revogação server-side exigirá blacklist/persistência de sessões ou tokens opacos armazenados.
 
+### Autorização De Edição De Usuário Corrigida (2026-05-25)
+
+Arquivos: 
+- `src/Infrastructure/Helper/Auth/RecordAuthorizationHelperTrait.php`
+- `config/packages/framework.yaml`
+
+**Correções aplicadas:**
+
+1. Corrigido bug nos métodos `canAccessExistingRecord()` e `canModifyCatalogRecord()` que retornavam `true` quando a entidade não era encontrada (`$entity === null`). Agora retornam `false` corretamente, impedindo acesso a registros inexistentes.
+
+2. **Habilitado Symfony Serializer** em `framework.yaml` com `serializer: enabled: true`. Sem essa configuração, o `MapRequestPayload` não conseguia deserializar o JSON do request, resultando em todos os campos do DTO como `null`.
+
+**Comportamento atual correto:**
+- ADMIN pode editar qualquer usuário
+- Usuário comum pode editar apenas seu próprio registro
+- Usuário comum não pode alterar o campo `role` (nem o próprio)
+- Tentativa de editar usuário inexistente retorna erro de autorização
+- `MapRequestPayload` deserializa corretamente os DTOs de formulário
+
 ## Recomendações Para Próximas Iterações
 
 - Criar um field/output próprio para coleções inversas (`OneToMany`) quando a API precisar expor listas como `Wallet.walletTransactions`.

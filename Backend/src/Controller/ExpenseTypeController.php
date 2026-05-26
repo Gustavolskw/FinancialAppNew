@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Infrastructure\DTO\EntityDto\ExpenseType;
+use App\Infrastructure\DTO\Configuration\ExpenseTypeConfiguration;
 use App\Infrastructure\DTO\Forms\ExpenseType\ExpenseTypeEditFormDto;
 use App\Infrastructure\DTO\Forms\ExpenseType\ExpenseTypeInsertEditFormDto;
 use App\Infrastructure\DTO\Forms\ExpenseType\ExpenseTypePostFormDto;
@@ -29,7 +29,7 @@ final class ExpenseTypeController extends AbstractController
     public function list(Request $request, #[MapQueryString] EntityQueryParamsDto $queryDto, EntityManagerInterface $entityManager): JsonResponse
     {
         return $this->actionManager
-            ->handle(ExpenseType::build($entityManager), $request, QueryParams::fromArray($queryDto->toArray()))
+            ->handle(ExpenseTypeConfiguration::build($entityManager), $request, QueryParams::fromArray($queryDto->toArray()))
             ->output();
     }
 
@@ -37,7 +37,7 @@ final class ExpenseTypeController extends AbstractController
     public function view(int $id, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         return $this->actionManager
-            ->handle(ExpenseType::build($entityManager), $request, id: $id)
+            ->handle(ExpenseTypeConfiguration::build($entityManager), $request, id: $id)
             ->output();
     }
 
@@ -45,7 +45,7 @@ final class ExpenseTypeController extends AbstractController
     public function post(Request $request, #[MapRequestPayload] ExpenseTypePostFormDto $formDto, EntityManagerInterface $entityManager): JsonResponse
     {
         return $this->actionManager
-            ->handle(ExpenseType::build($entityManager), $request, formDto: $formDto)
+            ->handle(ExpenseTypeConfiguration::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
 
@@ -53,7 +53,7 @@ final class ExpenseTypeController extends AbstractController
     public function insertEdit(Request $request, #[MapRequestPayload] ExpenseTypeInsertEditFormDto $formDto, EntityManagerInterface $entityManager): JsonResponse
     {
         return $this->actionManager
-            ->handle(ExpenseType::build($entityManager), $request, formDto: $formDto)
+            ->handle(ExpenseTypeConfiguration::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
 
@@ -61,7 +61,7 @@ final class ExpenseTypeController extends AbstractController
     public function edit(Request $request, #[MapRequestPayload] ExpenseTypeEditFormDto $formDto, EntityManagerInterface $entityManager): JsonResponse
     {
         return $this->actionManager
-            ->handle(ExpenseType::build($entityManager), $request, formDto: $formDto)
+            ->handle(ExpenseTypeConfiguration::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
 
@@ -69,7 +69,7 @@ final class ExpenseTypeController extends AbstractController
     public function delete(int $id, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         return $this->actionManager
-            ->handle(ExpenseType::build($entityManager), $request, id: $id)
+            ->handle(ExpenseTypeConfiguration::build($entityManager), $request, id: $id)
             ->output();
     }
 }

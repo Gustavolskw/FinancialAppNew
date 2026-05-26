@@ -3,7 +3,7 @@
 namespace App\Infrastructure\Handler\Analytics;
 
 use App\Infrastructure\DTO\EntityAttributes\Fields\FieldsInterface;
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use App\Infrastructure\Handler\Analytics\Dto\AnalysesDataDto;
 use App\Infrastructure\Helper\Interface\EntityClassCollection;
 use Doctrine\Common\Collections\ArrayCollection;

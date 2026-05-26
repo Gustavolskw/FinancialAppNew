@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infrastructure\DTO\EntityDto;
+namespace App\Infrastructure\DTO\Configuration;
 
 use App\Entity\Entry as EntryEntity;
 use App\Entity\Expense as ExpenseEntity;
@@ -9,11 +9,11 @@ use App\Entity\Wallet as WalletEntity;
 use App\Infrastructure\DTO\EntityAttributes\FieldTypeEnum;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttribute;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttributeInterface;
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use App\Infrastructure\Helper\EntityHelper\EntityFieldsHelper;
 use Doctrine\ORM\EntityManagerInterface;
 
-final class Transaction extends ConfigurableEntity
+final class TransactionConfiguration extends ConfigurableEntity
 {
     private const string ENTITYCLASS = TransactionEntity::class;
     public const string LISTDATATERM = "transactions";
@@ -44,9 +44,9 @@ final class Transaction extends ConfigurableEntity
             $this->getFields(),
             $this->getEntityManager(),
             [
-                "expense" => Expense::class,
-                "entry" => Entry::class,
-                "wallet" => Wallet::class,
+                "expense" => ExpenseConfiguration::class,
+                "entry" => EntryConfiguration::class,
+                "wallet" => WalletConfiguration::class,
             ],
             $deepFetch
         );

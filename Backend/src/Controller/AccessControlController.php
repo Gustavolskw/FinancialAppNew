@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Infrastructure\DTO\EntityDto\User;
+use App\Infrastructure\DTO\Configuration\UserConfiguration;
 use App\Infrastructure\DTO\Forms\Login\LoginFormDto;
 use App\Infrastructure\Handler\Action\PrimaryAction\AccessControlAction;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,7 +20,7 @@ class AccessControlController extends AbstractController
         #[MapRequestPayload] LoginFormDto $formDto,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
-        return AccessControlAction::build(User::build($entityManager))
+        return AccessControlAction::build(UserConfiguration::build($entityManager))
             ->login($formDto)
             ->output();
     }
@@ -28,7 +28,7 @@ class AccessControlController extends AbstractController
     #[Route('/logoff', name: 'logoff', methods: ['POST'], format: 'json')]
     public function logoff(EntityManagerInterface $entityManager): JsonResponse
     {
-        return AccessControlAction::build(User::build($entityManager))
+        return AccessControlAction::build(UserConfiguration::build($entityManager))
             ->logoff()
             ->output();
     }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Infrastructure\DTO\EntityDto\PaymentMethod;
+use App\Infrastructure\DTO\Configuration\PaymentMethodConfiguration;
 use App\Infrastructure\DTO\Forms\PaymentMethod\PaymentMethodEditFormDto;
 use App\Infrastructure\DTO\Forms\PaymentMethod\PaymentMethodInsertEditFormDto;
 use App\Infrastructure\DTO\Forms\PaymentMethod\PaymentMethodPostFormDto;
@@ -29,7 +29,7 @@ final class PaymentMethodController extends AbstractController
     public function list(Request $request, #[MapQueryString] EntityQueryParamsDto $queryDto, EntityManagerInterface $entityManager): JsonResponse
     {
         return $this->actionManager
-            ->handle(PaymentMethod::build($entityManager), $request, QueryParams::fromArray($queryDto->toArray()))
+            ->handle(PaymentMethodConfiguration::build($entityManager), $request, QueryParams::fromArray($queryDto->toArray()))
             ->output();
     }
 
@@ -37,7 +37,7 @@ final class PaymentMethodController extends AbstractController
     public function view(int $id, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         return $this->actionManager
-            ->handle(PaymentMethod::build($entityManager), $request, id: $id)
+            ->handle(PaymentMethodConfiguration::build($entityManager), $request, id: $id)
             ->output();
     }
 
@@ -45,7 +45,7 @@ final class PaymentMethodController extends AbstractController
     public function post(Request $request, #[MapRequestPayload] PaymentMethodPostFormDto $formDto, EntityManagerInterface $entityManager): JsonResponse
     {
         return $this->actionManager
-            ->handle(PaymentMethod::build($entityManager), $request, formDto: $formDto)
+            ->handle(PaymentMethodConfiguration::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
 
@@ -53,7 +53,7 @@ final class PaymentMethodController extends AbstractController
     public function insertEdit(Request $request, #[MapRequestPayload] PaymentMethodInsertEditFormDto $formDto, EntityManagerInterface $entityManager): JsonResponse
     {
         return $this->actionManager
-            ->handle(PaymentMethod::build($entityManager), $request, formDto: $formDto)
+            ->handle(PaymentMethodConfiguration::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
 
@@ -61,7 +61,7 @@ final class PaymentMethodController extends AbstractController
     public function edit(Request $request, #[MapRequestPayload] PaymentMethodEditFormDto $formDto, EntityManagerInterface $entityManager): JsonResponse
     {
         return $this->actionManager
-            ->handle(PaymentMethod::build($entityManager), $request, formDto: $formDto)
+            ->handle(PaymentMethodConfiguration::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
 
@@ -69,7 +69,7 @@ final class PaymentMethodController extends AbstractController
     public function delete(int $id, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         return $this->actionManager
-            ->handle(PaymentMethod::build($entityManager), $request, id: $id)
+            ->handle(PaymentMethodConfiguration::build($entityManager), $request, id: $id)
             ->output();
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Infrastructure\Handler\Action;
 
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use App\Infrastructure\DTO\Params\Interface\QueryParamsInterface;
 use App\Infrastructure\DTO\Response\ResponseBuilder;
 use App\Infrastructure\Handler\Analytics\SimpleDataAnalytics;

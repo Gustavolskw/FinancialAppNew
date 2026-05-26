@@ -27,7 +27,7 @@ AppFinancasNew é um monorepo com:
 ## Arquitetura
 
 ### Backend
-- Controller fino → ActionManager → Action → EntityDTO configurável → ResponseBuilder
+- Controller fino → ActionManager → Action → Configuration configurável → ResponseBuilder
 - Autenticação JWT com Bearer token
 - Autorização por dono/ADMIN
 - CRUD genérico com hooks específicos por entidade
@@ -73,7 +73,7 @@ Para tarefas de frontend, leia também:
 
 ### Backend
 - `.windsurf/skills/appfinancasnew-backend-fields/SKILL.md`: Fields, validações, enums
-- `.windsurf/skills/appfinancasnew-backend-entity-dtos/SKILL.md`: EntityDTOs configuráveis
+- `.windsurf/skills/appfinancasnew-backend-entity-dtos/SKILL.md`: Configurations configuráveis
 - `.windsurf/skills/appfinancasnew-backend-actions/SKILL.md`: ActionManager, Actions, CRUD
 - `.windsurf/skills/appfinancasnew-backend-helpers/SKILL.md`: Helpers de query, output, auth
 

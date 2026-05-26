@@ -25,7 +25,7 @@ Use this skill for `src/Infrastructure/Handler/Action`, including:
 The normal HTTP flow is:
 
 1. Controller binds payload/query DTOs with Symfony attributes.
-2. Controller builds the configurable EntityDTO with `EntityDto::build($entityManager)`.
+2. Controller builds the configurable Configuration with `Configuration::build($entityManager)`.
 3. Controller delegates to `ActionManager`.
 4. `ActionManager` chooses a generic action by HTTP method.
 5. `Action` validates fields, runs hooks, applies values to the Doctrine entity, persists/flushes, and builds a standardized response.
@@ -102,7 +102,7 @@ Do not call `specificAction()` during update.
 
 - validates the id;
 - loads the entity;
-- fills the EntityDTO from current entity data;
+- fills the Configuration from current entity data;
 - sets the id field value;
 - runs `beforeDelete()`;
 - removes the entity;
@@ -112,7 +112,7 @@ Do not call `specificAction()` during update.
 `status(int $id, bool $status)`:
 
 - validates the id and presence of `setStatus()` on the entity;
-- fills the EntityDTO from current entity data;
+- fills the Configuration from current entity data;
 - sets id and status field values;
 - runs `beforeChangeStatus()`;
 - calls `setStatus($status)`;

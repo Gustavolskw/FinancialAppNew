@@ -180,7 +180,7 @@ enum MeuEnum: int implements EntityFieldEnumInterface
 }
 ```
 
-### 2. Usar No EntityDTO
+### 2. Usar No Configuration
 
 ```php
 $fields->setEnumField('meuCampo', 'getMeuCampo', MeuEnum::class, required: true);
@@ -227,7 +227,7 @@ class EntryFormDto
 
 ## Validações Customizadas
 
-### No EntityDTO
+### No Configuration
 
 ```php
 $fields->setTextField(

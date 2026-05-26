@@ -7,16 +7,16 @@ Este arquivo descreve como um agente Codex deve continuar a implementação sem 
 Além de `AGENTS.md`, `.codex/README.md` na raiz e `Backend/.codex`, leia [docs/codex/skills.md](skills.md) e carregue as Skills locais que cobrem os diretórios alterados:
 
 - `src/Infrastructure/DTO/EntityAttributes`: [appfinancasnew-backend-fields](../../skills/appfinancasnew-backend-fields/SKILL.md)
-- `src/Infrastructure/DTO/EntityDto`: [appfinancasnew-backend-entity-dtos](../../skills/appfinancasnew-backend-entity-dtos/SKILL.md)
+- `src/Infrastructure/DTO/Configuration`: [appfinancasnew-backend-entity-dtos](../../skills/appfinancasnew-backend-entity-dtos/SKILL.md)
 - `src/Infrastructure/Handler/Action`: [appfinancasnew-backend-actions](../../skills/appfinancasnew-backend-actions/SKILL.md)
 - `src/Infrastructure/Helper`: [appfinancasnew-backend-helpers](../../skills/appfinancasnew-backend-helpers/SKILL.md)
 
 ## Ao Adicionar Um Novo Endpoint CRUD
 
-Leia primeiro as Skills de EntityDTOs e Actions. Se o CRUD tiver validação nova ou relação obrigatória, leia também a Skill de Fields e a Skill de Helpers.
+Leia primeiro as Skills de Configurations e Actions. Se o CRUD tiver validação nova ou relação obrigatória, leia também a Skill de Fields e a Skill de Helpers.
 
 1. Verifique se a entidade Doctrine existe em `src/Entity`.
-2. Crie ou atualize o DTO configurável em `src/Infrastructure/DTO/EntityDto`.
+2. Crie ou atualize o DTO configurável em `src/Infrastructure/DTO/Configuration`.
 3. Declare `ENTITYCLASS`, `LISTDATATERM` e `SINGLEDATATERM`.
 4. Configure os campos em `configureFields()`.
 5. Use o `output()` herdado de `ConfigurableEntity`, salvo quando a entidade precisar formato de resposta específico.
@@ -33,7 +33,7 @@ Controllers devem ter pouca lógica:
 
 ```php
 return $this->actionManager
-    ->handle(EntityDto::build($entityManager), $request, $queryParams, $formDto, $id)
+    ->handle(Configuration::build($entityManager), $request, $queryParams, $formDto, $id)
     ->output();
 ```
 
@@ -49,7 +49,7 @@ Não instancie `new ActionManager()` em controllers novos; a instância injetada
 
 ## Modelo De DTO Configurável
 
-Para detalhes de criação e manutenção de EntityDTOs, siga [appfinancasnew-backend-entity-dtos](../../skills/appfinancasnew-backend-entity-dtos/SKILL.md).
+Para detalhes de criação e manutenção de Configurations, siga [appfinancasnew-backend-entity-dtos](../../skills/appfinancasnew-backend-entity-dtos/SKILL.md).
 
 Campos devem ser declarados no DTO configurável, não no controller:
 
@@ -81,9 +81,9 @@ Para validação específica de campo, use `additionalFieldValidation`:
 })
 ```
 
-Esse é o padrão usado em `src/Infrastructure/DTO/EntityDto/User.php` para validar senha forte com uma closure.
+Esse é o padrão usado em `src/Infrastructure/DTO/Configuration/User.php` para validar senha forte com uma closure.
 
-`ConfigurableEntity` já implementa o `output()` padrão com `AttributeOutputHelper::outputEntityFields()` e o `setFieldValues()` padrão por loop nos campos configurados. Não duplique esses métodos em EntityDTOs concretos; sobrescreva somente quando o payload ou a saída exigirem comportamento específico.
+`ConfigurableEntity` já implementa o `output()` padrão com `AttributeOutputHelper::outputEntityFields()` e o `setFieldValues()` padrão por loop nos campos configurados. Não duplique esses métodos em Configurations concretos; sobrescreva somente quando o payload ou a saída exigirem comportamento específico.
 
 ## SpecificAction
 
@@ -159,7 +159,7 @@ Os demais viram filtros. Texto, nome, email e localização usam `LIKE`. Status 
 
 Rotas relacionais explícitas, como `GET /wallet/user/{userId}`, `GET /entry/wallet/{walletId}` e `GET /expense/wallet/{walletId}`, devem apenas preservar `$request->query->all()`, adicionar o filtro relacional (`userId` ou `walletId`) e delegar para `ActionManager` com `QueryParams::fromArray(...)`.
 
-`Transaction` é agrupador interno dos dados comuns. Não crie controller nem rotas diretas para `Transaction`; os payloads de `Entry` e `Expense` devem receber os campos transacionais e seus EntityDTOs/listagens devem filtrar por esses campos via join com a transação vinculada.
+`Transaction` é agrupador interno dos dados comuns. Não crie controller nem rotas diretas para `Transaction`; os payloads de `Entry` e `Expense` devem receber os campos transacionais e seus Configurations/listagens devem filtrar por esses campos via join com a transação vinculada.
 
 ## Cache De GETs
 
@@ -175,14 +175,14 @@ O cache de requests é genérico e fica em `src/Infrastructure/Handler/Cache`.
 
 ## Relações
 
-Antes de implementar escrita de relações, leia as Skills de Fields, EntityDTOs e Actions.
+Antes de implementar escrita de relações, leia as Skills de Fields, Configurations e Actions.
 
 O projeto consegue ler relações, retorná-las como objeto ou id, validar ids relacionais informados e aplicar relações unitárias em create/update.
 
 Ao adicionar criação de entidades com relações obrigatórias:
 
 - aceitar `{relation}Id` no Form DTO;
-- configurar `setRelationalField()` no EntityDTO com o getter real da entidade;
+- configurar `setRelationalField()` no Configuration com o getter real da entidade;
 - deixar `BaseSpecificAction::preActionValidation()` validar a existência do id relacionado;
 - deixar `Action::applyFieldsToEntity()` resolver a entidade relacionada e aplicar o setter derivado do getter.
 

@@ -1,6 +1,6 @@
 ---
 name: backend-complete
-description: Skill completa e compactada do backend Symfony - guia rápido para CRUD, Fields, EntityDTOs e Actions
+description: Skill completa e compactada do backend Symfony - guia rápido para CRUD, Fields, Configurations e Actions
 ---
 
 # Backend Complete Skill
@@ -38,10 +38,10 @@ class MinhaEntidade
 }
 ```
 
-### 2. EntityDTO
+### 2. Configuration
 
 ```php
-// Backend/src/Infrastructure/DTO/EntityDto/MinhaEntidadeDto.php
+// Backend/src/Infrastructure/DTO/Configuration/MinhaEntidadeDto.php
 class MinhaEntidadeDto extends ConfigurableEntity
 {
     use MainConfigurableEntity;
@@ -230,7 +230,7 @@ enum MeuEnum: int implements EntityFieldEnumInterface
 }
 ```
 
-### 2. Usar No EntityDTO
+### 2. Usar No Configuration
 
 ```php
 $fields->setEnumField('meuCampo', 'getMeuCampo', MeuEnum::class, required: true);
@@ -245,7 +245,7 @@ private ?int $meuCampo = null;
 
 ## 🔗 Campos Relacionais
 
-### EntityDTO
+### Configuration
 
 ```php
 $fields->setRelationalField('wallet', 'getWallet', Wallet::class, required: true);
@@ -443,7 +443,7 @@ php -l Backend/src/path/to/file.php
 ## ✅ Checklist CRUD
 
 - [ ] Entidade Doctrine criada
-- [ ] EntityDTO criado com `configureFields()`
+- [ ] Configuration criado com `configureFields()`
 - [ ] Form DTO criado
 - [ ] Query DTO criado (se necessário)
 - [ ] Controller criado (fino)
@@ -476,14 +476,14 @@ php -l Backend/src/path/to/file.php
 Para detalhes aprofundados, use:
 
 - `/skill backend-fields` - Fields, validações, enums
-- `/skill backend-entity-dto` - EntityDTOs configuráveis
+- `/skill backend-entity-dto` - Configurations configuráveis
 - `/skill backend-actions` - Actions, hooks, fluxo CRUD
 
 ## 🔍 Troubleshooting
 
 ### Erro de validação
 
-- Verifique `configureFields()` no EntityDTO
+- Verifique `configureFields()` no Configuration
 - Verifique constraints no Form DTO
 - Verifique `preActionValidation()` no SpecificAction
 
@@ -509,7 +509,7 @@ Para detalhes aprofundados, use:
 
 - **Localização**: `Backend/src/`
 - **Controllers**: `Controller/`
-- **EntityDTOs**: `Infrastructure/DTO/EntityDto/`
+- **Configurations**: `Infrastructure/DTO/Configuration/`
 - **Fields**: `Infrastructure/DTO/EntityAttributes/`
 - **Form DTOs**: `Infrastructure/DTO/Forms/`
 - **Actions**: `Infrastructure/Handler/Action/`

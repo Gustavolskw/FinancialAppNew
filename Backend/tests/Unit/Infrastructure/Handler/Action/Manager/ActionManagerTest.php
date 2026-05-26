@@ -8,7 +8,7 @@ use App\Entity\EntryType;
 use App\Entity\User;
 use App\Entity\Wallet;
 use App\Infrastructure\DTO\EntityAttributes\Enum\RolesEnum;
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use App\Infrastructure\DTO\Forms\EntryType\EntryTypeEditFormDto;
 use App\Infrastructure\DTO\Forms\StatusFormDto;
 use App\Infrastructure\Handler\Action\Manager\ActionManager;

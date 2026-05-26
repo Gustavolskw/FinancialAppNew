@@ -59,7 +59,7 @@ Quando tocar o frontend, leia também:
 Depois da leitura geral, use a skill local correspondente ao módulo alterado:
 
 - `skills/appfinancasnew-backend-fields`: alterar Fields, validações, enums, relações ou output de atributos.
-- `skills/appfinancasnew-backend-entity-dtos`: alterar EntityDTOs configuráveis, fields de entidade, hidratação ou output.
+- `skills/appfinancasnew-backend-entity-dtos`: alterar Configurations configuráveis, fields de entidade, hidratação ou output.
 - `skills/appfinancasnew-backend-actions`: alterar controllers, `ActionManager`, `Action`, hooks `SpecificAction`, login/logoff ou fluxo CRUD.
 - `skills/appfinancasnew-backend-helpers`: alterar helpers de query, output, resposta, auth, paginação ou senha.
 - `frontEnd/skills/appfinancasnew-frontend-react-router`: alterar rotas, layout, componentes, Tailwind ou estrutura React Router.
@@ -92,14 +92,14 @@ Não duplique regra de negócio no frontend. Não mova lógica de banco para con
 Preserve o padrão:
 
 ```text
-Controller fino -> ActionManager -> Action -> EntityDTO configurável -> ResponseBuilder
+Controller fino -> ActionManager -> Action -> Configuration configurável -> ResponseBuilder
 ```
 
 Regras obrigatórias:
 
 - Controllers devem receber DTOs via `MapRequestPayload` ou `MapQueryString` e delegar para `ActionManager`.
 - CRUD genérico passa por `ActionManager`, autenticação JWT e autorização por dono/ADMIN.
-- EntityDTOs configuram fields, validações, relações, output e termos de resposta.
+- Configurations configuram fields, validações, relações, output e termos de resposta.
 - `SpecificAction` concentra comportamento específico de entidade.
 - `Entry` e `Expense` controlam o ciclo de vida de `Transaction`; não crie fluxo público direto para `Transaction` sem pedido explícito.
 - `POST /user` normal é público, não aceita `role` e cria usuário comum.

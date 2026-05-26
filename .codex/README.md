@@ -26,7 +26,7 @@ Preserve React Router, TypeScript e a separação entre UI e regras de negócio 
 
 Antes de mexer nos diretórios abaixo, leia a Skill local correspondente:
 - Backend/src/Infrastructure/DTO/EntityAttributes -> skills/appfinancasnew-backend-fields/SKILL.md
-- Backend/src/Infrastructure/DTO/EntityDto -> skills/appfinancasnew-backend-entity-dtos/SKILL.md
+- Backend/src/Infrastructure/DTO/Configuration -> skills/appfinancasnew-backend-entity-dtos/SKILL.md
 - Backend/src/Infrastructure/Handler/Action -> skills/appfinancasnew-backend-actions/SKILL.md
 - Backend/src/Infrastructure/Helper -> skills/appfinancasnew-backend-helpers/SKILL.md
 - frontEnd/app -> frontEnd/skills/appfinancasnew-frontend-react-router/SKILL.md

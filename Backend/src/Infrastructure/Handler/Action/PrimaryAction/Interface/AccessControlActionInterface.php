@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Handler\Action\PrimaryAction\Interface;
 
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use App\Infrastructure\DTO\Forms\Login\LoginFormDto;
 use App\Infrastructure\Handler\Response\JsonResponseHandlerInterface;
 

@@ -5,7 +5,7 @@ namespace App\Infrastructure\Handler\Action\Specific;
 use App\Entity\Transaction as TransactionEntity;
 use App\Entity\Wallet as WalletEntity;
 use App\Infrastructure\DTO\EntityAttributes\Fields\BasicFieldDto;
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 
 trait TransactionPayloadSpecificActionTrait
 {

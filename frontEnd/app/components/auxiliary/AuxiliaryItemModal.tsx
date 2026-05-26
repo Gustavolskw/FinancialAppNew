@@ -192,7 +192,7 @@ export function AuxiliaryItemModal({ item, onClose, onSaved, type }: AuxiliaryIt
             <span>Cancelar</span>
           </button>
           <button className="btn-entrar disabled:cursor-not-allowed disabled:opacity-60" disabled={isSubmitting} type="submit">
-            <span>{isSubmitting ? "Salvando..." : isEditing ? "Salvar alterações" : activeText.submitLabel}</span>
+            <span>{isSubmitting ? "Salvando..." : "Salvar"}</span>
           </button>
         </div>
       </FieldsForm>

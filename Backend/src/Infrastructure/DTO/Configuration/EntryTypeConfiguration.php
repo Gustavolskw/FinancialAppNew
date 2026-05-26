@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Infrastructure\DTO\EntityDto;
+namespace App\Infrastructure\DTO\Configuration;
 
-use App\Entity\ExpenseType as ExpenseTypeEntity;
+use App\Entity\EntryType as EntryTypeEntity;
 use App\Entity\User as UserEntity;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttribute;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttributeInterface;
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use App\Infrastructure\Helper\EntityHelper\EntityFieldsHelper;
 use Doctrine\ORM\EntityManagerInterface;
 
-final class ExpenseType extends ConfigurableEntity
+final class EntryTypeConfiguration extends ConfigurableEntity
 {
-    private const string ENTITYCLASS = ExpenseTypeEntity::class;
-    public const string LISTDATATERM = "expenseTypes";
-    public const string SINGLEDATATERM = "expenseType";
+    private const string ENTITYCLASS = EntryTypeEntity::class;
+    public const string LISTDATATERM = "entryTypes";
+    public const string SINGLEDATATERM = "entryType";
 
     public function configureFields(FieldsAttributeInterface $fields): FieldsAttributeInterface
     {
@@ -35,7 +35,7 @@ final class ExpenseType extends ConfigurableEntity
             $this->getFields(),
             $this->getEntityManager(),
             [
-                "user" => User::class,
+                "user" => UserConfiguration::class,
             ],
             $deepFetch
         );

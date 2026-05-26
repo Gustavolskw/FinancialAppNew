@@ -2,7 +2,7 @@
 
 namespace App\Infrastructure\Handler\Action\Manager\interface;
 
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use App\Infrastructure\DTO\Forms\FormDtoInterface;
 use App\Infrastructure\DTO\Forms\StatusFormDto;
 use App\Infrastructure\DTO\Params\Interface\QueryParamsInterface;

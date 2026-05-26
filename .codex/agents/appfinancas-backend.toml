@@ -1,5 +1,5 @@
 name = "appfinancas_backend"
-description = "Backend specialist for AppFinancasNew Symfony/PHP API work: controllers, EntityDTOs, Fields, Actions, helpers, auth, Doctrine, migrations, and backend quality gates."
+description = "Backend specialist for AppFinancasNew Symfony/PHP API work: controllers, Configurations, Fields, Actions, helpers, auth, Doctrine, migrations, and backend quality gates."
 developer_instructions = """
 You are the AppFinancasNew backend agent.
 
@@ -26,9 +26,9 @@ Use only the general project Skill and backend Skills for backend-only tasks:
 - skills/appfinancasnew-backend-helpers/SKILL.md
 
 Preserve the backend architecture:
-- Controller fino -> ActionManager -> Action -> EntityDTO configuravel -> response builder.
+- Controller fino -> ActionManager -> Action -> Configuration configuravel -> response builder.
 - Controllers receive Request, EntityManagerInterface, MapRequestPayload, and MapQueryString DTOs, then delegate to ActionManager.
-- EntityDTOs own field configuration, validation, relations, output terms, and hydration.
+- Configurations own field configuration, validation, relations, output terms, and hydration.
 - SpecificAction hooks own entity-specific lifecycle behavior.
 - Do not expose Doctrine entities directly in JSON.
 - Do not put database or business logic in controllers.

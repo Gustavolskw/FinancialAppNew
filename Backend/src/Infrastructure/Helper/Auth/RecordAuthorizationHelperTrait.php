@@ -13,7 +13,7 @@ use App\Entity\Transaction as TransactionEntity;
 use App\Entity\User as UserEntity;
 use App\Entity\Wallet as WalletEntity;
 use App\Infrastructure\DTO\EntityAttributes\Enum\RolesEnum;
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use App\Infrastructure\DTO\Forms\FormDtoInterface;
 use App\Infrastructure\DTO\Response\ResponseBuilder;
 use App\Infrastructure\Handler\Response\JsonResponseHandler;
@@ -137,37 +137,37 @@ trait RecordAuthorizationHelperTrait
 
         return match ($entityClass) {
             UserEntity::class => static function (QueryBuilder $qb) use ($currentUser): void {
-                $alias = $qb->getRootAliases()[0];
-                $qb->andWhere(sprintf('%s.id = :securityCurrentUserId', $alias))
+                    $alias = $qb->getRootAliases()[0];
+                    $qb->andWhere(sprintf('%s.id = :securityCurrentUserId', $alias))
                     ->setParameter('securityCurrentUserId', $currentUser->getId());
-            },
+                },
             WalletEntity::class => static function (QueryBuilder $qb) use ($currentUser): void {
-                $alias = $qb->getRootAliases()[0];
-                $qb->andWhere(sprintf('%s.walletUser = :securityCurrentUser', $alias))
+                    $alias = $qb->getRootAliases()[0];
+                    $qb->andWhere(sprintf('%s.walletUser = :securityCurrentUser', $alias))
                     ->setParameter('securityCurrentUser', $currentUser);
-            },
+                },
             TransactionEntity::class => static function (QueryBuilder $qb) use ($currentWallet): void {
-                $alias = $qb->getRootAliases()[0];
-                self::restrictByCurrentWallet($qb, sprintf('%s.transactionWallet', $alias), $currentWallet);
-            },
+                    $alias = $qb->getRootAliases()[0];
+                    self::restrictByCurrentWallet($qb, sprintf('%s.transactionWallet', $alias), $currentWallet);
+                },
             EntryEntity::class => static function (QueryBuilder $qb) use ($currentWallet): void {
-                $alias = $qb->getRootAliases()[0];
-                $qb->leftJoin(sprintf('%s.transaction', $alias), 'securityEntryTransaction');
-                self::restrictByCurrentWallet($qb, 'securityEntryTransaction.transactionWallet', $currentWallet);
-            },
+                    $alias = $qb->getRootAliases()[0];
+                    $qb->leftJoin(sprintf('%s.transaction', $alias), 'securityEntryTransaction');
+                    self::restrictByCurrentWallet($qb, 'securityEntryTransaction.transactionWallet', $currentWallet);
+                },
             ExpenseEntity::class => static function (QueryBuilder $qb) use ($currentWallet): void {
-                $alias = $qb->getRootAliases()[0];
-                $qb->leftJoin(sprintf('%s.expenseTransaction', $alias), 'securityExpenseTransaction');
-                self::restrictByCurrentWallet($qb, 'securityExpenseTransaction.transactionWallet', $currentWallet);
-            },
+                    $alias = $qb->getRootAliases()[0];
+                    $qb->leftJoin(sprintf('%s.expenseTransaction', $alias), 'securityExpenseTransaction');
+                    self::restrictByCurrentWallet($qb, 'securityExpenseTransaction.transactionWallet', $currentWallet);
+                },
             EntryTypeEntity::class,
             ExpenseTypeEntity::class,
             PaymentMethodEntity::class => static function (QueryBuilder $qb) use ($currentUser): void {
-                $alias = $qb->getRootAliases()[0];
-                $qb->andWhere(sprintf('(%s.isDefault = :securityDefaultCatalog OR %s.user = :securityCatalogUser)', $alias, $alias))
+                    $alias = $qb->getRootAliases()[0];
+                    $qb->andWhere(sprintf('(%s.isDefault = :securityDefaultCatalog OR %s.user = :securityCatalogUser)', $alias, $alias))
                     ->setParameter('securityDefaultCatalog', true)
                     ->setParameter('securityCatalogUser', $currentUser);
-            },
+                },
             default => null,
         };
     }
@@ -260,7 +260,7 @@ trait RecordAuthorizationHelperTrait
         $entity = $this->recordAuthorizationEntity($baseEntityClass, $baseEntityClass->getEntityClass(), $id);
 
         if ($entity === null) {
-            return true;
+            return false;
         }
 
         return $this->entityBelongsToUser($entity, $currentUser);
@@ -292,10 +292,10 @@ trait RecordAuthorizationHelperTrait
             WalletEntity::class => $this->formInt($formDto, 'userId') === $currentUser->getId(),
             TransactionEntity::class => $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser),
             EntryEntity::class => $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser)
-                && $this->catalogIdVisibleToUser($baseEntityClass, EntryTypeEntity::class, $this->formInt($formDto, 'entryTypeId'), $currentUser),
+            && $this->catalogIdVisibleToUser($baseEntityClass, EntryTypeEntity::class, $this->formInt($formDto, 'entryTypeId'), $currentUser),
             ExpenseEntity::class => $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser)
-                && $this->catalogIdVisibleToUser($baseEntityClass, ExpenseTypeEntity::class, $this->formInt($formDto, 'expenseTypeId'), $currentUser)
-                && $this->catalogIdVisibleToUser($baseEntityClass, PaymentMethodEntity::class, $this->formInt($formDto, 'paymentMethodId'), $currentUser),
+            && $this->catalogIdVisibleToUser($baseEntityClass, ExpenseTypeEntity::class, $this->formInt($formDto, 'expenseTypeId'), $currentUser)
+            && $this->catalogIdVisibleToUser($baseEntityClass, PaymentMethodEntity::class, $this->formInt($formDto, 'paymentMethodId'), $currentUser),
             EntryTypeEntity::class,
             ExpenseTypeEntity::class,
             PaymentMethodEntity::class => true,
@@ -312,20 +312,20 @@ trait RecordAuthorizationHelperTrait
 
         return match ($entityClass) {
             WalletEntity::class => $this->formInt($formDto, 'userId') === null
-                || $this->formInt($formDto, 'userId') === $currentUser->getId(),
+            || $this->formInt($formDto, 'userId') === $currentUser->getId(),
             TransactionEntity::class => $this->formInt($formDto, 'walletId') === null
-                || $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser),
+            || $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser),
             EntryEntity::class => (
                 $this->formInt($formDto, 'walletId') === null
                 || $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser)
             )
-                && $this->nullableCatalogIdVisibleToUser($baseEntityClass, EntryTypeEntity::class, $this->formInt($formDto, 'entryTypeId'), $currentUser),
+            && $this->nullableCatalogIdVisibleToUser($baseEntityClass, EntryTypeEntity::class, $this->formInt($formDto, 'entryTypeId'), $currentUser),
             ExpenseEntity::class => (
                 $this->formInt($formDto, 'walletId') === null
                 || $this->walletIdBelongsToUser($this->formInt($formDto, 'walletId'), $currentUser)
             )
-                && $this->nullableCatalogIdVisibleToUser($baseEntityClass, ExpenseTypeEntity::class, $this->formInt($formDto, 'expenseTypeId'), $currentUser)
-                && $this->nullableCatalogIdVisibleToUser($baseEntityClass, PaymentMethodEntity::class, $this->formInt($formDto, 'paymentMethodId'), $currentUser),
+            && $this->nullableCatalogIdVisibleToUser($baseEntityClass, ExpenseTypeEntity::class, $this->formInt($formDto, 'expenseTypeId'), $currentUser)
+            && $this->nullableCatalogIdVisibleToUser($baseEntityClass, PaymentMethodEntity::class, $this->formInt($formDto, 'paymentMethodId'), $currentUser),
             UserEntity::class => true,
             EntryTypeEntity::class,
             ExpenseTypeEntity::class,
@@ -346,7 +346,7 @@ trait RecordAuthorizationHelperTrait
         $entity = $this->recordAuthorizationEntity($baseEntityClass, $baseEntityClass->getEntityClass(), $id);
 
         if ($entity === null) {
-            return true;
+            return false;
         }
 
         if (!$this->isCatalogEntity($entity) || $this->catalogIsDefault($entity)) {

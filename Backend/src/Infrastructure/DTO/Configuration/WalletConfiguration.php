@@ -1,20 +1,22 @@
 <?php
 
-namespace App\Infrastructure\DTO\EntityDto;
+namespace App\Infrastructure\DTO\Configuration;
 
-use App\Entity\PaymentMethod as PaymentMethodEntity;
-use App\Entity\User as UserEntity;
+use App\Entity\User;
+use App\Entity\Wallet as WalletEntity;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttribute;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttributeInterface;
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\UserConfiguration;
 use App\Infrastructure\Helper\EntityHelper\EntityFieldsHelper;
 use Doctrine\ORM\EntityManagerInterface;
 
-final class PaymentMethod extends ConfigurableEntity
+final class WalletConfiguration extends MainConfigurableEntity
 {
-    private const string ENTITYCLASS = PaymentMethodEntity::class;
-    public const string LISTDATATERM = "paymentMethods";
-    public const string SINGLEDATATERM = "paymentMethod";
+    private const string ENTITYCLASS = WalletEntity::class;
+    public const string LISTDATATERM = "wallets";
+    public const string SINGLEDATATERM = "wallet";
+
 
     public function configureFields(FieldsAttributeInterface $fields): FieldsAttributeInterface
     {
@@ -22,10 +24,12 @@ final class PaymentMethod extends ConfigurableEntity
 
         return $fields
             ->setIdField("id")
-            ->setNameField("name", required: true)
-            ->setStatusField("isDefault", "isDefault")
-            ->setRelationalField("user", UserEntity::class, "getUser");
+            ->setTextField("title", "getTitle", required: true)
+            ->setTextField("description", "getDescription", required: true)
+            ->setStatusField("status")
+            ->setRelationalField("user", User::class, "getWalletUser", required: true);
     }
+
 
     public function setFieldsFromEntityData(object $entity, bool $deepFetch = false): self
     {
@@ -34,9 +38,7 @@ final class PaymentMethod extends ConfigurableEntity
             self::ENTITYCLASS,
             $this->getFields(),
             $this->getEntityManager(),
-            [
-                "user" => User::class,
-            ],
+            UserConfiguration::class,
             $deepFetch
         );
 

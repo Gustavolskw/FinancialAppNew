@@ -1,29 +1,29 @@
 ---
-name: backend-entity-dto
-description: Skill especializada em EntityDTOs do backend - configuração, fields, output e hidratação
+name: backend-configurations
+description: Skill especializada em Configurations do backend - configuração, fields, output e hidratação
 ---
 
-# Backend EntityDTO Skill
+# Backend Configuration Skill
 
-Skill especializada para trabalhar com EntityDTOs configuráveis no backend Symfony/PHP.
+Skill especializada para trabalhar com Configurations configuráveis no backend Symfony/PHP.
 
 ## Quando Usar
 
 Use esta skill quando precisar:
-- Criar novo EntityDTO para uma entidade
-- Configurar fields de um EntityDTO
+- Criar novo Configuration para uma entidade
+- Configurar fields de um Configuration
 - Customizar output de resposta
 - Implementar hidratação de entidade
-- Mapear Form DTOs para EntityDTO
+- Mapear Form DTOs para Configuration
 - Definir termos de resposta (data keys)
 
 ## Localização
 
-`Backend/src/Infrastructure/DTO/EntityDto/`
+`Backend/src/Infrastructure/DTO/Configuration/`
 
 ## Conceitos Principais
 
-### EntityDTO
+### Configuration
 
 DTO configurável que define:
 - Quais campos da entidade são expostos
@@ -33,21 +33,21 @@ DTO configurável que define:
 
 ### Traits Principais
 
-- **`ConfigurableEntity`**: Base para EntityDTOs configuráveis
+- **`ConfigurableEntity`**: Base para Configurations configuráveis
 - **`MainConfigurableEntity`**: Adiciona `output()` e `setFieldValues()` padrão
 
-## Criar Novo EntityDTO
+## Criar Novo Configuration
 
 ### Template Básico
 
 ```php
 <?php
 
-namespace App\Infrastructure\DTO\EntityDto;
+namespace App\Infrastructure\DTO\Configuration;
 
 use App\Entity\MinhaEntidade;
-use App\Infrastructure\DTO\EntityDto\Traits\ConfigurableEntity;
-use App\Infrastructure\DTO\EntityDto\Traits\MainConfigurableEntity;
+use App\Infrastructure\DTO\Configuration\Traits\ConfigurableEntity;
+use App\Infrastructure\DTO\Configuration\Traits\MainConfigurableEntity;
 use App\Infrastructure\Helper\Entity\EntityFieldsHelper;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -458,7 +458,7 @@ class EntryFormDto
 ### ❌ Não Fazer
 
 - Não expor entidades Doctrine diretamente em JSON
-- Não colocar lógica de negócio no EntityDTO
+- Não colocar lógica de negócio no Configuration
 - Não duplicar validação (use fields)
 - Não expor senha ou campos sensíveis no output
 
@@ -467,7 +467,7 @@ class EntryFormDto
 ### Criação (POST)
 
 1. Controller recebe Form DTO
-2. Controller cria EntityDTO com `::build($entityManager)`
+2. Controller cria Configuration com `::build($entityManager)`
 3. `ActionManager` chama `setFieldValues($formDto)`
 4. `Action::save()` valida fields
 5. `Action` cria entidade e aplica fields
@@ -478,7 +478,7 @@ class EntryFormDto
 ### Atualização (PUT/PATCH)
 
 1. Controller recebe Form DTO
-2. Controller cria EntityDTO com `::build($entityManager)`
+2. Controller cria Configuration com `::build($entityManager)`
 3. `ActionManager` chama `setFieldValues($formDto)`
 4. `Action::edit()` valida fields
 5. `Action` carrega entidade existente e aplica fields
@@ -488,7 +488,7 @@ class EntryFormDto
 
 ### Visualização (GET)
 
-1. Controller cria EntityDTO com `::build($entityManager)`
+1. Controller cria Configuration com `::build($entityManager)`
 2. `Action::view()` carrega entidade
 3. `setFieldsFromEntityData()` popula DTO
 4. `output()` gera resposta JSON
@@ -497,7 +497,7 @@ class EntryFormDto
 
 ```bash
 # Sintaxe PHP
-php -l Backend/src/Infrastructure/DTO/EntityDto/MinhaEntidadeDto.php
+php -l Backend/src/Infrastructure/DTO/Configuration/MinhaEntidadeDto.php
 
 # Quality gate completo
 ./scripts/quality-backend.sh
@@ -505,8 +505,8 @@ php -l Backend/src/Infrastructure/DTO/EntityDto/MinhaEntidadeDto.php
 
 ## Referências
 
-- `Backend/src/Infrastructure/DTO/EntityDto/Traits/ConfigurableEntity.php`
-- `Backend/src/Infrastructure/DTO/EntityDto/Traits/MainConfigurableEntity.php`
+- `Backend/src/Infrastructure/DTO/Configuration/Traits/ConfigurableEntity.php`
+- `Backend/src/Infrastructure/DTO/Configuration/Traits/MainConfigurableEntity.php`
 - `Backend/src/Infrastructure/Helper/Entity/EntityFieldsHelper.php`
 - `Backend/src/Infrastructure/Helper/Output/AttributeOutputHelper.php`
 - Skill completa: `.windsurf/skills/appfinancasnew-backend-entity-dtos/SKILL.md`

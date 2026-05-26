@@ -2,7 +2,7 @@
 
 namespace App\Infrastructure\Helper\Response;
 
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use App\Infrastructure\Helper\Interface\EntityClassCollection;
 
 final class EntityListBuilder extends AbstractEntityBuilder implements EntityClassCollection

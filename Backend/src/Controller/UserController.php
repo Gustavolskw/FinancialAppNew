@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Infrastructure\DTO\EntityDto\User;
+use App\Infrastructure\DTO\Configuration\UserConfiguration;
 use App\Infrastructure\DTO\Forms\StatusFormDto;
 use App\Infrastructure\DTO\Forms\User\UserAdminPostFormDto;
 use App\Infrastructure\DTO\Forms\User\UserEditFormDto;
@@ -27,7 +27,7 @@ class UserController extends AbstractController
     {
     }
 
-    #[Route('/user', name:'userList', methods: ['GET'], format: 'json')]
+    #[Route('/user', name: 'userList', methods: ['GET'], format: 'json')]
     public function list(
         Request $request,
         #[MapQueryString] EntityQueryParamsDto $userDto,
@@ -36,66 +36,66 @@ class UserController extends AbstractController
         $queryParams = QueryParams::fromArray($userDto->toArray());
 
         return $this->actionManager
-            ->handle(User::build($entityManager), $request, $queryParams)
+            ->handle(UserConfiguration::build($entityManager), $request, $queryParams)
             ->output();
     }
 
-    #[Route('/user/{id}', name:'userView', requirements: ['id' => '\d+'], methods: ['GET'], format: 'json')]
+    #[Route('/user/{id}', name: 'userView', requirements: ['id' => '\d+'], methods: ['GET'], format: 'json')]
     public function view(
         int $id,
         Request $request,
         EntityManagerInterface $entityManager
     ): JsonResponse {
         return $this->actionManager
-            ->handle(User::build($entityManager), $request, id: $id)
+            ->handle(UserConfiguration::build($entityManager), $request, id: $id)
             ->output();
     }
 
-    #[Route('/user', name:'userPost', methods: ['POST'], format: 'json')]
+    #[Route('/user', name: 'userPost', methods: ['POST'], format: 'json')]
     public function post(
         Request $request,
         #[MapRequestPayload] UserPostFormDto $formDto,
         EntityManagerInterface $entityManager
     ): JsonResponse {
         return $this->actionManager
-            ->handle(User::build($entityManager), $request, formDto: $formDto)
+            ->handle(UserConfiguration::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
 
-    #[Route('/user/admin', name:'userAdminPost', methods: ['POST'], format: 'json')]
+    #[Route('/user/admin', name: 'userAdminPost', methods: ['POST'], format: 'json')]
     public function adminPost(
         Request $request,
         #[MapRequestPayload] UserAdminPostFormDto $formDto,
         EntityManagerInterface $entityManager
     ): JsonResponse {
         return $this->actionManager
-            ->handle(User::build($entityManager), $request, formDto: $formDto)
+            ->handle(UserConfiguration::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
 
-    #[Route('/user', name:'userInsertEdit', methods: ['PUT'], format: 'json')]
+    #[Route('/user', name: 'userInsertEdit', methods: ['PUT'], format: 'json')]
     public function insertEdit(
         Request $request,
         #[MapRequestPayload] UserInsertEditFormDto $formDto,
         EntityManagerInterface $entityManager
     ): JsonResponse {
         return $this->actionManager
-            ->handle(User::build($entityManager), $request, formDto: $formDto)
+            ->handle(UserConfiguration::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
 
-    #[Route('/user', name:'userEdit', methods: ['PATCH'], format: 'json')]
+    #[Route('/user', name: 'userEdit', methods: ['PATCH'], format: 'json')]
     public function edit(
         Request $request,
         #[MapRequestPayload] UserEditFormDto $formDto,
         EntityManagerInterface $entityManager
     ): JsonResponse {
         return $this->actionManager
-            ->handle(User::build($entityManager), $request, formDto: $formDto)
+            ->handle(UserConfiguration::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
 
-    #[Route('/user/{id}/status', name:'userStatus', requirements: ['id' => '\d+'], methods: ['PATCH'], format: 'json')]
+    #[Route('/user/{id}/status', name: 'userStatus', requirements: ['id' => '\d+'], methods: ['PATCH'], format: 'json')]
     public function status(
         int $id,
         Request $request,
@@ -103,7 +103,7 @@ class UserController extends AbstractController
         EntityManagerInterface $entityManager
     ): JsonResponse {
         return $this->actionManager
-            ->handleStatus(User::build($entityManager), $request, $id, $formDto)
+            ->handleStatus(UserConfiguration::build($entityManager), $request, $id, $formDto)
             ->output();
     }
 }

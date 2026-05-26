@@ -6,4 +6,5 @@ export default [
   route("principal", "routes/dashboard.tsx"),
   route("transacoes", "routes/transactions.tsx"),
   route("auxiliares", "routes/auxiliary-items.tsx"),
+  route("perfil", "routes/profile.tsx"),
 ] satisfies RouteConfig;

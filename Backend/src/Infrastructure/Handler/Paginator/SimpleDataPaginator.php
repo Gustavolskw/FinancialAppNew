@@ -2,7 +2,7 @@
 
 namespace App\Infrastructure\Handler\Paginator;
 
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use App\Infrastructure\Handler\Paginator\Dto\PaginatorDataDto;
 use App\Infrastructure\Helper\Interface\EntityClassCollection;
 use Doctrine\Common\Collections\ArrayCollection;

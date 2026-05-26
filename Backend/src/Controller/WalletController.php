@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Infrastructure\DTO\EntityDto\Wallet;
+use App\Infrastructure\DTO\Configuration\WalletConfiguration;
 use App\Infrastructure\DTO\Forms\StatusFormDto;
 use App\Infrastructure\DTO\Forms\Wallet\WalletEditFormDto;
 use App\Infrastructure\DTO\Forms\Wallet\WalletInsertEditFormDto;
@@ -33,7 +33,7 @@ final class WalletController extends AbstractController
         EntityManagerInterface $entityManager
     ): JsonResponse {
         return $this->actionManager
-            ->handle(Wallet::build($entityManager), $request, QueryParams::fromArray($queryDto->toArray()))
+            ->handle(WalletConfiguration::build($entityManager), $request, QueryParams::fromArray($queryDto->toArray()))
             ->output();
     }
 
@@ -44,7 +44,7 @@ final class WalletController extends AbstractController
         $queryParams['userId'] = $userId;
 
         return $this->actionManager
-            ->handle(Wallet::build($entityManager), $request, QueryParams::fromArray($queryParams))
+            ->handle(WalletConfiguration::build($entityManager), $request, QueryParams::fromArray($queryParams))
             ->output();
     }
 
@@ -52,7 +52,7 @@ final class WalletController extends AbstractController
     public function view(int $id, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         return $this->actionManager
-            ->handle(Wallet::build($entityManager), $request, id: $id)
+            ->handle(WalletConfiguration::build($entityManager), $request, id: $id)
             ->output();
     }
 
@@ -63,7 +63,7 @@ final class WalletController extends AbstractController
         EntityManagerInterface $entityManager
     ): JsonResponse {
         return $this->actionManager
-            ->handle(Wallet::build($entityManager), $request, formDto: $formDto)
+            ->handle(WalletConfiguration::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
 
@@ -74,7 +74,7 @@ final class WalletController extends AbstractController
         EntityManagerInterface $entityManager
     ): JsonResponse {
         return $this->actionManager
-            ->handle(Wallet::build($entityManager), $request, formDto: $formDto)
+            ->handle(WalletConfiguration::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
 
@@ -85,7 +85,7 @@ final class WalletController extends AbstractController
         EntityManagerInterface $entityManager
     ): JsonResponse {
         return $this->actionManager
-            ->handle(Wallet::build($entityManager), $request, formDto: $formDto)
+            ->handle(WalletConfiguration::build($entityManager), $request, formDto: $formDto)
             ->output();
     }
 
@@ -97,7 +97,7 @@ final class WalletController extends AbstractController
         EntityManagerInterface $entityManager
     ): JsonResponse {
         return $this->actionManager
-            ->handleStatus(Wallet::build($entityManager), $request, $id, $formDto)
+            ->handleStatus(WalletConfiguration::build($entityManager), $request, $id, $formDto)
             ->output();
     }
 }

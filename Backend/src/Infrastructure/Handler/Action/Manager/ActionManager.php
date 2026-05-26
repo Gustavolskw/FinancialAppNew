@@ -2,7 +2,7 @@
 
 namespace App\Infrastructure\Handler\Action\Manager;
 
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use App\Infrastructure\DTO\Forms\FormDtoInterface;
 use App\Infrastructure\DTO\Forms\StatusFormDto;
 use App\Infrastructure\DTO\Params\Interface\QueryParamsInterface;
@@ -36,6 +36,7 @@ final class ActionManager implements ActionManagerInterface
         ?FormDtoInterface $formDto = null,
         ?int $id = null
     ): JsonResponseHandlerInterface {
+
         $this->resetRecordAuthorizationState();
 
         if ($this->isPublicUserCreate($baseEntityClass, $request, $id)) {

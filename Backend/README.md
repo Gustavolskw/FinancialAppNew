@@ -20,7 +20,7 @@ O backend concentra regras de domínio, persistência, autenticação, autoriza�
 O fluxo principal segue:
 
 ```text
-Controller fino -> ActionManager -> Action -> EntityDTO configurável -> ResponseBuilder
+Controller fino -> ActionManager -> Action -> Configuration configurável -> ResponseBuilder
 ```
 
 Pontos principais:
@@ -28,7 +28,7 @@ Pontos principais:
 - Controllers recebem payload/query DTOs e delegam.
 - `ActionManager` autentica, autoriza e escolhe o fluxo CRUD.
 - `Action` executa validação, persistência e hooks.
-- EntityDTOs configuram fields, output e relações.
+- Configurations configuram fields, output e relações.
 - Helpers centralizam saída, filtros, paginação e autenticação.
 
 ## Ambiente

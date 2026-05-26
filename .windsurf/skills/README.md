@@ -11,7 +11,7 @@ Esta pasta contém todas as skills do projeto AppFinancasNew centralizadas para 
 ├── caveman-specialized/                         # Modo ultra-comprimido
 ├── backend-complete-specialized/                # Guia completo backend
 ├── backend-fields-specialized/                  # Fields especializados
-├── backend-entity-dto-specialized/              # EntityDTOs especializados
+├── backend-entity-dto-specialized/              # Configurations especializados
 ├── backend-actions-specialized/                 # Actions especializados
 ├── frontend-fields-forms-specialized/           # Fields/Forms especializados
 ├── frontend-menus-specialized/                  # Menus especializados
@@ -20,12 +20,12 @@ Esta pasta contém todas as skills do projeto AppFinancasNew centralizadas para 
 ├── appfinancasnew-project/                      # Skill geral do projeto
 │
 ├── appfinancasnew-backend-actions/              # Backend: Actions (raiz)
-├── appfinancasnew-backend-entity-dtos/          # Backend: EntityDTOs (raiz)
+├── appfinancasnew-backend-entity-dtos/          # Backend: Configurations (raiz)
 ├── appfinancasnew-backend-fields/               # Backend: Fields (raiz)
 ├── appfinancasnew-backend-helpers/              # Backend: Helpers (raiz)
 │
 ├── backend-actions-specific/                    # Backend: Actions (específico)
-├── backend-entity-dtos-specific/                # Backend: EntityDTOs (específico)
+├── backend-entity-dtos-specific/                # Backend: Configurations (específico)
 ├── backend-fields-specific/                     # Backend: Fields (específico)
 ├── backend-helpers-specific/                    # Backend: Helpers (específico)
 │
@@ -51,7 +51,7 @@ Esta pasta contém todas as skills do projeto AppFinancasNew centralizadas para 
 | **frontend-specialist** ⭐ | Agrega todas as skills de frontend | Desenvolvimento completo de features frontend, arquitetura de componentes, UI/UX |
 | **frontend-integrator** 🔗 | Agrega skills de frontend + backend para integração | Criar features full-stack, integrar endpoints, debugar integração API |
 | **backend-specialist** ⭐ | Agrega todas as skills de backend | Desenvolvimento completo de features backend, arquitetura de API, domínio |
-| **backend-entity-generator** 🏗️ | Agrega skills para geração de entidades | Criar entidades Doctrine completas com CRUD, Fields, EntityDTOs, migrations |
+| **backend-entity-generator** 🏗️ | Agrega skills para geração de entidades | Criar entidades Doctrine completas com CRUD, Fields, Configurations, migrations |
 | **backend-review** 🔍 | Agrega skills de backend + review | Review de código backend, sugestões de melhoria, refatoração |
 | **frontend-review** 🔍 | Agrega skills de frontend + review | Review de código frontend, sugestões de melhoria, refatoração |
 
@@ -61,7 +61,7 @@ Esta pasta contém todas as skills do projeto AppFinancasNew centralizadas para 
 |-------|-----------|-------------|
 | **backend-complete** ⭐ | Guia completo e compactado | Quick start CRUD, referência rápida, checklist completo |
 | **backend-fields** | Fields especializados | Criar campos, validações, enums, campos relacionais |
-| **backend-entity-dto** | EntityDTOs especializados | Configurar EntityDTOs, output, hidratação, Form DTOs |
+| **backend-entity-dto** | Configurations especializados | Configurar Configurations, output, hidratação, Form DTOs |
 | **backend-actions** | Actions especializados | Fluxo CRUD, hooks, SpecificAction, ActionManager |
 
 ### Backend - Skills Completas (Referência)
@@ -69,11 +69,11 @@ Esta pasta contém todas as skills do projeto AppFinancasNew centralizadas para 
 | Skill | Descrição | Quando Usar |
 |-------|-----------|-------------|
 | **appfinancasnew-backend-actions** | ActionManager, Actions, CRUD | Alterar fluxo CRUD, ActionManager, Action, hooks SpecificAction, login/logoff |
-| **appfinancasnew-backend-entity-dtos** | EntityDTOs configuráveis | Criar ou alterar EntityDTOs, configureFields(), output(), hidratação |
+| **appfinancasnew-backend-entity-dtos** | Configurations configuráveis | Criar ou alterar Configurations, configureFields(), output(), hidratação |
 | **appfinancasnew-backend-fields** | Fields, validações, enums | Alterar ou criar fields, validações, enums, relation fields, output de atributos |
 | **appfinancasnew-backend-helpers** | Helpers diversos | Usar, alterar ou criar helpers de query, output, response builders, auth, senha |
 | **backend-actions-specific** | Actions (versão específica Backend) | Versão específica do Backend/ para referência |
-| **backend-entity-dtos-specific** | EntityDTOs (versão específica Backend) | Versão específica do Backend/ para referência |
+| **backend-entity-dtos-specific** | Configurations (versão específica Backend) | Versão específica do Backend/ para referência |
 | **backend-fields-specific** | Fields (versão específica Backend) | Versão específica do Backend/ para referência |
 | **backend-helpers-specific** | Helpers (versão específica Backend) | Versão específica do Backend/ para referência |
 
@@ -117,7 +117,7 @@ As skills são automaticamente detectadas pelo Windsurf quando estão na pasta `
 /skill caveman                # Modo ultra-comprimido (~75% menos tokens)
 /skill backend-complete       # Guia completo (recomendado para começar)
 /skill backend-fields         # Trabalhar com Fields
-/skill backend-entity-dto     # Trabalhar com EntityDTOs
+/skill backend-entity-dto     # Trabalhar com Configurations
 /skill backend-actions        # Trabalhar com Actions
 /skill frontend-fields-forms  # Formulários e validação
 /skill frontend-menus         # Menus e navegação

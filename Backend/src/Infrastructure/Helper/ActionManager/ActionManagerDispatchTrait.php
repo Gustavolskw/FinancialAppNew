@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Helper\ActionManager;
 
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use App\Infrastructure\DTO\Forms\FormDtoInterface;
 use App\Infrastructure\DTO\Params\Interface\QueryParamsInterface;
 use App\Infrastructure\DTO\Params\QueryParams;

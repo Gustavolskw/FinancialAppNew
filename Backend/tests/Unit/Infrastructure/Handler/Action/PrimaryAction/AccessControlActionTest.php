@@ -6,7 +6,7 @@ namespace App\Tests\Unit\Infrastructure\Handler\Action\PrimaryAction;
 
 use App\Entity\User;
 use App\Infrastructure\DTO\EntityAttributes\Enum\RolesEnum;
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use App\Infrastructure\DTO\Forms\Login\LoginFormDto;
 use App\Infrastructure\Handler\Action\PrimaryAction\AccessControlAction;
 use App\Infrastructure\Helper\PasswordHashHelperTrait;

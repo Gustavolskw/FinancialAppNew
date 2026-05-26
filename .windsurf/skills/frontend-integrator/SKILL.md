@@ -29,7 +29,7 @@ Use quando precisar:
 
 ### Backend
 - **appfinancasnew-backend-actions**: ActionManager, Actions, CRUD, endpoints
-- **appfinancasnew-backend-entity-dtos**: EntityDTOs configuráveis, output, contratos
+- **appfinancasnew-backend-entity-dtos**: Configurations configuráveis, output, contratos
 - **appfinancasnew-backend-helpers**: Response builders, output helpers, auth
 
 ### General
@@ -44,7 +44,7 @@ Frontend (React Router)
     ↓ HTTP Request (Bearer JWT)
 Backend Controller (Symfony)
     ↓ ActionManager
-Action + EntityDTO
+Action + Configuration
     ↓ Response Builder
 JSON Response
     ↓ API Client

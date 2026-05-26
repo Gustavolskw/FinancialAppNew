@@ -2,7 +2,7 @@
 
 namespace App\Infrastructure\Handler\Action\Specific\Interface;
 
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 
 interface SpecificActionInterface
 {

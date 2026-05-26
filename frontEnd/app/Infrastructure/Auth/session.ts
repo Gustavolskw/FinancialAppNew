@@ -32,6 +32,11 @@ export function saveAuthSession(session: AuthSession): void {
   localStorage.setItem(authStorageKey, JSON.stringify(session));
   localStorage.setItem(tokenStorageKey, session.token);
   localStorage.setItem(userStorageKey, JSON.stringify(session.user));
+
+  // Disparar evento customizado para notificar componentes na mesma aba
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event("session-updated"));
+  }
 }
 
 export function clearAuthSession(): void {

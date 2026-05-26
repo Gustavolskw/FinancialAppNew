@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Infrastructure\DTO\EntityDto;
+namespace App\Infrastructure\DTO\Configuration;
 
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttributeInterface;
 use App\Infrastructure\DTO\EntityAttributes\FieldTypeEnum;
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use App\Infrastructure\DTO\Forms\FormDtoInterface;
 use App\Infrastructure\DTO\Params\Interface\QueryParamsInterface;
 use App\Infrastructure\Handler\Action\Specific\BaseSpecificAction;

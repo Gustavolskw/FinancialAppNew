@@ -2,7 +2,7 @@
 
 namespace App\Infrastructure\DTO\EntityAttributes\Fields;
 
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 
 final class RelationalAttributeDto extends Field
 {

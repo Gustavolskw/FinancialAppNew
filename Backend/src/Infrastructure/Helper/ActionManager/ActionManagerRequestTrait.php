@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Helper\ActionManager;
 
 use App\Entity\User as UserEntity;
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use App\Infrastructure\DTO\Forms\FormDtoInterface;
 use Symfony\Component\HttpFoundation\Request;
 

@@ -25,7 +25,7 @@ Use quando precisar:
 
 ### Core Backend
 - **appfinancasnew-backend-actions**: ActionManager, Actions, CRUD
-- **appfinancasnew-backend-entity-dtos**: EntityDTOs configuráveis
+- **appfinancasnew-backend-entity-dtos**: Configurations configuráveis
 - **appfinancasnew-backend-fields**: Fields, validações, enums
 - **appfinancasnew-backend-helpers**: Helpers diversos
 
@@ -115,7 +115,7 @@ protected function specificAction(ConfigurableEntity $dto): void
 }
 ```
 
-#### EntityDTOs
+#### Configurations
 - [ ] Herda de `ConfigurableEntity` ou `MainConfigurableEntity`
 - [ ] Define `ENTITYCLASS`, `LISTDATATERM`, `SINGLEDATATERM`
 - [ ] Implementa `configureFields()`
@@ -249,7 +249,7 @@ public function show(int $id): JsonResponse
 
 #### Validação
 - [ ] Input sempre validado (Fields)
-- [ ] Output sempre sanitizado (EntityDTO)
+- [ ] Output sempre sanitizado (Configuration)
 - [ ] Não confia em dados do cliente
 - [ ] SQL injection prevenido (QueryBuilder)
 - [ ] XSS prevenido (JSON responses)
@@ -280,7 +280,7 @@ public function show(int $id): JsonResponse
 #### Response
 - [ ] Pagina listas grandes
 - [ ] Não retorna objetos Doctrine diretamente
-- [ ] Usa EntityDTO para output
+- [ ] Usa Configuration para output
 - [ ] Limita profundidade de relações
 - [ ] Comprime responses grandes
 
@@ -425,7 +425,7 @@ docker compose exec backend vendor/bin/rector process src
 ### 2. Review Manual
 
 **Arquitetura:**
-- Fluxo Controller → ActionManager → Action → EntityDTO
+- Fluxo Controller → ActionManager → Action → Configuration
 - Separação de responsabilidades
 - Não duplicação de lógica
 

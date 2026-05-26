@@ -6,7 +6,7 @@ namespace App\Tests\Unit\Infrastructure\Handler\Cache;
 
 use App\Entity\Entry;
 use App\Entity\Wallet;
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use App\Infrastructure\DTO\Params\QueryParams;
 use App\Infrastructure\DTO\Response\CachedResponseData;
 use App\Infrastructure\Handler\Cache\RequestCacheHandler;

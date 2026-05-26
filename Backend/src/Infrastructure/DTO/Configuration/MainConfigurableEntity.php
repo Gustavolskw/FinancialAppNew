@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Infrastructure\DTO\EntityDto;
+namespace App\Infrastructure\DTO\Configuration;
 
-use App\Entity\Wallet;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttributeInterface;
 use App\Infrastructure\DTO\EntityAttributes\FieldTypeEnum;
-use App\Infrastructure\DTO\EntityDto\Interface\BaseMainEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseMainEntityClassInterface;
 
 abstract class MainConfigurableEntity extends ConfigurableEntity implements BaseMainEntityClassInterface
 {

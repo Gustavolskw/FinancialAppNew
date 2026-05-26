@@ -8,7 +8,7 @@ Este projeto possui Skills versionadas em `skills/` para dar contexto operaciona
 | --- | --- | --- |
 | [appfinancasnew-project](../../skills/appfinancasnew-project/SKILL.md) | Trabalhar em qualquer parte do monorepo, especialmente setup, Docker, banco, quality gates, documentação ou mudanças que cruzem backend e frontend. | raiz do projeto |
 | [appfinancasnew-backend-fields](../../skills/appfinancasnew-backend-fields/SKILL.md) | Alterar ou criar fields, validações, enums, tipos de campo, relações ou output de atributos. | `src/Infrastructure/DTO/EntityAttributes` |
-| [appfinancasnew-backend-entity-dtos](../../skills/appfinancasnew-backend-entity-dtos/SKILL.md) | Criar ou alterar EntityDTOs configuráveis, `configureFields()`, `setFieldValues()`, `output()` e hidratação por entidade. | `src/Infrastructure/DTO/EntityDto` |
+| [appfinancasnew-backend-entity-dtos](../../skills/appfinancasnew-backend-entity-dtos/SKILL.md) | Criar ou alterar Configurations configuráveis, `configureFields()`, `setFieldValues()`, `output()` e hidratação por entidade. | `src/Infrastructure/DTO/Configuration` |
 | [appfinancasnew-backend-actions](../../skills/appfinancasnew-backend-actions/SKILL.md) | Alterar fluxo CRUD, `ActionManager`, `Action`, hooks `SpecificAction` ou ações primárias como login/logoff. | `src/Infrastructure/Handler/Action` |
 | [appfinancasnew-backend-helpers](../../skills/appfinancasnew-backend-helpers/SKILL.md) | Usar, alterar ou criar helpers de query, output, hidratação, response builders, senha ou utilitários. | `src/Infrastructure/Helper` |
 | [appfinancasnew-react-mobile-first](../../skills/appfinancasnew-react-mobile-first/SKILL.md) | Criar ou refatorar telas React Router/Tailwind mobile first, dashboards, navegação, modais, grids, tabelas, gráficos e UI responsiva do produto financeiro. | `frontEnd/app` |
@@ -34,7 +34,7 @@ Este projeto possui Skills versionadas em `skills/` para dar contexto operaciona
 | [AppFinancas Frontend Agent Oficial](../../.codex/agents/appfinancas-frontend.toml) | Chamar pelo fluxo `/agent` um agente especializado em frontend com docs e Skills de frontend separados. | `frontEnd` |
 | [AppFinancas Backend Agent Invocável Legado](../../.agents/appfinancas-backend.md) | Documentação humana/legada do agente especializado em backend. | `Backend` |
 | [AppFinancas Frontend Agent Invocável Legado](../../.agents/appfinancas-frontend.md) | Documentação humana/legada do agente especializado em frontend. | `frontEnd` |
-| [AppFinancas Backend Agent](../../agents/appfinancas-backend.md) | Tarefas na API Symfony/PHP, incluindo CRUD, Actions, EntityDTOs, Fields, helpers, Doctrine, migrations e quality gate backend. | `Backend` |
+| [AppFinancas Backend Agent](../../agents/appfinancas-backend.md) | Tarefas na API Symfony/PHP, incluindo CRUD, Actions, Configurations, Fields, helpers, Doctrine, migrations e quality gate backend. | `Backend` |
 | [AppFinancas Frontend Agent](../../agents/appfinancas-frontend.md) | Tarefas na aplicação React Router/Tailwind, incluindo rotas, componentes, Fields, API client, dashboards, grids, auth client e quality gate frontend. | `frontEnd` |
 
 ## Como Manter As Skills

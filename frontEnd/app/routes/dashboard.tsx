@@ -252,6 +252,18 @@ export default function Dashboard() {
     void refreshDashboard();
   }, [authStatus, monthFilter.month, monthFilter.year]);
 
+  useEffect(() => {
+    const handleSessionUpdate = () => {
+      void refreshDashboard();
+    };
+
+    window.addEventListener("session-updated", handleSessionUpdate);
+
+    return () => {
+      window.removeEventListener("session-updated", handleSessionUpdate);
+    };
+  }, [monthFilter.month, monthFilter.year]);
+
   function openModal(type: TransactionType) {
     setModalType(type);
   }
@@ -305,7 +317,7 @@ export default function Dashboard() {
         <ChartCard
           emptyLabel={emptyPeriodLabel}
           hasData={hasPeriodData}
-          subtitle="Entradas, despesas e saldo usando month/year do backend"
+          subtitle="Entradas, despesas e saldo agrupados por mês e ano"
           title="Resumo por competência"
         >
           <Bar data={periodData} options={groupedCurrencyBarOptions} />
@@ -314,7 +326,7 @@ export default function Dashboard() {
         <ChartCard
           emptyLabel={emptyEntryTypeLabel}
           hasData={hasEntryTypeData}
-          subtitle="Agrupado por EntryType retornado pela API"
+          subtitle="Distribuição por tipo de entrada"
           title="Entradas por tipo"
         >
           <Doughnut data={entryTypeData} options={doughnutCurrencyOptions} />
@@ -327,7 +339,7 @@ export default function Dashboard() {
             emptyLabel={emptyExpenseTypeLabel}
             hasData={hasExpenseTypeData}
             heightClassName="h-64"
-            subtitle="Agrupado por ExpenseType retornado pela API"
+            subtitle="Distribuição por categoria de despesa"
             title="Despesas por categoria"
           >
             <Doughnut data={expenseTypeData} options={doughnutCurrencyOptions} />
@@ -337,7 +349,7 @@ export default function Dashboard() {
             emptyLabel={emptyPaymentLabel}
             hasData={hasPaymentData}
             heightClassName="h-64"
-            subtitle="Agrupado por PaymentMethod retornado pela API"
+            subtitle="Distribuição por método de pagamento"
             title="Despesas por pagamento"
           >
             <Bar data={paymentData} options={singleCurrencyBarOptions} />

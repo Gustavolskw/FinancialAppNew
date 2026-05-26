@@ -1,7 +1,7 @@
 ---
 name: backend-specialist
 description: >
-  Backend specialist aggregating all Symfony, Doctrine, Actions, EntityDTOs, Fields,
+  Backend specialist aggregating all Symfony, Doctrine, Actions, Configurations, Fields,
   and API skills. Use for comprehensive backend development tasks requiring deep knowledge
   of the entire backend stack.
 ---
@@ -24,14 +24,14 @@ Use quando precisar de conhecimento completo de backend:
 
 ### Core Backend
 - **appfinancasnew-backend-actions**: ActionManager, Actions, CRUD, hooks SpecificAction
-- **appfinancasnew-backend-entity-dtos**: EntityDTOs configuráveis, output, hidratação
+- **appfinancasnew-backend-entity-dtos**: Configurations configuráveis, output, hidratação
 - **appfinancasnew-backend-fields**: Fields, validações, enums, relation fields
 - **appfinancasnew-backend-helpers**: Query helpers, output helpers, response builders, auth
 
 ### Specialized Backend
-- **backend-complete**: Guia completo e compactado - CRUD, Fields, EntityDTOs, Actions
+- **backend-complete**: Guia completo e compactado - CRUD, Fields, Configurations, Actions
 - **backend-fields**: Fields especializados - criação, validação, enums
-- **backend-entity-dto**: EntityDTOs especializados - configuração, output
+- **backend-entity-dto**: Configurations especializados - configuração, output
 - **backend-actions**: Actions especializados - fluxo CRUD, hooks
 
 ### Symfony Framework
@@ -65,7 +65,7 @@ ActionManager
     ↓
 Action (save/edit/delete/status)
     ↓
-EntityDTO configurável
+Configuration configurável
     ↓
 Doctrine Entity
     ↓
@@ -82,7 +82,7 @@ Backend/
 │   ├── Entity/              # Entidades Doctrine
 │   ├── Infrastructure/
 │   │   ├── DTO/
-│   │   │   ├── EntityDto/   # EntityDTOs configuráveis
+│   │   │   ├── Configuration/   # Configurations configuráveis
 │   │   │   ├── EntityAttributes/ # Fields, validações, enums
 │   │   │   └── Forms/       # Form DTOs por entidade
 │   │   ├── Handler/
@@ -148,9 +148,9 @@ class EntryController extends AbstractController
 - Não expõem entidade Doctrine diretamente
 - Não contêm regra de negócio
 
-## EntityDTOs
+## Configurations
 
-### Padrão de EntityDTO
+### Padrão de Configuration
 ```php
 class EntryDTO extends MainConfigurableEntity
 {
@@ -548,7 +548,7 @@ docker compose exec backend php bin/console doctrine:migrations:diff
 
 - Regras genéricas de CRUD em `Action.php`
 - Regras específicas em `SpecificAction`
-- Definição de campos em `EntityDto`
+- Definição de campos em `Configuration`
 - Validação em `Fields`
 - Autorização via `RecordAuthorizationHelperTrait`
 

@@ -152,6 +152,18 @@ export default function Transactions() {
   }, [authStatus, monthFilter.month, monthFilter.year]);
 
   useEffect(() => {
+    const handleSessionUpdate = () => {
+      void refreshTransactions();
+    };
+
+    window.addEventListener("session-updated", handleSessionUpdate);
+
+    return () => {
+      window.removeEventListener("session-updated", handleSessionUpdate);
+    };
+  }, [monthFilter.month, monthFilter.year]);
+
+  useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(totalPages);
     }

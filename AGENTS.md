@@ -50,7 +50,7 @@ Quando a tarefa tocar o frontend, leia tambem:
 - Nao altere `node_modules/`, `vendor/`, `var/`, `.idea/`, caches ou arquivos gerados sem pedido explicito.
 - Antes de mexer em modulos cobertos por Skill local, leia a Skill correspondente listada em `docs/codex/skills.md`.
 - Para tarefas focadas em um modulo, use tambem o agente oficial da raiz em `.codex/agents/` antes de editar.
-- Para mudancas de backend, siga o fluxo atual: controller fino -> `ActionManager` -> `Action` -> EntityDTO configuravel -> response builder.
+- Para mudancas de backend, siga o fluxo atual: controller fino -> `ActionManager` -> `Action` -> Configuration configuravel -> response builder.
 - Para mudancas de frontend, siga React Router 7, TypeScript, rotas em `app/routes.ts`, componentes em `app/` e estilos globais em `app/app.css` ate surgir uma convencao mais especifica.
 - Para mudancas Docker, mantenha o Compose como orquestrador local e documente portas, variaveis e dependencias entre servicos.
 

@@ -6,7 +6,7 @@ namespace App\Infrastructure\Handler\Action\PrimaryAction;
 
 use App\Entity\User;
 use App\Infrastructure\DTO\EntityAttributes\Enum\RolesEnum;
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use App\Infrastructure\DTO\Forms\Login\LoginFormDto;
 use App\Infrastructure\DTO\Response\AuthSessionDataDto;
 use App\Infrastructure\DTO\Response\ResponseBuilder;

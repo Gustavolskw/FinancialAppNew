@@ -9,7 +9,7 @@ use App\Infrastructure\DTO\EntityAttributes\FieldTypeEnum;
 use App\Infrastructure\DTO\EntityAttributes\Fields\BasicFieldDto;
 use App\Infrastructure\DTO\EntityAttributes\Fields\RelationalAttributeDto;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttribute;
-use App\Infrastructure\DTO\EntityDto\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
 use App\Infrastructure\Handler\Action\Specific\BaseSpecificAction;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infrastructure\DTO\EntityDto\Interface;
+namespace App\Infrastructure\DTO\Configuration\Interface;
 
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttributeInterface;
 use App\Infrastructure\DTO\Forms\FormDtoInterface;

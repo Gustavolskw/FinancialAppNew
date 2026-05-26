@@ -11,7 +11,7 @@ Para trabalhos iniciados na raiz, considere também:
 - `docker-compose.yml`: stack local com PostgreSQL e backend. Consulte `docs/codex/docker.md`.
 - `agents`: agentes especializados de raiz que compilam as instruções e Skills dos módulos principais.
 
-O backend mantém o padrão controller fino -> `ActionManager` -> `Action` -> EntityDTO configurável
+O backend mantém o padrão controller fino -> `ActionManager` -> `Action` -> Configuration configurável
 -> response builder. O frontend deve consumir essa API sem duplicar regra de negócio.
 
 ## Visão Geral
@@ -128,7 +128,7 @@ Entidades Doctrine:
 
 Repositories Doctrine gerados, sem lógica customizada. Use-os para consultas específicas quando `EntityQueryHelper` não for suficiente.
 
-### `src/Infrastructure/DTO/EntityDto`
+### `src/Infrastructure/DTO/Configuration`
 
 Skill obrigatória antes de alterar esta área: [appfinancasnew-backend-entity-dtos](../../skills/appfinancasnew-backend-entity-dtos/SKILL.md).
 
@@ -137,7 +137,7 @@ Camada central de configuração de entidade para API.
 - `ConfigurableEntity`: guarda `FieldsAttributeInterface`, repository e entity manager; resolve query builder com `EntityQueryHelper`; fornece `BaseSpecificAction` por padrão; também fornece os defaults genéricos de `output()` via `AttributeOutputHelper` e `setFieldValues()` por loop sobre os campos configurados.
 - `MainConfigurableEntity`: adiciona `createdAt` e `updatedAt`.
 - `User`: define campos de saída/entrada, validação de senha, role via `RolesEnum`, relação com `Wallet`, termos de resposta `users`/`user` e `UserSpecificAction`.
-- `Wallet`: define campos de carteira e relação com usuário; a coleção inversa de transações não é exposta no EntityDTO enquanto não houver field/output próprio para coleções.
+- `Wallet`: define campos de carteira e relação com usuário; a coleção inversa de transações não é exposta no Configuration enquanto não houver field/output próprio para coleções.
 - `EntryType`, `ExpenseType` e `PaymentMethod`: definem catálogos/tipos do domínio financeiro; usuários autenticados enxergam os defaults e seus próprios registros.
 - `Entry` e `Expense`: definem objetos específicos vinculados a transações e catálogos.
 - `Transaction`: define a transação geral, com valor, local, descrição, data, mês, ano, relação obrigatória com carteira e relações opcionais com despesa ou entrada.
@@ -378,7 +378,7 @@ Rotas protegidas por `ActionManager`:
 - Proteção das rotas CRUD/status que passam pelo `ActionManager` por Bearer JWT stateless e autorização por dono/ADMIN.
 - Listagem paginada e filtrada de usuário.
 - Resposta JSON padronizada.
-- EntityDTOs configuráveis para `EntryType`, `ExpenseType`, `PaymentMethod`, `Entry`, `Expense` e `Transaction`, criados na ordem de dependência do domínio.
+- Configurations configuráveis para `EntryType`, `ExpenseType`, `PaymentMethod`, `Entry`, `Expense` e `Transaction`, criados na ordem de dependência do domínio.
 - Controllers e Form DTOs para `Wallet`, `EntryType`, `ExpenseType`, `PaymentMethod`, `Entry`, `Expense` e `Transaction`.
 - Entidades financeiras principais modeladas no Doctrine.
 - Docker básico para PHP-FPM/Nginx/Xdebug.
