@@ -137,37 +137,37 @@ trait RecordAuthorizationHelperTrait
 
         return match ($entityClass) {
             UserEntity::class => static function (QueryBuilder $qb) use ($currentUser): void {
-                    $alias = $qb->getRootAliases()[0];
-                    $qb->andWhere(sprintf('%s.id = :securityCurrentUserId', $alias))
-                    ->setParameter('securityCurrentUserId', $currentUser->getId());
-                },
+                $alias = $qb->getRootAliases()[0];
+                $qb->andWhere(sprintf('%s.id = :securityCurrentUserId', $alias))
+                ->setParameter('securityCurrentUserId', $currentUser->getId());
+            },
             WalletEntity::class => static function (QueryBuilder $qb) use ($currentUser): void {
-                    $alias = $qb->getRootAliases()[0];
-                    $qb->andWhere(sprintf('%s.walletUser = :securityCurrentUser', $alias))
-                    ->setParameter('securityCurrentUser', $currentUser);
-                },
+                $alias = $qb->getRootAliases()[0];
+                $qb->andWhere(sprintf('%s.walletUser = :securityCurrentUser', $alias))
+                ->setParameter('securityCurrentUser', $currentUser);
+            },
             TransactionEntity::class => static function (QueryBuilder $qb) use ($currentWallet): void {
-                    $alias = $qb->getRootAliases()[0];
-                    self::restrictByCurrentWallet($qb, sprintf('%s.transactionWallet', $alias), $currentWallet);
-                },
+                $alias = $qb->getRootAliases()[0];
+                self::restrictByCurrentWallet($qb, sprintf('%s.transactionWallet', $alias), $currentWallet);
+            },
             EntryEntity::class => static function (QueryBuilder $qb) use ($currentWallet): void {
-                    $alias = $qb->getRootAliases()[0];
-                    $qb->leftJoin(sprintf('%s.transaction', $alias), 'securityEntryTransaction');
-                    self::restrictByCurrentWallet($qb, 'securityEntryTransaction.transactionWallet', $currentWallet);
-                },
+                $alias = $qb->getRootAliases()[0];
+                $qb->leftJoin(sprintf('%s.transaction', $alias), 'securityEntryTransaction');
+                self::restrictByCurrentWallet($qb, 'securityEntryTransaction.transactionWallet', $currentWallet);
+            },
             ExpenseEntity::class => static function (QueryBuilder $qb) use ($currentWallet): void {
-                    $alias = $qb->getRootAliases()[0];
-                    $qb->leftJoin(sprintf('%s.expenseTransaction', $alias), 'securityExpenseTransaction');
-                    self::restrictByCurrentWallet($qb, 'securityExpenseTransaction.transactionWallet', $currentWallet);
-                },
+                $alias = $qb->getRootAliases()[0];
+                $qb->leftJoin(sprintf('%s.expenseTransaction', $alias), 'securityExpenseTransaction');
+                self::restrictByCurrentWallet($qb, 'securityExpenseTransaction.transactionWallet', $currentWallet);
+            },
             EntryTypeEntity::class,
             ExpenseTypeEntity::class,
             PaymentMethodEntity::class => static function (QueryBuilder $qb) use ($currentUser): void {
-                    $alias = $qb->getRootAliases()[0];
-                    $qb->andWhere(sprintf('(%s.isDefault = :securityDefaultCatalog OR %s.user = :securityCatalogUser)', $alias, $alias))
-                    ->setParameter('securityDefaultCatalog', true)
-                    ->setParameter('securityCatalogUser', $currentUser);
-                },
+                $alias = $qb->getRootAliases()[0];
+                $qb->andWhere(sprintf('(%s.isDefault = :securityDefaultCatalog OR %s.user = :securityCatalogUser)', $alias, $alias))
+                ->setParameter('securityDefaultCatalog', true)
+                ->setParameter('securityCatalogUser', $currentUser);
+            },
             default => null,
         };
     }
