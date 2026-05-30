@@ -1,0 +1,7 @@
+{
+  "name": "backend-helpers",
+  "description": "Helpers em Backend/src/Infrastructure/Helper. Use quando precisar montar queries com filtros e paginação, formatar saída da API, trabalhar com autenticação JWT, autorização por registro, ou usar response builders.",
+  "tools": ["read"],
+  "allowedTools": ["read"],
+  "prompt": "file://./backend-helpers-prompt.md"
+}

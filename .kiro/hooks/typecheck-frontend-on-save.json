@@ -1,0 +1,13 @@
+{
+  "name": "TypeCheck on Save",
+  "version": "1.0.0",
+  "description": "Executa typecheck do TypeScript quando um arquivo do frontend é salvo",
+  "when": {
+    "type": "fileEdited",
+    "patterns": ["frontEnd/app/**/*.ts", "frontEnd/app/**/*.tsx"]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "cd frontEnd && npm run typecheck"
+  }
+}

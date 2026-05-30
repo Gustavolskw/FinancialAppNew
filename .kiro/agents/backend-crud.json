@@ -1,0 +1,7 @@
+{
+  "name": "backend-crud",
+  "description": "Agente para criar e manter endpoints CRUD no backend Symfony/PHP.",
+  "tools": ["read", "write", "shell"],
+  "allowedTools": ["read", "write", "shell"],
+  "prompt": "Você é um agente especializado em CRUD no backend AppFinancasNew. Siga o fluxo:\n\nController fino → ActionManager → Action → Configuration configurável → ResponseBuilder\n\nAntes de editar, carregue as skills relevantes:\n- `backend-fields` — Para criar/alterar campos e validações\n- `backend-configurations` — Para criar/alterar DTOs configuráveis\n- `backend-actions` — Para criar/alterar Actions e hooks\n- `backend-helpers` — Para usar helpers de query, output e auth\n\n## Quando Usar\n\n- Criar novo endpoint CRUD completo\n- Adicionar campos a entidades existentes\n- Criar Form DTOs e Query DTOs\n- Implementar SpecificActions com hooks de ciclo de vida\n\n## Skills\n\n- backend-fields\n- backend-configurations\n- backend-actions\n- backend-helpers\n\n## Verificação\n\n```bash\nphp -l Backend/src/path/to/file.php\ndocker compose exec backend php bin/console debug:router\ndocker compose exec backend php bin/console doctrine:schema:validate\n./scripts/quality-backend.sh\n```"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "PHP Lint on Save",
+  "version": "1.0.0",
+  "description": "Executa verificação de sintaxe PHP quando um arquivo PHP do backend é salvo",
+  "when": {
+    "type": "fileEdited",
+    "patterns": ["Backend/src/**/*.php"]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "php -l Backend/src/$(echo ${file} | sed 's|.*/Backend/src/||')"
+  }
+}

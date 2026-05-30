@@ -322,11 +322,6 @@ export default function Transactions() {
     }
   }
 
-  function showStatusUnavailable() {
-    setActionMessageType("error");
-    setActionMessage("Entry e Expense ainda não possuem rota de status no backend. Assim que a API expuser esse contrato, esta ação pode ser conectada aqui.");
-  }
-
   return (
     <AuthenticatedAppShell>
       <header className="flex flex-col gap-4 border-b border-slate-200 pb-5 lg:flex-row lg:items-center lg:justify-between dark:border-slate-800">
@@ -406,7 +401,6 @@ export default function Transactions() {
         onEdit={openEditModal}
         onSelect={selectTransaction}
         onSelectAll={selectAllVisible}
-        onStatusUnavailable={showStatusUnavailable}
         pagination={{
           currentPage: safeCurrentPage,
           endItem: paginationEndItem,

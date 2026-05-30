@@ -97,23 +97,6 @@ export function AuxiliaryItemsGrid({
           onReset={handleFilterReset}
           totalCount={items.length}
         />
-
-        <div className="mt-4 flex justify-end">
-          <label className="flex flex-col gap-1 text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
-            Por página
-            <Select
-              className="font-medium normal-case tracking-normal"
-              onChange={(event) => setPageSize(Number(event.target.value))}
-              value={pageSize}
-            >
-              {pageSizeOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </Select>
-          </label>
-        </div>
       </div>
 
       {/* Mobile: Cards */}
@@ -264,30 +247,53 @@ export function AuxiliaryItemsGrid({
       </div>
 
       <div className="mt-4 flex flex-col gap-3 border-t border-slate-100 pt-4 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between dark:border-slate-800 dark:text-slate-300">
-        <span>
-          Mostrando {visibleStartItem}-{visibleEndItem} de {filteredItems.length} item(ns)
-        </span>
+        <div>
+          {filteredItems.length > 0 ? (
+            <span>
+              Exibindo {visibleStartItem}-{visibleEndItem} de {filteredItems.length}
+            </span>
+          ) : (
+            <span>Nenhum item para paginar</span>
+          )}
+        </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            className="rounded-md border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
-            disabled={safeCurrentPage <= 1}
-            onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
-            type="button"
-          >
-            Anterior
-          </button>
-          <span className="min-w-20 text-center text-xs font-semibold uppercase tracking-[0.08em] text-slate-500 dark:text-slate-400">
-            {safeCurrentPage} / {totalPages}
-          </span>
-          <button
-            className="rounded-md border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
-            disabled={safeCurrentPage >= totalPages}
-            onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
-            type="button"
-          >
-            Próxima
-          </button>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <label className="flex items-center gap-2">
+            <span>Por página</span>
+            <Select
+              className="py-1.5"
+              onChange={(event) => setPageSize(Number(event.target.value))}
+              value={pageSize}
+            >
+              {pageSizeOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </Select>
+          </label>
+
+          <div className="flex items-center gap-2">
+            <button
+              className="rounded-md border border-slate-200 px-3 py-2 font-semibold text-slate-600 transition hover:-translate-y-0.5 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+              disabled={safeCurrentPage <= 1}
+              onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+              type="button"
+            >
+              Anterior
+            </button>
+            <span className="min-w-24 text-center font-semibold text-slate-700 dark:text-slate-200">
+              {safeCurrentPage} / {totalPages}
+            </span>
+            <button
+              className="rounded-md border border-slate-200 px-3 py-2 font-semibold text-slate-600 transition hover:-translate-y-0.5 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+              disabled={safeCurrentPage >= totalPages}
+              onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+              type="button"
+            >
+              Próxima
+            </button>
+          </div>
         </div>
       </div>
     </section>

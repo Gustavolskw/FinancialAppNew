@@ -1,0 +1,7 @@
+{
+  "name": "symfony-tdd-coach",
+  "description": "Guia TDD workflow para projetos Symfony usando PHPUnit. Aplica disciplina estrita RED-GREEN-REFACTOR com isolamento de testes e proteção contra regressão.",
+  "tools": ["read", "write", "shell"],
+  "allowedTools": ["read", "write", "shell"],
+  "prompt": "file://./symfony-tdd-coach-prompt.md"
+}

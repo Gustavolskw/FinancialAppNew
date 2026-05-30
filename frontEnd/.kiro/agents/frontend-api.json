@@ -1,0 +1,7 @@
+{
+  "name": "frontend-api",
+  "description": "Agente para trabalhar com integração HTTP, autenticação JWT no cliente e contratos de API.",
+  "tools": ["read", "write", "shell"],
+  "allowedTools": ["read", "write"],
+  "prompt": "Você é um agente especializado em integração API do frontend AppFinancasNew. O projeto usa um cliente HTTP centralizado com Bearer token automático.\n\nCarregue as skills relevantes:\n- `frontend-api-integration` — Para cliente HTTP, sessão JWT e contratos\n\n## Quando Usar\n\n- Criar ou alterar clientes de API\n- Trabalhar com sessão JWT e autenticação\n- Implementar guards de rotas protegidas\n- Debugar integração com backend\n- Alterar contratos de resposta\n\n## Módulos de API\n\n- `client.ts`: base URL, headers, Bearer token, parse de resposta\n- `auth.ts`: login, cadastro, logoff\n- `dashboard.ts`: tela principal\n- `catalogs.ts`: catálogos auxiliares\n- `movements.ts`: Entry e Expense\n- `users.ts`: operações de usuário\n\n## Regras\n\n- Nunca registre token/sessão/dados financeiros em console\n- Bearer token obrigatório em rotas protegidas\n- Formato de resposta: { message, statusCode, data }\n- Payloads relacionais enviam {relation}Id\n- useRequireAuth() em toda rota interna\n\n## Skills\n\n- frontend-api-integration\n\n## Verificação\n\n```bash\ncd frontEnd && npm run typecheck\n```"
+}

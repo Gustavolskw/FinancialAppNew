@@ -1,0 +1,7 @@
+{
+  "name": "agent-md-to-json",
+  "description": "Converts agent.md files (YAML frontmatter + markdown body) into kiro-cli compliant agent.json configurations.",
+  "tools": ["read", "write", "shell"],
+  "allowedTools": ["read", "write"],
+  "prompt": "file://./agent-md-to-json-prompt.md"
+}

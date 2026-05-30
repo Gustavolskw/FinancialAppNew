@@ -1,0 +1,7 @@
+{
+  "name": "backend-helpers",
+  "description": "Helpers em src/Infrastructure/Helper. Use quando precisar montar queries com filtros e paginação, formatar saída da API, trabalhar com autenticação JWT, autorização por registro, ou usar response builders.",
+  "tools": ["read"],
+  "allowedTools": ["read"],
+  "prompt": "Helpers em `src/Infrastructure/Helper`.\n\n## EntityQueryHelper\n\nFiltros: texto/nome/email → LIKE, status → booleano, relações → {relation}Id, demais → igualdade.\n\n## EntityFieldsHelper\n\n```php\nEntityFieldsHelper::setFieldsFromEntityData($configuration, $entity);\n```\n\n## AttributeOutputHelper\n\nDatas em America/Sao_Paulo, relações como objeto ou {campo}Id, PASSWORDFIELD nunca na saída.\n\n## Response Builders\n\nResponseBuilder, JsonResponseHandler, EntityBuilder, EntityListBuilder, SimpleDataPaginator.\n\n## Auth Helpers\n\n- `JwtAuthenticationHelperTrait`: valida Bearer JWT (HS256, APP_SECRET)\n- `RecordAuthorizationHelperTrait`: ADMIN pode tudo, usuário comum apenas próprios\n- `PasswordHashHelperTrait`: hash e verify\n\n## Regras\n\n- Não duplique helpers em controllers\n- Use EntityQueryHelper para queries filtradas\n- Use AttributeOutputHelper para formatação de saída"
+}

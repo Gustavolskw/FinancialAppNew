@@ -1,0 +1,7 @@
+{
+  "name": "backend-actions",
+  "description": "Orquestração CRUD em Backend/src/Infrastructure/Handler/Action. Use quando precisar entender o fluxo CRUD do ActionManager, criar ou alterar SpecificActions, trabalhar com hooks de ciclo de vida, ou entender cache de requests.",
+  "tools": ["read"],
+  "allowedTools": ["read"],
+  "prompt": "file://./backend-actions-prompt.md"
+}

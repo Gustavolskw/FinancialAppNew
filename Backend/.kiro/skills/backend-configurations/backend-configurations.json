@@ -1,0 +1,7 @@
+{
+  "name": "backend-configurations",
+  "description": "DTOs configuráveis em src/Infrastructure/DTO/Configuration. Use quando precisar criar novo Configuration para uma entidade, alterar campos, configurar output e hidratação, ou entender a hierarquia ConfigurableEntity.",
+  "tools": ["read"],
+  "allowedTools": ["read"],
+  "prompt": "DTOs configuráveis em `src/Infrastructure/DTO/Configuration`.\n\n## Hierarquia\n\n- `ConfigurableEntity`: base com output(), setFieldValues(), query builder, BaseSpecificAction\n- `MainConfigurableEntity`: adiciona createdAt e updatedAt\n\n## Estrutura Obrigatória\n\n```php\nclass NomeEntidade extends MainConfigurableEntity\n{\n    protected const ENTITYCLASS = \\App\\Entity\\NomeEntidade::class;\n    protected const LISTDATATERM = 'nomeEntidades';\n    protected const SINGLEDATATERM = 'nomeEntidade';\n\n    protected function configureFields(): FieldsAttributeInterface { ... }\n    public function setFieldsFromEntityData(object $entity): void { ... }\n    public static function build(EntityManagerInterface $entityManager): static { ... }\n}\n```\n\n## Defaults Herdados (Não Duplique)\n\n- `output()`: usa `AttributeOutputHelper::outputEntityFields()`\n- `setFieldValues()`: loop sobre campos configurados\n\n## Regras\n\n- Cada entidade Doctrine exposta deve ter um Configuration\n- Use os defaults herdados sempre que possível\n- Campos declarados no Configuration, não no controller\n- Para relações: `setRelationalField('campo', Classe::class, 'getterReal')`"
+}

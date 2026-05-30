@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 
 function CloseIcon({ className }: { className?: string }) {
   return (
@@ -26,6 +26,15 @@ type AppModalProps = {
 };
 
 export function AppModal({ children, title, description, titleId = "app-modal-title", onClose }: AppModalProps) {
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, []);
+
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/60 px-3 py-4 backdrop-blur-sm sm:px-4 sm:py-6" role="presentation">
       <section

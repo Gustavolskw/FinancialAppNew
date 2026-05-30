@@ -17,7 +17,6 @@ type TransactionsManagementGridProps = {
   onEdit: (transaction: DashboardTransaction) => void;
   onSelect: (id: number, selected: boolean) => void;
   onSelectAll: (selected: boolean) => void;
-  onStatusUnavailable: () => void;
 };
 
 export function TransactionsManagementGrid({
@@ -32,7 +31,6 @@ export function TransactionsManagementGrid({
   onEdit,
   onSelect,
   onSelectAll,
-  onStatusUnavailable,
 }: TransactionsManagementGridProps) {
   const [bulkMenuOpen, setBulkMenuOpen] = useState(false);
   const selectedCount = selectedIds.size;
@@ -83,17 +81,6 @@ export function TransactionsManagementGrid({
                   type="button"
                 >
                   Excluir selecionados
-                </button>
-                <button
-                  className="mt-1 flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm font-semibold text-slate-500 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                  onClick={() => {
-                    setBulkMenuOpen(false);
-                    onStatusUnavailable();
-                  }}
-                  title="Funcionalidade em desenvolvimento."
-                  type="button"
-                >
-                  Alterar status
                 </button>
               </div>
             )}
@@ -155,21 +142,13 @@ export function TransactionsManagementGrid({
                 </div>
               </div>
 
-              <div className="mt-4 grid grid-cols-3 gap-2 border-t border-slate-100 pt-3 dark:border-slate-800">
+              <div className="mt-4 grid grid-cols-2 gap-2 border-t border-slate-100 pt-3 dark:border-slate-800">
                 <button
                   className="rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-700/20 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-200 dark:hover:bg-blue-500/20"
                   onClick={() => onEdit(transaction)}
                   type="button"
                 >
                   Editar
-                </button>
-                <button
-                  className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-                  onClick={onStatusUnavailable}
-                  title="Funcionalidade em desenvolvimento."
-                  type="button"
-                >
-                  Status
                 </button>
                 <button
                   className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-600/20 disabled:cursor-not-allowed disabled:opacity-50 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300 dark:hover:bg-red-500/20"
@@ -245,21 +224,13 @@ export function TransactionsManagementGrid({
                     {currency(transaction.amount)}
                   </td>
                   <td className="py-3 pl-4">
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 gap-2">
                       <button
                         className="rounded-md border border-blue-200 px-3 py-2 text-xs font-semibold text-blue-700 transition hover:-translate-y-0.5 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-700/20 dark:border-blue-500/30 dark:text-blue-200 dark:hover:bg-blue-500/10"
                         onClick={() => onEdit(transaction)}
                         type="button"
                       >
                         Editar
-                      </button>
-                      <button
-                        className="rounded-md border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-500 transition hover:-translate-y-0.5 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-400/20 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
-                        onClick={onStatusUnavailable}
-                        title="Funcionalidade em desenvolvimento."
-                        type="button"
-                      >
-                        Status
                       </button>
                       <button
                         className="rounded-md border border-red-200 px-3 py-2 text-xs font-semibold text-red-600 transition hover:-translate-y-0.5 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-600/20 disabled:cursor-not-allowed dark:border-red-500/30 dark:text-red-300 dark:hover:bg-red-500/10"

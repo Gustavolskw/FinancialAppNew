@@ -1,0 +1,12 @@
+{
+  "name": "Quality Gate After Task",
+  "version": "1.0.0",
+  "description": "Lembra o agente de rodar verificação após completar uma tarefa de spec",
+  "when": {
+    "type": "postTaskExecution"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A tarefa foi concluída. Rode a verificação proporcional à mudança: para backend use 'php -l' no arquivo ou './scripts/quality-backend.sh' para mudanças amplas; para frontend use 'npm run typecheck' ou './scripts/quality-frontend.sh' para mudanças amplas. Reporte o resultado."
+  }
+}

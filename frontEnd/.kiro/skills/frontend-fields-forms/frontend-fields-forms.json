@@ -1,0 +1,7 @@
+{
+  "name": "frontend-fields-forms",
+  "description": "Sistema de Fields e formulários dinâmicos em app/Infrastructure/DTO/EntityAttributes. Use quando precisar criar formulários com FieldsForm, trabalhar com FieldRenderer, implementar validação por metadados, criar modais CRUD com Fields, ou alinhar payloads com o backend.",
+  "tools": ["read"],
+  "allowedTools": ["read"],
+  "prompt": "Sistema de Fields e formulários dinâmicos em `app/Infrastructure/DTO/EntityAttributes`.\n\n## Componentes\n\n| Componente | Responsabilidade |\n|------------|------------------|\n| `FieldTypeEnum` | Tipos de campo |\n| `Fields/*FieldDto.tsx` | DTOs de campo individual |\n| `FieldsAttribute` | Coleção de campos |\n| `FieldRenderer` | Renderiza campo individual |\n| `FieldsForm` | Frame completo do formulário |\n\n## FieldsForm\n\n```tsx\n<FieldsForm\n  fields={fieldsAttribute}\n  onSubmit={handleSubmit}\n  isLoading={isSubmitting}\n  submitLabel=\"Salvar\"\n/>\n```\n\n## Validação\n\n```typescript\nconst error = validateFieldValue(field, value);\nconst errors = validateFieldValues(fields, values);\n```\n\n## Regras\n\n- noValidate nos formulários com Fields\n- Prefira FieldsForm sobre <form> manual\n- Erros abaixo do campo + toast resumo no submit\n- Payloads enviam {relation}Id\n- Preserve aria-invalid e aria-describedby"
+}

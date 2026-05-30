@@ -1,0 +1,7 @@
+{
+  "name": "backend-configurations",
+  "description": "DTOs configuráveis em Backend/src/Infrastructure/DTO/Configuration. Use quando precisar criar novo Configuration para uma entidade, alterar campos, configurar output e hidratação, ou entender a hierarquia ConfigurableEntity.",
+  "tools": ["read"],
+  "allowedTools": ["read"],
+  "prompt": "file://./backend-configurations-prompt.md"
+}

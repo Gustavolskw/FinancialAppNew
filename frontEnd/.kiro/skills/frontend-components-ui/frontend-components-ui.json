@@ -1,0 +1,7 @@
+{
+  "name": "frontend-components-ui",
+  "description": "Padrões de componentes, Tailwind CSS, acessibilidade e design system. Use quando precisar criar ou refatorar componentes reutilizáveis, implementar UI com Tailwind, trabalhar com responsividade mobile-first, implementar dashboards e gráficos, ou garantir acessibilidade.",
+  "tools": ["read"],
+  "allowedTools": ["read"],
+  "prompt": "Padrões de componentes, Tailwind CSS, acessibilidade e design system.\n\n## Princípios\n\n- Mobile-first: `sm:`, `md:`, `lg:`, `xl:`\n- Touch-friendly (min 44px)\n- Paleta: Blue primary, Green success, Yellow warning, Red error, Gray neutral\n\n## Padrões Tailwind\n\n```tsx\n// Card\n<div className=\"bg-white rounded-lg shadow-md p-4\">\n// Button Primary\n<button className=\"bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded\">\n// Input\n<input className=\"border border-gray-300 rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500\">\n// Grid\n<div className=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4\">\n```\n\n## Componentização\n\n- Botões compartilham componente\n- Modais usam modal base + composição\n- Mensagens são componentes reutilizáveis\n- Dashboards separam cálculo de renderização\n- Tailwind repetível vira componente/constante\n\n## Acessibilidade\n\naria-*, htmlFor, foco visível, type=\"button\", labels descritivos, contraste WCAG AA.\n\n## Permissões\n\nSem permissão → oculte a ação. Não mostre \"Restrito\". Backend é barreira final."
+}

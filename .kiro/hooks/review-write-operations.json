@@ -1,0 +1,13 @@
+{
+  "name": "Review Write Operations",
+  "version": "1.0.0",
+  "description": "Verifica se operações de escrita seguem os padrões do projeto antes de executar",
+  "when": {
+    "type": "preToolUse",
+    "toolTypes": ["write"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Antes de escrever, verifique: (1) O arquivo está no diretório correto conforme a arquitetura do projeto? (2) Não está alterando node_modules/, vendor/, var/, .idea/ ou arquivos gerados? (3) Segue os padrões do steering file correspondente (backend-architecture, frontend-architecture, symfony-patterns, frontend-patterns)? Se tudo OK, prossiga."
+  }
+}

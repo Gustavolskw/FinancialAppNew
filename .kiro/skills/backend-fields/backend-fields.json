@@ -1,0 +1,7 @@
+{
+  "name": "backend-fields",
+  "description": "Sistema de metadados de campos em Backend/src/Infrastructure/DTO/EntityAttributes. Use quando precisar criar ou alterar campos de entidade, adicionar validações customizadas, trabalhar com enums, configurar campos relacionais ou entender tipos de campo disponíveis.",
+  "tools": ["read"],
+  "allowedTools": ["read"],
+  "prompt": "file://./backend-fields-prompt.md"
+}

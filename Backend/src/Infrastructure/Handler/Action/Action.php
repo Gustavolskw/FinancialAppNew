@@ -147,13 +147,23 @@ class Action implements ActionInterface
             }
 
             $entityManager = $this->baseEntityClass->getEntityManager();
-            $entityManager->remove($entity);
+            $connection = $entityManager->getConnection();
+            $connection->beginTransaction();
 
-            if (!$specificAction->afterDelete($this->baseEntityClass)) {
-                return $this->response("Regra de negócio impediu a exclusão", 400);
+            try {
+                $entityManager->remove($entity);
+
+                if (!$specificAction->afterDelete($this->baseEntityClass)) {
+                    $connection->rollBack();
+                    return $this->response("Regra de negócio impediu a exclusão", 400);
+                }
+
+                $entityManager->flush();
+                $connection->commit();
+            } catch (\Throwable $exception) {
+                $connection->rollBack();
+                throw $exception;
             }
-
-            $entityManager->flush();
 
             return $this->response("Registro excluído com sucesso", 200);
         } catch (\InvalidArgumentException $exception) {
