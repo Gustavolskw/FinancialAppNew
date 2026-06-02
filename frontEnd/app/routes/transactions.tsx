@@ -19,6 +19,7 @@ import { FormStatusMessage } from "../components/feedback/FormStatusMessage";
 import { currentMonthFilter, MonthFilter, monthFilterLabel, type MonthFilterValue } from "../components/filters/MonthFilter";
 import { AuthenticatedAppShell } from "../components/navigation/AuthenticatedAppShell";
 import { MovementModal } from "../components/transactions/MovementModal";
+import { ConfirmModal } from "../components/modals/ConfirmModal";
 import { TransactionsAnalyticsCharts } from "../components/transactions/TransactionsAnalyticsCharts";
 import { TransactionsGridFilters } from "../components/transactions/TransactionsGridFilters";
 import { TransactionsManagementGrid } from "../components/transactions/TransactionsManagementGrid";
@@ -78,6 +79,7 @@ export default function Transactions() {
   const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [actionMessageType, setActionMessageType] = useState<"success" | "error">("success");
   const [isDeleting, setIsDeleting] = useState(false);
+  const [confirmState, setConfirmState] = useState<{ title: string; description?: string; onConfirm: () => void } | null>(null);
   const [monthFilter, setMonthFilter] = useState<MonthFilterValue>(() => {
     try {
       const stored = sessionStorage.getItem("dashboard:monthFilter");
@@ -261,80 +263,82 @@ export default function Transactions() {
     setModalState({ mode: "edit", transaction, type: transaction.type });
   }
 
-  async function deleteTransaction(transaction: DashboardTransaction) {
+  function deleteTransaction(transaction: DashboardTransaction) {
     if (!transaction.resourceId) {
       setActionMessageType("error");
       setActionMessage("Esta transação não possui identificador para exclusão.");
       return;
     }
 
-    const confirmed = window.confirm(`Excluir "${transaction.description}"?`);
+    setConfirmState({
+      title: "Excluir transação",
+      description: `Excluir "${transaction.description}"? Esta ação não pode ser desfeita.`,
+      onConfirm: async () => {
+        setConfirmState(null);
+        setIsDeleting(true);
+        setActionMessage(null);
 
-    if (!confirmed) {
-      return;
-    }
+        try {
+          if (transaction.type === "entry") {
+            await deleteEntry(transaction.resourceId as number);
+          } else {
+            await deleteExpense(transaction.resourceId as number);
+          }
 
-    setIsDeleting(true);
-    setActionMessage(null);
-
-    try {
-      if (transaction.type === "entry") {
-        await deleteEntry(transaction.resourceId);
-      } else {
-        await deleteExpense(transaction.resourceId);
-      }
-
-      setSelectedIds((currentIds) => {
-        const nextIds = new Set(currentIds);
-        nextIds.delete(transaction.resourceId as number);
-        return nextIds;
-      });
-      setActionMessageType("success");
-      setActionMessage("Transação excluída com sucesso.");
-      await refreshTransactions();
-    } catch (error) {
-      setActionMessageType("error");
-      setActionMessage(apiErrorMessage(error, "Não foi possível excluir a transação."));
-    } finally {
-      setIsDeleting(false);
-    }
+          setSelectedIds((currentIds) => {
+            const nextIds = new Set(currentIds);
+            nextIds.delete(transaction.resourceId as number);
+            return nextIds;
+          });
+          setActionMessageType("success");
+          setActionMessage("Transação excluída com sucesso.");
+          await refreshTransactions();
+        } catch (error) {
+          setActionMessageType("error");
+          setActionMessage(apiErrorMessage(error, "Não foi possível excluir a transação."));
+        } finally {
+          setIsDeleting(false);
+        }
+      },
+    });
   }
 
-  async function bulkDeleteSelected() {
+  function bulkDeleteSelected() {
     if (selectedTransactions.length === 0) {
       return;
     }
 
-    const confirmed = window.confirm(`Excluir ${selectedTransactions.length} item(ns) selecionado(s)?`);
+    setConfirmState({
+      title: "Excluir selecionados",
+      description: `Excluir ${selectedTransactions.length} item(ns) selecionado(s)? Esta ação não pode ser desfeita.`,
+      onConfirm: async () => {
+        setConfirmState(null);
+        setIsDeleting(true);
+        setActionMessage(null);
 
-    if (!confirmed) {
-      return;
-    }
+        try {
+          await Promise.all(selectedTransactions.map((transaction) => {
+            if (!transaction.resourceId) {
+              return Promise.resolve();
+            }
 
-    setIsDeleting(true);
-    setActionMessage(null);
+            return transaction.type === "entry"
+              ? deleteEntry(transaction.resourceId)
+              : deleteExpense(transaction.resourceId);
+          }));
 
-    try {
-      await Promise.all(selectedTransactions.map((transaction) => {
-        if (!transaction.resourceId) {
-          return Promise.resolve();
+          setSelectedIds(new Set());
+          setActionMessageType("success");
+          setActionMessage("Itens selecionados excluídos com sucesso.");
+          await refreshTransactions();
+        } catch (error) {
+          setActionMessageType("error");
+          setActionMessage(apiErrorMessage(error, "Não foi possível excluir todos os itens selecionados."));
+        } finally {
+          setIsDeleting(false);
         }
-
-        return transaction.type === "entry"
-          ? deleteEntry(transaction.resourceId)
-          : deleteExpense(transaction.resourceId);
-      }));
-
-      setSelectedIds(new Set());
-      setActionMessageType("success");
-      setActionMessage("Itens selecionados excluídos com sucesso.");
-      await refreshTransactions();
-    } catch (error) {
-      setActionMessageType("error");
-      setActionMessage(apiErrorMessage(error, "Não foi possível excluir todos os itens selecionados."));
-    } finally {
-      setIsDeleting(false);
-    }
+      },
+    });
   }
 
   return (
@@ -446,6 +450,17 @@ export default function Transactions() {
         type={modalState?.type ?? null}
         walletId={dashboardData.wallet?.id ?? null}
       />
+
+      {confirmState && (
+        <ConfirmModal
+          confirmLabel="Excluir"
+          description={confirmState.description}
+          isLoading={isDeleting}
+          onCancel={() => setConfirmState(null)}
+          onConfirm={confirmState.onConfirm}
+          title={confirmState.title}
+        />
+      )}
     </AuthenticatedAppShell>
   );
 }

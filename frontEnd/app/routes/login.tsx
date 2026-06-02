@@ -165,9 +165,11 @@ export default function Login() {
 
         <div className="flex flex-col gap-3 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between dark:text-slate-300">
           <span>Sessão segura e criptografada</span>
+          {/* TODO: implementar fluxo de recuperação de senha
           <a className="font-medium text-blue-700 underline-offset-4 hover:text-blue-800 hover:underline active:text-blue-900 dark:text-blue-300 dark:hover:text-blue-200 dark:active:text-blue-100" href="/login">
             Esqueci minha senha
           </a>
+          */}
         </div>
 
         <button className="btn-entrar focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 focus:ring-offset-white disabled:cursor-not-allowed disabled:opacity-70 dark:focus:ring-blue-300 dark:focus:ring-offset-slate-900" disabled={isSubmitting} type="submit">

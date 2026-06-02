@@ -14,6 +14,7 @@ import type { Route } from "./+types/auxiliary-items";
 import { AuxiliaryCatalogCharts, buildCatalogUsageStats } from "../components/auxiliary/AuxiliaryCatalogCharts";
 import { AuxiliaryCatalogTabs } from "../components/auxiliary/AuxiliaryCatalogTabs";
 import { AuxiliaryItemModal, catalogFieldText } from "../components/auxiliary/AuxiliaryItemModal";
+import { ConfirmModal } from "../components/modals/ConfirmModal";
 import { AuxiliaryItemsGrid } from "../components/auxiliary/AuxiliaryItemsGrid";
 import { ProtectedRouteFallback } from "../components/auth/ProtectedRouteFallback";
 import { DashboardStatusBanner } from "../components/dashboard/DashboardStatusBanner";
@@ -96,6 +97,7 @@ export default function AuxiliaryItems() {
   const [actionMessageType, setActionMessageType] = useState<"success" | "error">("success");
   const [isMutating, setIsMutating] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [confirmState, setConfirmState] = useState<{ title: string; description?: string; onConfirm: () => void } | null>(null);
 
   const dashboardData = dashboard ?? emptyDashboard;
   const activeItems = catalogs[activeType];
@@ -190,33 +192,34 @@ export default function AuxiliaryItems() {
     setModalState({ item, type: activeType });
   }
 
-  async function deleteItem(item: AuxiliaryCatalogItem) {
+  function deleteItem(item: AuxiliaryCatalogItem) {
     if (!canManageCatalogItem(item, isAdmin)) {
       setActionMessageType("error");
       setActionMessage("Somente administradores podem excluir itens auxiliares padrão.");
       return;
     }
 
-    const confirmed = window.confirm(`Excluir "${item.name}"?`);
+    setConfirmState({
+      title: "Excluir item",
+      description: `Excluir "${item.name}"? Esta ação não pode ser desfeita.`,
+      onConfirm: async () => {
+        setConfirmState(null);
+        setIsMutating(true);
+        setActionMessage(null);
 
-    if (!confirmed) {
-      return;
-    }
-
-    setIsMutating(true);
-    setActionMessage(null);
-
-    try {
-      await deleteCatalogItem(activeType, item.id);
-      setActionMessageType("success");
-      setActionMessage("Item excluído com sucesso.");
-      await refreshData();
-    } catch (error) {
-      setActionMessageType("error");
-      setActionMessage(apiErrorMessage(error, "Não foi possível excluir o item. Verifique se ele está vinculado a transações."));
-    } finally {
-      setIsMutating(false);
-    }
+        try {
+          await deleteCatalogItem(activeType, item.id);
+          setActionMessageType("success");
+          setActionMessage("Item excluído com sucesso.");
+          await refreshData();
+        } catch (error) {
+          setActionMessageType("error");
+          setActionMessage(apiErrorMessage(error, "Não foi possível excluir o item. Verifique se ele está vinculado a transações."));
+        } finally {
+          setIsMutating(false);
+        }
+      },
+    });
   }
 
   return (
@@ -269,7 +272,7 @@ export default function AuxiliaryItems() {
         emptyLabel={emptyGridLabel}
         isMutating={isMutating}
         items={activeItems}
-        onDelete={(item) => void deleteItem(item)}
+        onDelete={(item) => deleteItem(item)}
         onEdit={openEditModal}
         stats={usageStats}
       />
@@ -284,6 +287,17 @@ export default function AuxiliaryItems() {
         }}
         type={modalState?.type ?? null}
       />
+
+      {confirmState && (
+        <ConfirmModal
+          confirmLabel="Excluir"
+          description={confirmState.description}
+          isLoading={isMutating}
+          onCancel={() => setConfirmState(null)}
+          onConfirm={confirmState.onConfirm}
+          title={confirmState.title}
+        />
+      )}
     </AuthenticatedAppShell>
   );
 }
