@@ -1,3 +1,9 @@
+---
+name: frontend-crud
+description: Agente para criar interfaces CRUD completas no frontend React Router.
+tools: ["read", "write", "shell"]
+---
+
 # Frontend CRUD Agent
 
 Agente para criar interfaces CRUD completas no frontend React Router.

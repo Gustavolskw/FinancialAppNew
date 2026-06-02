@@ -126,7 +126,22 @@ export default function Dashboard() {
   const [loadStatus, setLoadStatus] = useState<LoadStatus>("loading");
   const [loadMessage, setLoadMessage] = useState("Carregando dados da carteira...");
   const [modalType, setModalType] = useState<ModalType>(null);
-  const [monthFilter, setMonthFilter] = useState<MonthFilterValue>(() => currentMonthFilter());
+  const [monthFilter, setMonthFilter] = useState<MonthFilterValue>(() => {
+    try {
+      const stored = sessionStorage.getItem("dashboard:monthFilter");
+      if (stored) {
+        const parsed = JSON.parse(stored) as MonthFilterValue;
+        if (parsed.month >= 1 && parsed.month <= 12 && parsed.year > 0) {
+          return parsed;
+        }
+      }
+    } catch { /* ignore */ }
+    return currentMonthFilter();
+  });
+
+  useEffect(() => {
+    sessionStorage.setItem("dashboard:monthFilter", JSON.stringify(monthFilter));
+  }, [monthFilter.month, monthFilter.year]);
 
   const dashboardData = dashboard ?? emptyDashboard;
   const isLoadingDashboard = loadStatus === "loading";

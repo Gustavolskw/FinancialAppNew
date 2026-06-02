@@ -29,4 +29,27 @@ class JsonResponseHandler implements JsonResponseHandlerInterface
     {
         return new self($data);
     }
+
+    public static function createFromArray(string $message, int $statusCode, array $data): JsonResponseHandlerInterface
+    {
+        $serializable = new class($message, $statusCode, $data) implements JsonSerializable {
+            public function __construct(
+                private readonly string $message,
+                private readonly int $statusCode,
+                private readonly array $data
+            ) {
+            }
+
+            public function jsonSerialize(): array
+            {
+                return [
+                    'message' => $this->message,
+                    'statusCode' => $this->statusCode,
+                    'data' => $this->data,
+                ];
+            }
+        };
+
+        return new self($serializable);
+    }
 }

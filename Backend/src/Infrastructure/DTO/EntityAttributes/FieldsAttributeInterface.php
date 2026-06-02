@@ -60,4 +60,5 @@ interface FieldsAttributeInterface
     public function getValueField(string $name): ?FieldsInterface;
     public function getRelationalField(string $name): ?FieldsInterface;
     public function getFields(): ArrayCollection;
+    public function setVirtualField(string $name, mixed $value): self;
 }

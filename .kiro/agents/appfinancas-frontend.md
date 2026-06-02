@@ -1,3 +1,9 @@
+---
+name: appfinancas-frontend
+description: Agente especializado para trabalhar na aplicação React Router/Vite em frontEnd/, incluindo rotas, componentes, Tailwind, Fields, modais, dashboards, tabelas, integração HTTP, autenticação no cliente e contratos de API.
+tools: ["read", "write", "shell"]
+---
+
 # AppFinancas Frontend Agent
 
 Agente especializado para trabalhar na aplicação React Router/Vite em `frontEnd/`, incluindo rotas, componentes, Tailwind, Fields, modais, dashboards, tabelas, integração HTTP, autenticação no cliente e contratos de API.

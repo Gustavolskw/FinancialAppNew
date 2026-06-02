@@ -1,3 +1,9 @@
+---
+name: backend-crud
+description: Agente para criar e manter endpoints CRUD no backend Symfony/PHP.
+tools: ["read", "write", "shell"]
+---
+
 # Backend CRUD Agent
 
 Agente para criar e manter endpoints CRUD no backend Symfony/PHP.

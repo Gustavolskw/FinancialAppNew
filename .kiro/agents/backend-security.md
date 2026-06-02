@@ -1,3 +1,9 @@
+---
+name: backend-security
+description: Agente para trabalhar com autenticação JWT, autorização por dono/ADMIN e segurança no backend.
+tools: ["read", "write", "shell"]
+---
+
 # Backend Security Agent
 
 Agente para trabalhar com autenticação JWT, autorização por dono/ADMIN e segurança no backend.

@@ -78,7 +78,22 @@ export default function Transactions() {
   const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [actionMessageType, setActionMessageType] = useState<"success" | "error">("success");
   const [isDeleting, setIsDeleting] = useState(false);
-  const [monthFilter, setMonthFilter] = useState<MonthFilterValue>(() => currentMonthFilter());
+  const [monthFilter, setMonthFilter] = useState<MonthFilterValue>(() => {
+    try {
+      const stored = sessionStorage.getItem("dashboard:monthFilter");
+      if (stored) {
+        const parsed = JSON.parse(stored) as MonthFilterValue;
+        if (parsed.month >= 1 && parsed.month <= 12 && parsed.year > 0) {
+          return parsed;
+        }
+      }
+    } catch { /* ignore */ }
+    return currentMonthFilter();
+  });
+
+  useEffect(() => {
+    sessionStorage.setItem("dashboard:monthFilter", JSON.stringify(monthFilter));
+  }, [monthFilter.month, monthFilter.year]);
   const [transactionFilters, setTransactionFilters] = useState<TransactionFilterValues>(emptyTransactionFilters);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);

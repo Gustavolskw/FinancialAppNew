@@ -1,3 +1,9 @@
+---
+name: backend-doctrine
+description: Agente para trabalhar com entidades Doctrine, migrations e schema do banco de dados.
+tools: ["read", "write", "shell"]
+---
+
 # Backend Doctrine Agent
 
 Agente para trabalhar com entidades Doctrine, migrations e schema do banco de dados.

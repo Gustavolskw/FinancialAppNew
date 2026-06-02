@@ -1,3 +1,9 @@
+---
+name: frontend-ui
+description: Agente para trabalhar com componentes, Tailwind CSS, dashboards, gráficos e design system.
+tools: ["read", "write", "shell"]
+---
+
 # Frontend UI Agent
 
 Agente para trabalhar com componentes, Tailwind CSS, dashboards, gráficos e design system.

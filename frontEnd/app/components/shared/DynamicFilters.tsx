@@ -345,7 +345,7 @@ function FilterInput({ definition, disabled, onChange, value }: FilterInputProps
         <span>{definition.label}</span>
         <div className="relative">
           <select
-            className="w-full appearance-none rounded-lg border border-slate-300 bg-white py-3 pl-4 pr-10 text-base text-slate-950 shadow-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-700/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500 sm:py-2 sm:pl-3 sm:pr-9 sm:text-sm dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:focus:border-blue-300 dark:focus:ring-blue-300/20"
+            className="w-full cursor-pointer appearance-none rounded-lg border border-slate-300 bg-white py-3 pl-4 pr-10 text-base text-slate-950 shadow-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-700/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500 sm:py-2 sm:pl-3 sm:pr-9 sm:text-sm dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:focus:border-blue-300 dark:focus:ring-blue-300/20"
             disabled={disabled}
             onChange={(event) => onChange(event.target.value)}
             value={value}

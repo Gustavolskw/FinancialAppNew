@@ -1,3 +1,9 @@
+---
+name: appfinancas-project
+description: Agente geral para trabalhar em qualquer parte do monorepo AppFinancasNew, incluindo setup, Docker, banco de dados, quality gates, documentação ou mudanças que cruzem backend e frontend.
+tools: ["read", "write", "shell"]
+---
+
 # AppFinancas Project Agent
 
 Agente geral para trabalhar em qualquer parte do monorepo AppFinancasNew, incluindo setup, Docker, banco de dados, quality gates, documentação ou mudanças que cruzem backend e frontend.

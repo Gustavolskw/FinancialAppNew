@@ -7,4 +7,5 @@ export default [
   route("transacoes", "routes/transactions.tsx"),
   route("auxiliares", "routes/auxiliary-items.tsx"),
   route("perfil", "routes/profile.tsx"),
+  route("analise-anual", "routes/annual-analytics.tsx"),
 ] satisfies RouteConfig;

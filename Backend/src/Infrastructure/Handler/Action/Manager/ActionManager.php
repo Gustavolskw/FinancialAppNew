@@ -3,12 +3,14 @@
 namespace App\Infrastructure\Handler\Action\Manager;
 
 use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
+use App\Infrastructure\DTO\Configuration\Interface\AnalyzableEntityInterface;
 use App\Infrastructure\DTO\Forms\FormDtoInterface;
 use App\Infrastructure\DTO\Forms\StatusFormDto;
 use App\Infrastructure\DTO\Params\Interface\QueryParamsInterface;
 use App\Infrastructure\Handler\Action\Action;
 use App\Infrastructure\Handler\Action\Manager\interface\ActionManagerInterface;
 use App\Infrastructure\Handler\Cache\RequestCacheHandlerInterface;
+use App\Infrastructure\Handler\Response\JsonResponseHandler;
 use App\Infrastructure\Handler\Response\JsonResponseHandlerInterface;
 use App\Infrastructure\Helper\ActionManager\ActionManagerDispatchTrait;
 use App\Infrastructure\Helper\ActionManager\ActionManagerRequestTrait;
@@ -103,5 +105,31 @@ final class ActionManager implements ActionManagerInterface
         $this->invalidateCacheAfterSuccessfulMutation($baseEntityClass, $response);
 
         return $response;
+    }
+
+    public function handleAnalytics(
+        BaseEntityClassInterface $baseEntityClass,
+        Request $request,
+        QueryParamsInterface $queryParams,
+        int $walletId,
+        int $year
+    ): JsonResponseHandlerInterface {
+        $this->resetRecordAuthorizationState();
+
+        $authenticationResponse = $this->authenticateRequest($request);
+        if ($authenticationResponse !== null) {
+            return $authenticationResponse;
+        }
+
+        $authorizationResponse = $this->authorizeRecordAccess($baseEntityClass, $request, null, $walletId);
+        if ($authorizationResponse !== null) {
+            return $authorizationResponse;
+        }
+
+        if (!$baseEntityClass instanceof AnalyzableEntityInterface) {
+            return $this->response("Entidade não suporta analytics", 400);
+        }
+
+        return JsonResponseHandler::createFromArray('Sucesso!', 200, $baseEntityClass->buildAnnualAnalyticsData($walletId, $year));
     }
 }

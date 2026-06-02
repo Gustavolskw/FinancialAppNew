@@ -44,7 +44,7 @@ export function EnumFieldDto({
       <div className="relative">
         <select
           autoFocus={autoFocus}
-          className={classNames(baseInputClassName, "appearance-none pr-10", inputClassName)}
+          className={classNames(baseInputClassName, "cursor-pointer appearance-none pr-10", inputClassName)}
           disabled={disabled || readOnly}
           id={fieldId(name)}
           name={name}

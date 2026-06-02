@@ -29,7 +29,7 @@ export function Select({ children, className = "", disabled, onChange, value }: 
   return (
     <div className="relative">
       <select
-        className={`w-full appearance-none rounded-md border border-slate-300 bg-white py-2 pl-3 pr-9 text-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-700/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:focus:border-blue-300 dark:focus:ring-blue-300/20 ${className}`}
+        className={`w-full cursor-pointer appearance-none rounded-md border border-slate-300 bg-white py-2 pl-3 pr-9 text-sm outline-none transition focus:border-blue-700 focus:ring-2 focus:ring-blue-700/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:focus:border-blue-300 dark:focus:ring-blue-300/20 ${className}`}
         disabled={disabled}
         onChange={onChange}
         value={value}

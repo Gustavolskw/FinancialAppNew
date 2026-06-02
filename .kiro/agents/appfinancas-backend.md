@@ -1,3 +1,9 @@
+---
+name: appfinancas-backend
+description: Agente especializado para trabalhar na API Symfony/PHP em Backend/, incluindo controllers, Configurations, Forms, Actions, helpers, autenticação, autorização, Doctrine, migrations e quality gate.
+tools: ["read", "write", "shell"]
+---
+
 # AppFinancas Backend Agent
 
 Agente especializado para trabalhar na API Symfony/PHP em `Backend/`, incluindo controllers, Configurations, Forms, Actions, helpers, autenticação, autorização, Doctrine, migrations e quality gate.

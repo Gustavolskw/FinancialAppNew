@@ -1,3 +1,9 @@
+---
+name: frontend-api
+description: Agente para trabalhar com integração HTTP, autenticação JWT no cliente e contratos de API.
+tools: ["read", "write", "shell"]
+---
+
 # Frontend API Agent
 
 Agente para trabalhar com integração HTTP, autenticação JWT no cliente e contratos de API.

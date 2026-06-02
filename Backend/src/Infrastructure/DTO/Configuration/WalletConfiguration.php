@@ -1,22 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\DTO\Configuration;
 
 use App\Entity\User;
 use App\Entity\Wallet as WalletEntity;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttribute;
 use App\Infrastructure\DTO\EntityAttributes\FieldsAttributeInterface;
+use App\Infrastructure\DTO\Configuration\Interface\AnalyzableEntityInterface;
 use App\Infrastructure\DTO\Configuration\Interface\BaseEntityClassInterface;
-use App\Infrastructure\DTO\Configuration\UserConfiguration;
+use App\Infrastructure\Handler\Analytics\Interface\AnalyticsConfigurationInterface;
+use App\Infrastructure\Handler\Analytics\Wallet\WalletAnnualAnalytics;
 use App\Infrastructure\Helper\EntityHelper\EntityFieldsHelper;
 use Doctrine\ORM\EntityManagerInterface;
 
-final class WalletConfiguration extends MainConfigurableEntity
+final class WalletConfiguration extends MainConfigurableEntity implements AnalyzableEntityInterface
 {
     private const string ENTITYCLASS = WalletEntity::class;
     public const string LISTDATATERM = "wallets";
     public const string SINGLEDATATERM = "wallet";
-
 
     public function configureFields(FieldsAttributeInterface $fields): FieldsAttributeInterface
     {
@@ -29,7 +32,6 @@ final class WalletConfiguration extends MainConfigurableEntity
             ->setStatusField("status")
             ->setRelationalField("user", User::class, "getWalletUser", required: true);
     }
-
 
     public function setFieldsFromEntityData(object $entity, bool $deepFetch = false): self
     {
@@ -53,5 +55,15 @@ final class WalletConfiguration extends MainConfigurableEntity
     public static function build(EntityManagerInterface $entityManager): BaseEntityClassInterface
     {
         return new self(new FieldsAttribute(), self::ENTITYCLASS, $entityManager);
+    }
+
+    public function buildAnnualAnalyticsData(int $walletId, int $year): array
+    {
+        return $this->analyticsConfiguration()->compute($walletId, $year);
+    }
+
+    public function analyticsConfiguration(): AnalyticsConfigurationInterface
+    {
+        return new WalletAnnualAnalytics($this->getEntityManager());
     }
 }

@@ -264,4 +264,11 @@ final class FieldsAttribute implements FieldsAttributeInterface
     {
         return $this->fields;
     }
+
+    public function setVirtualField(string $name, mixed $value): self
+    {
+        $field = BasicFieldDto::factory($name, FieldTypeEnum::TEXTFIELD, '');
+        $field->setValue($value);
+        return $this->put($field);
+    }
 }

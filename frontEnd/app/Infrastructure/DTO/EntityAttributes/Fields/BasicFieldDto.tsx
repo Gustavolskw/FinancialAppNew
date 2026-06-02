@@ -60,7 +60,7 @@ export function BasicFieldDto({
         <div className="relative">
           <select
             autoFocus={autoFocus}
-            className={classNames(baseInputClassName, multiple && "min-h-28", !multiple && "appearance-none pr-10", inputClassName)}
+            className={classNames(baseInputClassName, multiple && "min-h-28", !multiple && "cursor-pointer appearance-none pr-10", inputClassName)}
             disabled={disabled}
             id={fieldId(name)}
             multiple={multiple}

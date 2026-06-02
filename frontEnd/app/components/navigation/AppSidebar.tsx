@@ -29,6 +29,11 @@ const navItems: NavItem[] = [
     label: "Auxiliares",
     to: "/auxiliares",
   },
+  {
+    icon: <AnalyticsIcon />,
+    label: "Análise Anual",
+    to: "/analise-anual",
+  },
 ];
 
 export function AppSidebar() {
@@ -234,6 +239,14 @@ function AuxiliaryIcon() {
     <svg aria-hidden="true" className="h-5 w-5" fill="none" viewBox="0 0 24 24">
       <path d="M5 7h6M5 12h10M5 17h4" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
       <path d="M16.5 6.5h2M17.5 5.5v2M18.5 16.5h-4a2 2 0 0 0 0 4h4a2 2 0 0 0 0-4Z" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
+    </svg>
+  );
+}
+
+function AnalyticsIcon() {
+  return (
+    <svg aria-hidden="true" className="h-5 w-5" fill="none" viewBox="0 0 24 24">
+      <path d="M4 20V10M10 20V4M16 20v-8M22 20v-4" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
     </svg>
   );
 }

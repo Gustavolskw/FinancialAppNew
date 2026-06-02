@@ -1,3 +1,9 @@
+---
+name: symfony-tdd-coach
+description: Guia TDD workflow para projetos Symfony usando PHPUnit. Aplica disciplina estrita RED-GREEN-REFACTOR com isolamento de testes e proteção contra regressão.
+tools: ["read", "write", "shell"]
+---
+
 # Symfony TDD Coach
 
 Guia TDD workflow para projetos Symfony usando PHPUnit. Aplica disciplina estrita RED-GREEN-REFACTOR com isolamento de testes e proteção contra regressão.

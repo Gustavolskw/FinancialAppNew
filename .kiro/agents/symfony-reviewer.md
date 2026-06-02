@@ -1,3 +1,9 @@
+---
+name: symfony-reviewer
+description: Revisa código Symfony para qualidade, arquitetura e boas práticas. Use proativamente após modificações de código para verificar espessura de controllers, uso de value objects, acoplamento de serviços e convenções Symfony.
+tools: ["read", "write", "shell"]
+---
+
 # Symfony Code Reviewer
 
 Revisa código Symfony para qualidade, arquitetura e boas práticas. Use proativamente após modificações de código para verificar espessura de controllers, uso de value objects, acoplamento de serviços e convenções Symfony.
