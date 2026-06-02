@@ -32,7 +32,7 @@ class JsonResponseHandler implements JsonResponseHandlerInterface
 
     public static function createFromArray(string $message, int $statusCode, array $data): JsonResponseHandlerInterface
     {
-        $serializable = new class($message, $statusCode, $data) implements JsonSerializable {
+        $serializable = new class ($message, $statusCode, $data) implements JsonSerializable {
             public function __construct(
                 private readonly string $message,
                 private readonly int $statusCode,
