@@ -1,6 +1,7 @@
 import { FieldTypeEnum } from "./FieldTypeEnum";
 import {
   BasicFieldDto,
+  CurrencyFieldDto,
   DateFieldDto,
   EnumFieldDto,
   IdFieldDto,
@@ -171,6 +172,16 @@ export class FieldsAttribute implements FieldsAttributeInterface {
     return this.put(this.buildField(name, fieldType, entityGetter, required, additionalFieldValidation));
   }
 
+  setCurrencyField(
+    name: string,
+    entityGetter: string,
+    fieldType = FieldTypeEnum.CURRENCYFIELD,
+    required = false,
+    additionalFieldValidation?: AdditionalFieldValidation,
+  ): this {
+    return this.put(this.buildField(name, fieldType, entityGetter, required, additionalFieldValidation));
+  }
+
   setRelationalField(
     name: string,
     relationalEntityClass: string,
@@ -326,6 +337,14 @@ export function FieldRenderer({
           fieldType={field.fieldType}
           onChange={handleChange}
           value={typeof value === "number" || typeof value === "string" ? value : null}
+        />
+      );
+    case FieldTypeEnum.CURRENCYFIELD:
+      return (
+        <CurrencyFieldDto
+          {...commonProps}
+          onChange={handleChange}
+          value={typeof value === "number" ? value : null}
         />
       );
     case FieldTypeEnum.DATEFIELD:

@@ -1,7 +1,8 @@
 FROM node:20-alpine AS development-dependencies-env
-COPY . /app
+COPY package.json package-lock.json /app/
 WORKDIR /app
 RUN npm ci
+COPY . /app
 RUN chmod +x /app/docker-entrypoint.sh
 
 FROM development-dependencies-env AS development-env

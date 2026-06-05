@@ -1,4 +1,5 @@
 export { BasicFieldDto } from "./BasicFieldDto";
+export { CurrencyFieldDto } from "./CurrencyFieldDto";
 export { DateFieldDto } from "./DateFieldDto";
 export { EnumFieldDto } from "./EnumFieldDto";
 export {

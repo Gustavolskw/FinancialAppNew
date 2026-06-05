@@ -76,7 +76,7 @@ const movementPlaceholders: Record<keyof MovementValues, string> = {
 
 function buildMovementFields(): FieldDefinition[] {
   return new FieldsAttribute()
-    .setValueField("amount", "getAmount", FieldTypeEnum.VALUEFIELD, true, (value) => {
+    .setCurrencyField("amount", "getAmount", FieldTypeEnum.CURRENCYFIELD, true, (value) => {
       if (typeof value !== "number" || value <= 0) {
         return "Informe um valor maior que zero";
       }

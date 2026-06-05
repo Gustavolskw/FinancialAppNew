@@ -13,6 +13,7 @@ export enum FieldTypeEnum {
   DATEFIELD = "DATEFIELD",
   DATETIMEFIELD = "DATETIMEFIELD",
   STATUSFIELD = "STATUSFIELD",
+  CURRENCYFIELD = "CURRENCYFIELD",
 }
 
 export function getFieldType(fieldType: FieldTypeEnum): string {
@@ -31,6 +32,7 @@ export function getFieldType(fieldType: FieldTypeEnum): string {
     case FieldTypeEnum.OPTIONSFIELD:
       return "array";
     case FieldTypeEnum.VALUEFIELD:
+    case FieldTypeEnum.CURRENCYFIELD:
       return "float";
     case FieldTypeEnum.DATEFIELD:
       return "DateTime";
@@ -51,6 +53,7 @@ export function getFieldSizeValidation(fieldType: FieldTypeEnum): number {
       return 100;
     case FieldTypeEnum.TEXTFIELD:
     case FieldTypeEnum.VALUEFIELD:
+    case FieldTypeEnum.CURRENCYFIELD:
     case FieldTypeEnum.DATEFIELD:
     case FieldTypeEnum.DATETIMEFIELD:
     case FieldTypeEnum.PASSWORDFIELD:
